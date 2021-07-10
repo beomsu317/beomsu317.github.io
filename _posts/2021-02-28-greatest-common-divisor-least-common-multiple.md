@@ -68,5 +68,5 @@ int euclid(int n,int mod){
 
 123, 321의 최대공약수는 3이며 $123 * 321 = 3 * LCM$이 성립한다. 따라서 계산해보면 13161이 최소공배수인 것을 알 수 있다.
 
-##### Resources
+## References
 - [Euclidean Algorithm](https://en.wikipedia.org/wiki/Euclidean_algorithm)

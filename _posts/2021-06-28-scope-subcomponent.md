@@ -328,5 +328,5 @@ var cafeComponent: CafeComponent = DaggerCafeComponent.builder()
 Log.d(TAG, cafeComponent.cafeInfo().welcome())
 ```
 
-### References
+## References
 - [Scope](https://jaejong.tistory.com/131?category=873925#%EC%BB%A4%EC%8A%A4%ED%85%80Scope%EC%84%A0%EC%96%B8%EB%B0%A9%EB%B2%95)

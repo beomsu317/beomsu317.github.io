@@ -268,5 +268,5 @@ public class MainActivity extends AppCompatActivity {
 
 터치 후 좌표 값이 변경될 때 그려주도록 구현하였고, 이를 좀 더 부드럽게 곡선으로 그려주는 방식의 그림판을 구현하였다.
 
-### References
+## References
 - [Do It! Android Programming](https://github.com/mike-jung/DoItAndroid)

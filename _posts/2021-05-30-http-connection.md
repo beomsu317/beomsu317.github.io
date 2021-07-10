@@ -139,5 +139,5 @@ public class MainActivity extends AppCompatActivity {
 
 입력 상자에 입력된 URL로 접근하여 받은 응답을 화면에 출력하게 된다. 
 
-### References
+## References
 - [Do It! Android Programming](https://github.com/mike-jung/DoItAndroid)

@@ -84,5 +84,5 @@ public class MainActivity extends AppCompatActivity {
 
 버튼을 누르면 동영상이 재생되는 것을 확인할 수 있다.
 
-### References
+## References
 - [Do It! Android Programming](https://github.com/mike-jung/DoItAndroid)

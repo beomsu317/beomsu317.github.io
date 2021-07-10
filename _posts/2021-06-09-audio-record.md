@@ -209,5 +209,5 @@ public class MainActivity extends AppCompatActivity {
 
 RECORD START 버튼을 누를 경우 녹음이 시작되며 RECORD STOP 버튼을 누르면 녹음이 종료되고 리소스가 해제된 후 SD 카드 위치에 저장된다. PLAY 버튼을 누르면 녹음된 파일이 재생되며 STOP을 누를 경우 정지되는 것을 확인할 수 있다.
 
-### References
+## References
 - [Do It! Android Programming](https://github.com/mike-jung/DoItAndroid)

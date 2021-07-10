@@ -157,5 +157,5 @@ $./main
 9
 ```
 
-##### Resources
+## References
 - [Synchronizing Clocks](https://www.algospot.com/judge/problem/read/PICNIC)

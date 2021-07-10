@@ -217,5 +217,5 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 Navigation Drawer의 메뉴를 선택하면 선택된 프래그먼트로 변경되는 것을 확인할 수 있다.
 
-### References
+## References
 - [Do It! Android Programming](https://github.com/mike-jung/DoItAndroid)

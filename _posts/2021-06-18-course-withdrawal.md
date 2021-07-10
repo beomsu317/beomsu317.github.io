@@ -91,5 +91,5 @@ double optimize(){
 ```
 
 
-##### Resources
+## References
 - [WITHDRAWAL](https://algospot.com/judge/problem/read/WITHDRAWAL)

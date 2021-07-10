@@ -129,5 +129,5 @@ public class MainActivity extends AppCompatActivity {
 
 버튼을 누르면 스레드가 생성되며 1초마다 `value` 값을 증가시켜 `TextView`에 나타나는 것을 확인할 수 있다.
 
-### References
+## References
 - [Do It! Android Programming](https://github.com/mike-jung/DoItAndroid)

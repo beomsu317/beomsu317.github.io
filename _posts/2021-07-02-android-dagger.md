@@ -274,7 +274,7 @@ public abstract class DaggerActivity extends Activity implements HasAndroidInjec
 }
 ```
 
-### References
+## References
 - [Android Dagger 사용방법 3가지](https://jaejong.tistory.com/152?category=888864)
 - [Dagger_Sample_DI](https://github.com/posth2071/Dagger_Sample_DI)
 

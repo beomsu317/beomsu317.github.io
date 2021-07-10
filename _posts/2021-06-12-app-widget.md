@@ -301,5 +301,5 @@ public class MyLocationProvider extends AppWidgetProvider {
 
 홈 화면을 길게 눌러 앱 위젯을 추가한 후 텍스트뷰를 누르면 지도에 내 위치가 표시되는 것을 확인할 수 있다.
 
-### References
+## References
 - [Do It! Android Programming](https://github.com/mike-jung/DoItAndroid)

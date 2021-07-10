@@ -41,5 +41,5 @@ int strcat(){
 }
 ```
 
-##### Resources
+## References
 - [STRJOIN](https://www.algospot.com/judge/problem/read/STRJOIN)

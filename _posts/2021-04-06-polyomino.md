@@ -75,5 +75,5 @@ for(int i=1;i<=n;i++){
 }
 ```
 
-##### Resources
+## References
 - [POLY](https://www.algospot.com/judge/problem/read/POLY)

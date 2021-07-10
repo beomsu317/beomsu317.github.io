@@ -142,5 +142,5 @@ $
 이러한 방식은 충분히 큰 수는 일반적인 곱셈법보다 빠르지만 작은 수인 경우 추가적인 덧셈과 연산들 때문에 느려지는 경우가 있다.
 
 
-##### Resources
+## References
 - [Karatsuba_algorithm](https://en.wikipedia.org/wiki/Karatsuba_algorithm)

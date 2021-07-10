@@ -58,5 +58,5 @@ int order(vector<int> &russian,vector<int> &korean){
 }
 ```
 
-##### Resources
+## References
 - [MATCHORDER](https://www.algospot.com/judge/problem/read/MATCHORDER)

@@ -464,5 +464,5 @@ if __name__ == '__main__':
 무결점. 이것이 이 파트의 모두다. 평소보다 길었지만 모두 가치있는 시간이라고 생각한다. 다음 post에서 보자.
 
 
-##### Resources 
+## References 
 - [Introduction to angr Part 3](https://blog.notso.pro/2019-04-10-angr-introduction-part3/)

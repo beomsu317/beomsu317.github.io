@@ -139,6 +139,6 @@ public class MainActivity extends AppCompatActivity {
 
 `View` 객체를 상속해 원하는 위치에 사각형, 원, 텍스트를 그릴 수 있는 것을 확인하였다.
 
-### References
+## References
 - [Do It! Android Programming](https://github.com/mike-jung/DoItAndroid)
 - [Canvas](https://developer.android.com/reference/android/graphics/Canvas)

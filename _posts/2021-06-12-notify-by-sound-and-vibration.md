@@ -105,5 +105,5 @@ public class MainActivity extends AppCompatActivity {
 
 각 버튼을 누르면 해당하는 진동, 사운드가 들리는 것을 확인할 수 있다.
 
-### References
+## References
 - [Do It! Android Programming](https://github.com/mike-jung/DoItAndroid)

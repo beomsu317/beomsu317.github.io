@@ -204,6 +204,6 @@ public class MainActivity extends AppCompatActivity {
 
 앱 화면 안에 카메라 미리보기가 출력되고 사진도 찍을 수 있는 것을 확인하였다.
 
-### References
+## References
 - [Do It! Android Programming](https://github.com/mike-jung/DoItAndroid)
 

@@ -88,5 +88,5 @@ $f(n) = O(g(n)), d(n)=O(e(n))$이면 $f(n) + d(n) = O(max(g(n),e(n)))$이다.
 $f(n) = O(g(n)), d(n)=O(e(n))$이면 $f(n) \cdot d(n) = O(g(n) \cdot e(n))$이다.
 
 
-##### Resources
+## References
 - [Asymptotic Notations](https://www.geeksforgeeks.org/analysis-of-algorithms-set-3asymptotic-notations/)

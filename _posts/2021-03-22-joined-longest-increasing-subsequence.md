@@ -55,5 +55,5 @@ int solve(vector<int> &seq1,vector<int> &seq2,int idx1,int idx2){
 }
 ```
 
-##### Resources
+## References
 - [JLIS](https://www.algospot.com/judge/problem/read/JLIS)

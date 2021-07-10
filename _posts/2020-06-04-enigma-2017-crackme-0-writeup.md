@@ -196,6 +196,6 @@ Great I solved it!! Now, how does this shit work?
 
 그렇다. 이것이다. 내가 이것을 해결했을 때 새벽 4시라고 말하는걸 잊었나? 그래, 내 인생은 좀 거지같아.
 
-##### Resources
+## References
 
 - [Enigma 2017 Crackme 0 Writeup](https://blog.notso.pro/2019-03-13-Enigma2017-Crackme0-writeup/)

@@ -181,5 +181,5 @@ public class MainActivity extends AppCompatActivity {
 
 레이아웃을 구현하여 외부에서 호출할 수 있는 함수를 만들고 `MainActivity`에서 호출함으로써 변경 가능한 새로운 레이아웃을 구현하였다.
 
-### References
+## References
 - [Do It! Android Programming](https://github.com/mike-jung/DoItAndroid)

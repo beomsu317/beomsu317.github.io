@@ -57,5 +57,5 @@ double optimize(const vector<double>& location, int cameras){
 }
 ```
 
-##### Resources
+## References
 - [DARPA](https://www.algospot.com/judge/problem/read/DARPA)

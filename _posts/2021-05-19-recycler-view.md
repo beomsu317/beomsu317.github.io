@@ -270,5 +270,5 @@ public class MainActivity extends AppCompatActivity {
 
 RecyclerView를 사용하여 여러개의 아이템들을 리스트 모양으로 보여주도록 구현하였다.
 
-### References
+## References
 - [Do It! Android Programming](https://github.com/mike-jung/DoItAndroid)

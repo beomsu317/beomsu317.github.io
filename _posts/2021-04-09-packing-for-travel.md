@@ -59,5 +59,5 @@ void reconstruct(int capacity,int item,vector<string> &picked){
 }
 ```
 
-##### Resources
+## References
 - [PACKING](https://www.algospot.com/judge/problem/read/PACKING)

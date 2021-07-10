@@ -39,5 +39,5 @@ Asymptotic Analysis(점근 해석)은 위의 2가지 이슈들을 처리할 수 
 
 또한 점근 해석에서 Constant Value(상수 값)보다 큰 크기의 입력을 항상 생각해야 한다. 소프트웨어나 알고리즘에 이러한 큰 크기의 입력은 주어지지 않을 수 있고, 점근적으로 느린 알고리즘은 특정 상황에서 더 좋은 성능을 낼 수 있다. 따라서 점근적으로 느리지만 소프트웨어에 빠른 알고리즘 선택할 수 있다.
 
-##### Resources
+## References
 - [Asymptotic Analysis](https://www.geeksforgeeks.org/analysis-of-algorithms-set-1-asymptotic-analysis/)

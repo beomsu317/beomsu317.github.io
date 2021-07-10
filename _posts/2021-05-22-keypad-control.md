@@ -104,6 +104,6 @@ public class MainActivity extends AppCompatActivity {
 
 입력상자에 포커싱되면 키패드가 올라오며 버튼을 누르면 키패드가 다시 내려가는 것을 확인할 수 있다.
 
-##### Resources
+## References
 - [Keyboard Input Style](https://developer.android.com/training/keyboard-input/style?hl=ko)
 - [Do It! Android Programming](https://github.com/mike-jung/DoItAndroid)

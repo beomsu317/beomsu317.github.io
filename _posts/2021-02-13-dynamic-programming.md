@@ -115,6 +115,6 @@ q -- r
 s -- t
 ```
 
-##### Resources
+## References
 - [Dynamic Programming](https://www.geeksforgeeks.org/dynamic-programming/)
 - [Memoization](https://en.wikipedia.org/wiki/Memoization)

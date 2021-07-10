@@ -67,5 +67,5 @@ int asymmetric2(int width){
 }
 ```
 
-##### Resources
+## References
 - [ASYMTILING](https://www.algospot.com/judge/problem/read/ASYMTILING)

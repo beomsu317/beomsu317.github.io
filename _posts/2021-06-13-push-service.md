@@ -421,5 +421,5 @@ public class MainActivity extends AppCompatActivity {
 
 첫번째 앱에서 푸시 메시지를 보내고 두번째 앱에선 해당 메시지를 받아 출력하는 것을 확인할 수 있다.
 
-### References
+## References
 - [Do It! Android Programming](https://github.com/mike-jung/DoItAndroid)

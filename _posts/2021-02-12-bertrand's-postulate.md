@@ -69,5 +69,5 @@ int main()
 }
 ```
 
-##### Resources
+## References
 - [Bertrand's Postulate](https://en.wikipedia.org/wiki/Bertrand%27s_postulate)

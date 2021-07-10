@@ -94,5 +94,5 @@ public class MainActivity extends AppCompatActivity {
 
 권한이 부여되어 있지 않다면 권한 부여 요청하는 창을 띄우며 수락, 거부에 대한 메시지 확인이 가능하다.
 
-### References
+## References
 - [Do It! Android Programming](https://github.com/mike-jung/DoItAndroid)

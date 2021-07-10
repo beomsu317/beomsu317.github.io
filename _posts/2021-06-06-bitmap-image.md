@@ -117,5 +117,5 @@ public class MainActivity extends AppCompatActivity {
 
 Double Buffering을 기법을 이용해 `Bitmap` 이미지를 화면에 나타내었고, 좌우, 상하 대칭, Blur 효과를 적용해보았다. 
 
-### References
+## References
 - [Do It! Android Programming](https://github.com/mike-jung/DoItAndroid)

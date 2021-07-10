@@ -91,5 +91,5 @@ int count(int y,int x){
 ```
 
 
-##### Resources
+## References
 - [TRIPATHCNT](https://www.algospot.com/judge/problem/read/TRIPATHCNT)

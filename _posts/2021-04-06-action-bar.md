@@ -97,5 +97,5 @@ public class MainActivity extends AppCompatActivity {
 
 액션바에 아이템을 설정하고 해당 아이템을 누르면 해당하는 이벤트가 수행되는 것을 확인할 수 있다.
 
-##### Resources
+## References
 - [Do It! Android Programming](https://github.com/mike-jung/DoItAndroid)

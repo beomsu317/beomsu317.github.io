@@ -217,5 +217,5 @@ int main() {
 }
 ```
 
-##### Resources
+## References
 - [피보나치 수를 구하는 여러가지 방법](https://www.acmicpc.net/blog/view/28)

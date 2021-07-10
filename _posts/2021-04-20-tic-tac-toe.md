@@ -115,5 +115,5 @@ int canWin(vector<string> &board,char turn){
 }
 ```
 
-##### Resources
+## References
 - [TICTACTOE](https://www.algospot.com/judge/problem/read/TICTACTOE)

@@ -155,5 +155,5 @@ public class MainActivity extends AppCompatActivity {
 
 위쪽 2/3과 아래쪽 1/3을 따로 채워주어 위쪽에서 아래쪽으로 색상이 변하는 배경화면을 만들었고, 그 위에 각 모양을 가진 선 3개가 그려진 것을 확인할 수 있다.
 
-### References
+## References
 - [Do It! Android Programming](https://github.com/mike-jung/DoItAndroid)

@@ -171,6 +171,6 @@ public class MainActivity extends AppCompatActivity {
 
 인텐트를 통해 카메라 앱으로 이동하여 사진을 찍고, 찍은 사진을 파일로 저장 및 화면에 표시되는 것을 확인할 수 있다.
 
-### References
+## References
 - [Do It! Android Programming](https://github.com/mike-jung/DoItAndroid)
 - [photobasics](https://developer.android.com/training/camera/photobasics)

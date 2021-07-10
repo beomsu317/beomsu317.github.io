@@ -135,5 +135,5 @@ public class MainActivity extends AppCompatActivity {
 
 "Start" 버튼을 누르면 스레드에서 100밀리 초마다 프로그레스바를 1씩 증가시키며 "Cancel" 또는 `value`가 100 이상인 경우 스레드를 종료시키는 것을 확인할 수 있다.
 
-### References
+## References
 - [Do It! Android Programming](https://github.com/mike-jung/DoItAndroid)

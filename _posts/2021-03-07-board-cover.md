@@ -145,5 +145,5 @@ int main(int argc, char* argv[]){
 }
 ```
 
-##### Resources
+## References
 - [BOARDCOVER](https://www.algospot.com/judge/problem/read/BOARDCOVER)

@@ -110,5 +110,5 @@ char expand(const string &curve,int generation,int skip){
 }
 ```
 
-##### Resources
+## References
 - [DRAGON](https://www.algospot.com/judge/problem/read/DRAGON)

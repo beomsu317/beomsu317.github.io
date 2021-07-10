@@ -128,5 +128,5 @@ public class MainActivity extends AppCompatActivity {
 
 입력 상자에 문자열 입력 후 버튼을 누르면 서브 스레드로 메시지가 전달되며 전달된 데이터를 `TextView`에 설정되는 것을 확인할 수 있다.
 
-### References
+## References
 - [Do It! Android Programming](https://github.com/mike-jung/DoItAndroid)

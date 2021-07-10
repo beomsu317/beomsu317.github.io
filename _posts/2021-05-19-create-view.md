@@ -108,5 +108,5 @@ public class MyButton extends AppCompatButton {
 
 가운데 버튼을 눌렀을 때 백그라운드 색과 글자 색이 변경되는 것을 확인할 수 있다.
 
-### References
+## References
 - [Do It! Android Programming](https://github.com/mike-jung/DoItAndroid)

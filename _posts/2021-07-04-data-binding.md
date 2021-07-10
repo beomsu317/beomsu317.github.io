@@ -600,7 +600,7 @@ public class BindingUtils {
 </layout>
 ```
 
-### References
+## References
 - [wikipedia - Data_binding](https://en.wikipedia.org/wiki/Data_binding)
 - [developer.android.com - data-binding](https://developer.android.com/topic/libraries/data-binding)
 - [android-working-with-databinding](https://www.androidhive.info/android-working-with-databinding/)

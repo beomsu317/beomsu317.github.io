@@ -137,8 +137,8 @@ public class MainActivity extends AppCompatActivity {
 
 각 애니메이션에 따라 버튼이 동작하는 것을 확인할 수 있다.
 
-##### Resources
+## References
 - [Animation.AnimationListener](https://developer.android.com/reference/android/view/animation/Animation.AnimationListener)
 
-### References
+## References
 - [Do It! Android Programming](https://github.com/mike-jung/DoItAndroid)

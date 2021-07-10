@@ -166,5 +166,5 @@ public class SmsActivity extends AppCompatActivity {
 
 브로드캐스트 리시버를 통해 데이터를 SMS를 전달받고 해당 메시지를 출력해주는 것을 확인할 수 있다.
 
-### References
+## References
 - [Do It! Android Programming](https://github.com/mike-jung/DoItAndroid)

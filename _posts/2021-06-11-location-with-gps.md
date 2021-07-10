@@ -157,5 +157,5 @@ public class MainActivity extends AppCompatActivity {
 
 버튼을 누르면 현재 위치 정보가 출력되고 위치를 변경하면 10초마다 위치를 확인하여 업데이트 해주는 것을 확인할 수 있다.
 
-### References
+## References
 - [Do It! Android Programming](https://github.com/mike-jung/DoItAndroid)

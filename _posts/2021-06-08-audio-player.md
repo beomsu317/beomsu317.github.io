@@ -171,5 +171,5 @@ public class MainActivity extends AppCompatActivity {
 
 `MediaPlayer` 객체를 이용해 간단히 오디오 재생을 수행할 수 있는 것을 확인하였다.
 
-### References
+## References
 - [Do It! Android Programming](https://github.com/mike-jung/DoItAndroid)

@@ -64,5 +64,5 @@ int play(int left,int right){
 ```
 
 
-##### Resources
+## References
 - [NUMBERGAME](https://www.algospot.com/judge/problem/read/NUMBERGAME)

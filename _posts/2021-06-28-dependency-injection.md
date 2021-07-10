@@ -147,5 +147,5 @@ Heater의 종류를 `A_Heater`에서 `B_Heater`로 변경할 경우 `Injection` 
 
 이런 디자인 패턴을 DI라 한다. 코드 간 커플링을 감소시키며, 재사용 및 유지보수를 용이하게 구현해준다. 
 
-### References
+## References
 - [DI (Dependency Injection) - 의존성 주입](https://jaejong.tistory.com/123?category=873925)

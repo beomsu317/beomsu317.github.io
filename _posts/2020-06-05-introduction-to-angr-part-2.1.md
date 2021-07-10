@@ -130,6 +130,6 @@ if __name__ == '__main__':
 
 동작했다! 좋아! 이것은 우리에게 6초 남짓만에 solution을 제공했다. 오늘은 여기까지이다. 다음 angr tutorial에서 보자.
 
-##### Resources
+## References
 
 - [Introduction to angr Part 2.1](https://blog.notso.pro/2019-04-03-angr-introduction-part2.1/)

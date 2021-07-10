@@ -214,5 +214,5 @@ public class MainActivity extends AppCompatActivity {
 
 RECORD START 버튼을 누르면 녹화가 시작되며 STOP을 눌러 저장 후 해당 비디오를 재생할 수 있는 것을 확인하였다.
 
-### References
+## References
 - [Do It! Android Programming](https://github.com/mike-jung/DoItAndroid)

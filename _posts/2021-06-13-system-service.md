@@ -205,5 +205,5 @@ public class MainActivity extends AppCompatActivity {
 
 버튼을 누를 경우 실행되는 프로세스, 설치된 패키지, 알람 설정 등의 기능을 시스템 서비스를 통해 구현할 수 있는 것을 확인하였다.
 
-### References
+## References
 - [Do It! Android Programming](https://github.com/mike-jung/DoItAndroid)

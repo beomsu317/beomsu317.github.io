@@ -128,5 +128,5 @@ int quantize(int from,int parts){
 ```
 
 
-##### Resources
+## References
 - [QUANTIZE](https://www.algospot.com/judge/problem/read/QUANTIZE)

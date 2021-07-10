@@ -73,5 +73,5 @@ int solve(const string &members, const string &fans)
 }
 ```
 
-##### Resources
+## References
 - [FANMEETING](https://www.algospot.com/judge/problem/read/FANMEETING)

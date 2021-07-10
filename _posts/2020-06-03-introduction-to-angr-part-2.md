@@ -198,5 +198,5 @@ if __name__ == '__main__':
 
 멋지다. 효과가 있다! angr가 어떻게 작동하는지 알아내기 시작했다, 아마 다음엔 실제 CTF에 적용되는 것을 볼 수 있을거야. 이 포스트는 여기서 끝이다. 다음 포스트에서 보자.
 
-##### Resources
+## References
 - [Introduction to angr Part 2](https://blog.notso.pro/2019-03-26-angr-introduction-part2/)

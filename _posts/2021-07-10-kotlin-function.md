@@ -76,5 +76,5 @@ fun mul(num1: Int, num2: Int): Int {
 
 ## Default and Named argument
 
-### References
+## References
 - [geeksforgeeks - kotlin](https://www.geeksforgeeks.org/kotlin-programming-language/)

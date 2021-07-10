@@ -116,5 +116,5 @@ string kth(int n,int m,int k){
 ```
 
 
-##### Resources
+## References
 - [MORSE](https://www.algospot.com/judge/problem/read/MORSE)

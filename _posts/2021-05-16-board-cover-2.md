@@ -151,5 +151,5 @@ int solve(){
 }
 ```
 
-##### Resources
+## References
 - [BOARDCOVER2](https://www.algospot.com/judge/problem/read/BOARDCOVER2)

@@ -133,5 +133,5 @@ public class MainActivity extends AppCompatActivity {
 
 뷰페이저를 통해 스크롤 시 화면이 넘어가 원하는 프래그먼트로 이동할 수 있는 것을 확인할 수 있다.
 
-### References
+## References
 - [Do It! Android Programming](https://github.com/mike-jung/DoItAndroid)

@@ -149,5 +149,5 @@ public class MainActivity extends AppCompatActivity {
 
 하단의 각 메뉴를 선택하면 선택된 프래그먼트가 보여지는 것을 확인할 수 있다.
 
-### References
+## References
 - [Do It! Android Programming](https://github.com/mike-jung/DoItAndroid)

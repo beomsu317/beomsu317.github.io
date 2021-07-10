@@ -74,5 +74,5 @@ bool play(int board){
 }
 ```
 
-##### Resources
+## References
 - [BLOCKGAME](https://www.algospot.com/judge/problem/read/BLOCKGAME)

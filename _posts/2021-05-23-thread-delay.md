@@ -118,5 +118,5 @@ public class MainActivity extends AppCompatActivity {
 
 버튼을 눌렀을 경우 요청이 시작되며 5초 후 요청이 완료되는 것을 확인할 수 있다.
 
-### References
+## References
 - [Do It! Android Programming](https://github.com/mike-jung/DoItAndroid)

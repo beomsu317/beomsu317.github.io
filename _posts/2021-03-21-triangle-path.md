@@ -41,5 +41,5 @@ int solve(vector<vector<int>> &tri,int y, int x){
 }
 ```
 
-##### Resources
+## References
 - [TRIANGLEPATH](https://www.algospot.com/judge/problem/read/TRIANGLEPATH)

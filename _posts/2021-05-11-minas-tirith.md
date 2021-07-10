@@ -110,5 +110,5 @@ int solveLinear(double begin,double end){
 }
 ```
 
-##### Resources
+## References
 - [MINASTIRITH](https://www.algospot.com/judge/problem/read/MINASTIRITH)

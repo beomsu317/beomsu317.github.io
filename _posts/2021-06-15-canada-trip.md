@@ -69,5 +69,5 @@ int optimize(){
 }
 ```
 
-##### Resources
+## References
 - [CANADATRIP](https://algospot.com/judge/problem/read/CANADATRIP)

@@ -45,5 +45,5 @@ int heat(){
 
 위와 같이 구현한 경우 $O(n)$ 시간이 걸리는 간단한 시뮬레이션으로 답을 구할 수 있다. 따라서 전체 시간 복잡도는 정렬에 걸리는 $O(n \log n)$이다.
 
-##### Resources
+## References
 - [LUNCHBOX](https://www.algospot.com/judge/problem/read/LUNCHBOX)

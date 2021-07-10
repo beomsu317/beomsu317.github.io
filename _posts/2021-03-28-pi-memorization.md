@@ -99,5 +99,5 @@ int memorize(int begin){
 }
 ```
 
-##### Resources
+## References
 - [PI](https://www.algospot.com/judge/problem/read/PI)

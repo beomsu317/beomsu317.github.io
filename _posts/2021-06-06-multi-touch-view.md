@@ -369,6 +369,6 @@ public class MainActivity extends AppCompatActivity {
 
 1개의 손가락으로 터치할 경우 사진이 이동되며, 2개의 손가락으로 터치했을 때의 이미지가 확대, 축소되는 것을 확인할 수 있다.
 
-### References
+## References
 - [Do It! Android Programming](https://github.com/mike-jung/DoItAndroid)
 - [Matrix](https://developer.android.com/reference/android/graphics/Matrix)

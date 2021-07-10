@@ -139,5 +139,5 @@ public class MainActivity extends YouTubeBaseActivity {
 
 앱이 시작되면 API 키를 전달해 `YouTubePlayerView`를 초기화하고, 버튼을 누르면 `videoId`를 전달해 로딩이 끝나면 동영상이 재생되는 것을 확인할 수 있다.
 
-### References
+## References
 - [Do It! Android Programming](https://github.com/mike-jung/DoItAndroid)

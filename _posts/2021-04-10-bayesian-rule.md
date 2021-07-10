@@ -28,5 +28,5 @@ $ P(A) $는 **사전확률(prior)**이라하며 사건 B가 발생하기 전 갖
 
 베이즈 정리는 사건 B가 발생함으로써 사건 A의 확률이 어떻게 변하는지 표현한 정리이다.
 
-##### Resources
+## References
 - [Bayesian Rule](https://datascienceschool.net/02%20mathematics/06.06%20%EB%B2%A0%EC%9D%B4%EC%A6%88%20%EC%A0%95%EB%A6%AC.html)

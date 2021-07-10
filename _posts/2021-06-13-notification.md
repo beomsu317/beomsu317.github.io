@@ -72,5 +72,5 @@ public class MainActivity extends AppCompatActivity {
 
 버튼을 누르면 상단에 알림이 오고 알림 메시지를 클릭할 경우 해당 액티비티로 이동하는 것을 확인할 수 있다.
 
-### References
+## References
 - [Do It! Android Programming](https://github.com/mike-jung/DoItAndroid)

@@ -118,5 +118,5 @@ public class MainActivity extends AppCompatActivity {
 
 멀티 윈도우로 액티비티를 띄우고 버튼을 누르면 멀티 윈도우 모드인지 여부를 확인할 수 있으며 PIP 모드도 동일하게 확인 가능하다.
 
-### References
+## References
 - [Do It! Android Programming](https://github.com/mike-jung/DoItAndroid)

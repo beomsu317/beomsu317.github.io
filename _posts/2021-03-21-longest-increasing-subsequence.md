@@ -46,5 +46,5 @@ int solve(vector<int> &seq,int idx){
 
 `solve(seq,-1);`를 호출하여 가장 긴 증가하는 부분 수열을 구할 수 있다. 0이 아닌 -1인 이유는 전체 길이도 포함시켜야 하기 때문이다.
 
-##### Resources
+## References
 - [가장 긴 증가하는 부분 수열](https://www.acmicpc.net/problem/11053)

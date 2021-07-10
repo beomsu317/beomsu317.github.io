@@ -630,5 +630,5 @@ public class MainActivity extends AppCompatActivity {
 
 데이터베이스에 테이블을 만들고 해당 테이블에 삽입, 조회, 삭제, 변경과 앨범, 연락처에서 Content Provider를 이용해 데이터를 가져올 수 있다.
 
-### References
+## References
 - [Do It! Android Programming](https://github.com/mike-jung/DoItAndroid)

@@ -224,5 +224,5 @@ public class MainActivity extends AppCompatActivity {
 
 버튼을 누르면 현재 위치 정보가 구글맵에 보여지는 것을 구현했고, 마커를 추가해 현재 위치를 아이콘으로 표현되는 것을 확인할 수 있다.
 
-### References
+## References
 - [Do It! Android Programming](https://github.com/mike-jung/DoItAndroid)

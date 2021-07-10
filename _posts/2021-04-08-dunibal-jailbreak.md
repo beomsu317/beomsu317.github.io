@@ -111,5 +111,5 @@ double search3(int here,int days){
 }
 ```
 
-##### Resources
+## References
 - [NUMB3RS](https://www.algospot.com/judge/problem/read/NUMB3RS)

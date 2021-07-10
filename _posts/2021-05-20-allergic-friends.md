@@ -90,5 +90,5 @@ void search(vector<int>& edible,int chosen){
 - `search()`는 호출 시마다 항상 음식을 하지만 `slowSearch()`는 음식을 하지 않고도 재귀 호출을 하게된다. `slowSearch()`의 깊이는 항상 $m$으로 고정되지만 `search()`는 항상 $m$이하의 숫자이다.
 - `slowSearch()`는 필요하지 않은 음식도 만들지만 `search()`는 필요한 음식만 한다.
 
-##### Resources
+## References
 - [ALLERGY](https://www.algospot.com/judge/problem/read/ALLERGY)

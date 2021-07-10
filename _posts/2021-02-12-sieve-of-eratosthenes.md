@@ -59,5 +59,5 @@ std::vector<int> eratos(int num){
 }
 ```
 
-##### Resources
+## References
 - [Sieve of Eratosthenes](https://en.wikipedia.org/wiki/Sieve_of_Eratosthenes)

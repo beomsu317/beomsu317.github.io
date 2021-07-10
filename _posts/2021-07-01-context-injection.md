@@ -194,6 +194,6 @@ DaggerAppComponent
     .create(this, 22, "홍길동")
 ```
 
-### References
+## References
 - [context 주입방법 @BindsInstance @Component.Builder @Component.Factory](https://jaejong.tistory.com/144)
 

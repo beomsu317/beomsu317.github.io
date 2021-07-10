@@ -123,5 +123,5 @@ s.subSequence(1, 4) // Output: - tri
 - `str.compareTo(string)` : `str` == `string`이면 0을 반환
 
 
-### References
+## References
 - [geeksforgeeks - kotlin](https://www.geeksforgeeks.org/kotlin-programming-language/)

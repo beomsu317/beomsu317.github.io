@@ -166,5 +166,5 @@ public class MainActivity extends AppCompatActivity {
 
 "OPEN" 버튼을 눌렀을 경우 숨어있던 뷰가 VISIBLE이 되며 나오고 "CLOSE" 버튼을 누르면 애니메이션이 끝난 후 INVISIBLE이 되는 것을 확인할 수 있다.
 
-### References
+## References
 - [Do It! Android Programming](https://github.com/mike-jung/DoItAndroid)
