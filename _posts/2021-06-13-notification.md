@@ -3,6 +3,8 @@ title: Notification
 author: Beomsu Lee
 category: [Android]
 tags: [android, notification]
+math: true
+mermaid: true
 ---
 
 ## Description

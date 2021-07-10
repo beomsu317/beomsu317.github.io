@@ -1,6 +1,8 @@
 ---
 title: Choose the Order of Match
 author: Beomsu Lee
+math: true
+mermaid: true
 tags: [greedy algorithm]
 ---
 

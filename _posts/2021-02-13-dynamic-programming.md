@@ -1,6 +1,8 @@
 ---
 title:  Dynamic Programming
 author: Beomsu Lee
+math: true
+mermaid: true
 tags: [algorithm,dynamic programming]
 ---
 

@@ -3,6 +3,8 @@ title: Video Record
 author: Beomsu Lee
 category: [Android]
 tags: [video]
+math: true
+mermaid: true
 ---
 
 ## Description

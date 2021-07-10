@@ -1,6 +1,8 @@
 ---
 title: Asymptotic Notations
 author: Beomsu Lee
+math: true
+mermaid: true
 tags: [algorithm]
 ---
 

@@ -1,6 +1,8 @@
 ---
 title: Triangle Path Count
 author: Beomsu Lee
+math: true
+mermaid: true
 tags: [dynamic programming]
 ---
 

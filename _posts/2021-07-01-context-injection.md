@@ -3,6 +3,8 @@ title: Context Injection
 author: Beomsu Lee
 category: [Android, Dagger]
 tags: [dagger]
+math: true
+mermaid: true
 ---
 
 ## Context Injection

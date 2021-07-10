@@ -1,6 +1,8 @@
 ---
 title: String Join
 author: Beomsu Lee
+math: true
+mermaid: true
 tags: [greedy algorithm]
 ---
 

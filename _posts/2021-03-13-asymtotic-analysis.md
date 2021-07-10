@@ -1,6 +1,8 @@
 ---
 title: Asymptotic Analysis
 author: Beomsu Lee
+math: true
+mermaid: true
 category: [Algorithm]
 tags: [asymptotic analysis]
 ---

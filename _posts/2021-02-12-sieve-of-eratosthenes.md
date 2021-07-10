@@ -1,6 +1,8 @@
 ---
 title:  Sieve of Eratosthenes
 author: Beomsu Lee
+math: true
+mermaid: true
 tags: [math]
 ---
 

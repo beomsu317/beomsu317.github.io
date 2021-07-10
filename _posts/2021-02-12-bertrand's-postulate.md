@@ -1,6 +1,8 @@
 ---
 title: Bertrand's Postulate
 author: Beomsu Lee
+math: true
+mermaid: true
 tags: [math]
 ---
 

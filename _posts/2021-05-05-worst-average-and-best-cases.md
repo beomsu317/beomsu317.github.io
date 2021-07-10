@@ -1,6 +1,8 @@
 ---
 title: Worst / Average / Best Cases
 author: Beomsu Lee
+math: true
+mermaid: true
 category: [Algorithm]
 ---
 

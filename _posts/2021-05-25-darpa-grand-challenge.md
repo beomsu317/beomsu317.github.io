@@ -1,6 +1,8 @@
 ---
 title: DARPA Grand Challenge
 author: Beomsu Lee
+math: true
+mermaid: true
 tags: [dicision problem]
 ---
 

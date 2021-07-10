@@ -1,6 +1,8 @@
 ---
 title: Triangle Path
 author: Beomsu Lee
+math: true
+mermaid: true
 tags: [dynamic programming]
 ---
 

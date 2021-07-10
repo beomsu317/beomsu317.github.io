@@ -3,6 +3,8 @@ title: Audio Record
 author: Beomsu Lee
 category: [Android]
 tags: [audio]
+math: true
+mermaid: true
 ---
 
 ## Description

@@ -3,6 +3,8 @@ title: Annotation
 author: Beomsu Lee
 category: [Android]
 tags: [java, annotation]
+math: true
+mermaid: true
 ---
 
 Annotation이란 자바 소스 코드에 추가할 수 있는 메타 데이터의 한 형태이다. JEEE5(Java Platform, Enterprise Edition 5)부터 새롭게 추가된 요소다. Annotation으로 인해 데이터의 유효성 검사 등을 쉽게 알 수 있고, 관련된 코드가 깔끔해지게 된다. Annotation의 용도는 다양하지만 메타 데이터의 비중이 가장 크다. Annotation은 클래스, 인터페이스, 메서드, 변수, 매개 변수 등에 추가할 수 있다. 

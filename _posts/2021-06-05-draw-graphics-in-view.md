@@ -3,6 +3,8 @@ title: Draw Graphics in View
 author: Beomsu Lee
 category: [Android]
 tags: [graphic]
+math: true
+mermaid: true
 ---
 
 ## Description

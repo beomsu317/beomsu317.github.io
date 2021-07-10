@@ -3,6 +3,8 @@ title: Music Player
 author: Beomsu Lee
 category: [Android]
 tags: [audio]
+math: true
+mermaid: true
 
 ---
 

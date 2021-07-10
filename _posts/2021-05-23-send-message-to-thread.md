@@ -1,6 +1,8 @@
 ---
 title: Send Message to Thread 
 author: Beomsu Lee
+math: true
+mermaid: true
 tags: [android]
 ---
 

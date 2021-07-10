@@ -3,6 +3,8 @@ title: Android Dagger
 author: Beomsu Lee
 category: [Android, Dagger]
 tags: [dagger]
+math: true
+mermaid: true
 ---
 
 ## Component Module을 이용한 구현

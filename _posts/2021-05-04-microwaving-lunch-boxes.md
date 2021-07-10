@@ -1,6 +1,8 @@
 ---
 title: Microwaving Lunch Boxes
 author: Beomsu Lee
+math: true
+mermaid: true
 tags: [greedy algorithm]
 ---
 

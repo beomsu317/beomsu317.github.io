@@ -3,6 +3,8 @@ title: Kotlin Array & String
 author: Beomsu Lee
 category: [Android,Kotlin]
 tags: [kotlin]
+math: true
+mermaid: true
 ---
 
 ## Kotlin Array

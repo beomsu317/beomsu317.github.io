@@ -3,6 +3,8 @@ title: Scope / Subcomponent
 author: Beomsu Lee
 category: [Android, Dagger]
 tags: [dagger]
+math: true
+mermaid: true
 ---
 
 ## Scope

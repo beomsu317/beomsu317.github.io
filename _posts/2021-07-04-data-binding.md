@@ -3,6 +3,8 @@ title: Data Binding
 author: Beomsu Lee
 category: [Android]
 tags: [data binding]
+math: true
+mermaid: true
 ---
 
 ## Data Binding

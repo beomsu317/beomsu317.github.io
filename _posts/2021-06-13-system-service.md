@@ -3,6 +3,8 @@ title: System Service
 author: Beomsu Lee
 category: [Android]
 tags: [android, system service]
+math: true
+mermaid: true
 ---
 
 ## Description

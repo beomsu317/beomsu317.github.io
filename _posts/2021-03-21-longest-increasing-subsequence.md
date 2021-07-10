@@ -1,6 +1,8 @@
 ---
 title: Longest Increasing Subsequence
 author: Beomsu Lee
+math: true
+mermaid: true
 tags: [dynamic programming]
 ---
 

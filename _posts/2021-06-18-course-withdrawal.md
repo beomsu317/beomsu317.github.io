@@ -3,6 +3,8 @@ title: Course Withdrawal
 author: Beomsu Lee
 category: [Algorithm, Dicision Problem]
 tags: [dicision problem]
+math: true
+mermaid: true
 ---
 
 ## Problem

@@ -3,6 +3,8 @@ title: Push Service
 author: Beomsu Lee
 category: [Android]
 tags: [android, push service]
+math: true
+mermaid: true
 ---
 
 ## Description

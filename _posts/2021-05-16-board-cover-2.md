@@ -1,6 +1,8 @@
 ---
 title: Board Cover 2
 author: Beomsu Lee
+math: true
+mermaid: true
 tags: [combinatorial search]
 ---
 

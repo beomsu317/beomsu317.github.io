@@ -3,6 +3,8 @@ title: App Widget
 author: Beomsu Lee
 category: [Android]
 tags: [app widget]
+math: true
+mermaid: true
 ---
 
 ## Description

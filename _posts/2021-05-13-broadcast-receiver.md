@@ -1,6 +1,8 @@
 ---
 title: Broadcast Receiver
 author: Beomsu Lee
+math: true
+mermaid: true
 tags: [android]
 ---
 

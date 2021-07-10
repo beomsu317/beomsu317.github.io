@@ -1,6 +1,8 @@
 ---
 title: Tic-Tac-Toe
 author: Beomsu Lee
+math: true
+mermaid: true
 tags: [dynamic programming]
 ---
 

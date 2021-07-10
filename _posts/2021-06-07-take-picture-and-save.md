@@ -3,6 +3,8 @@ title: Take Picture and Save
 author: Beomsu Lee
 category: [Android]
 tags: [take picture]
+math: true
+mermaid: true
 ---
 
 ## Description

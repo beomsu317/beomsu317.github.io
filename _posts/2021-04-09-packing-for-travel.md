@@ -1,6 +1,8 @@
 ---
 title: Packing for Travel
 author: Beomsu Lee
+math: true
+mermaid: true
 tags: [dynamic programming]
 ---
 

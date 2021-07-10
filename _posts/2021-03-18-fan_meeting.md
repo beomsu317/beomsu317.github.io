@@ -1,6 +1,8 @@
 ---
 title: Fan Meeting
 author: Beomsu Lee
+math: true
+mermaid: true
 tags: [divide and conquer]
 ---
 

@@ -1,6 +1,8 @@
 ---
 title: Keypad Control
 author: Beomsu Lee
+math: true
+mermaid: true
 tags: [android]
 ---
 

@@ -1,6 +1,8 @@
 ---
 title: Create Layout
 author: Beomsu Lee
+math: true
+mermaid: true
 tags: [android]
 ---
 

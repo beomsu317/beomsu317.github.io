@@ -3,6 +3,8 @@ title: Play YouTube Video
 author: Beomsu Lee
 category: [Android]
 tags: [youtube]
+math: true
+mermaid: true
 ---
 
 ## Description

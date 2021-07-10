@@ -1,6 +1,8 @@
 ---
 title: Action Bar
 author: Beomsu Lee
+math: true
+mermaid: true
 tags: [android]
 ---
 

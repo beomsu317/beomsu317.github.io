@@ -1,6 +1,8 @@
 ---
 title: Dr. Dunibal's Jailbreak
 author: Beomsu Lee
+math: true
+mermaid: true
 tags: [dynamic programming]
 ---
 

@@ -3,6 +3,8 @@ title: Kotlin Basic
 author: Beomsu Lee
 category: [Android,Kotlin]
 tags: [kotlin]
+math: true
+mermaid: true
 ---
 
 ## Kotlin Data Types

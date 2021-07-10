@@ -1,6 +1,8 @@
 ---
 title: Http Connection
 author: Beomsu Lee
+math: true
+mermaid: true
 tags: [android]
 ---
 

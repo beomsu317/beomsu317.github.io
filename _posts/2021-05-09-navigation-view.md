@@ -1,6 +1,8 @@
 ---
 title: Navigation View
 author: Beomsu Lee
+math: true
+mermaid: true
 tags: [android]
 ---
 

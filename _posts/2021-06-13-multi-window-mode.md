@@ -3,6 +3,8 @@ title: Multi Window Mode
 author: Beomsu Lee
 category: [Android]
 tags: [android, multi window]
+math: true
+mermaid: true
 ---
 
 ## Description

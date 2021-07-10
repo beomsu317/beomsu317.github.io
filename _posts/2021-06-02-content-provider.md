@@ -1,6 +1,8 @@
 ---
 title: Content Provider
 author: Beomsu Lee
+math: true
+mermaid: true
 tags: [android]
 ---
 

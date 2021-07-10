@@ -1,6 +1,8 @@
 ---
 title: Tweened Animation
 author: Beomsu Lee
+math: true
+mermaid: true
 tags: [android]
 ---
 

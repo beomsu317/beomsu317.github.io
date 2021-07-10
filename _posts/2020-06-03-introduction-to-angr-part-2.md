@@ -1,6 +1,8 @@
 ---
 title:  Introduction to angr Part 2
 author: Beomsu Lee
+math: true
+mermaid: true
 tags: [angr]
 ---
 

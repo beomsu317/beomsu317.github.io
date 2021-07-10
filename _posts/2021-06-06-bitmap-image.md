@@ -3,6 +3,8 @@ title: Bitmap Image
 author: Beomsu Lee
 category: [Android]
 tags: [image]
+math: true
+mermaid: true
 ---
 
 ## Description

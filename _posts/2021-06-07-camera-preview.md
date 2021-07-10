@@ -3,6 +3,8 @@ title: Camera Preview
 author: Beomsu Lee
 category: [Android]
 tags: [camera]
+math: true
+mermaid: true
 ---
 
 ## Description

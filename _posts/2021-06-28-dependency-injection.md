@@ -3,6 +3,8 @@ title: Dependency Injection
 author: Beomsu Lee
 category: [Android, Dagger]
 tags: [dagger]
+math: true
+mermaid: true
 ---
 
 ## Dependency Injection

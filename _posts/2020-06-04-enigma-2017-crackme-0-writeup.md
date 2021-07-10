@@ -1,6 +1,8 @@
 ---
 title:  Enigma 2017 Crackme 0 Writeup
 author: Beomsu Lee
+math: true
+mermaid: true
 tags: [reversing]
 ---
 

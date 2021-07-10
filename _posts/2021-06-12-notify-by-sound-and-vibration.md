@@ -3,6 +3,8 @@ title: Notify by Sound and Vibration
 author: Beomsu Lee
 category: [Android]
 tags: [android, sound, vibration]
+math: true
+mermaid: true
 ---
 
 ## Description

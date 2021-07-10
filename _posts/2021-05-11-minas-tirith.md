@@ -1,6 +1,8 @@
 ---
 title: Minas Tirith
 author: Beomsu Lee
+math: true
+mermaid: true
 tags: [greedy algorithm]
 ---
 

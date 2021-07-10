@@ -1,6 +1,8 @@
 ---
 title:  Greatest Common Divisor, Least Common Multiple
 author: Beomsu Lee
+math: true
+mermaid: true
 tags: [math]
 ---
 

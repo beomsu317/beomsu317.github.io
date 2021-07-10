@@ -1,6 +1,8 @@
 ---
 title: Synchronizing Clocks
 author: Beomsu Lee
+math: true
+mermaid: true
 tags: [brute force]
 ---
 

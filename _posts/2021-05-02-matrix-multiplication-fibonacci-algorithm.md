@@ -1,6 +1,8 @@
 ---
 title: Matrix Multiplication Fibonacci Algorithm
 author: Beomsu Lee
+math: true
+mermaid: true
 tags: [math]
 ---
 
