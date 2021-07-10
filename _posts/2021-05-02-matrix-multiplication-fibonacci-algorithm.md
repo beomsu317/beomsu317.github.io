@@ -16,8 +16,8 @@ tags: [math]
 
 $$
 \begin{multline}
-\shoveleft{ F_n = F_{n-1} + F_{n-2} } \\
-\shoveleft{ F_{n-1} = F_{n-1} + 0 * F_{n-2} } \\
+\shoveleft{ F_n = F_{n-1} + F_{n-2} } \cr
+\shoveleft{ F_{n-1} = F_{n-1} + 0 * F_{n-2} } \cr
 \end{multline}
 $$
 
@@ -28,17 +28,17 @@ $$
 \shoveleft
 { 
 \begin{pmatrix}
-F_n \\
-F_{n-1} \\ 
+F_n \cr
+F_{n-1} \cr
 \end{pmatrix} 
 = 
 \begin{pmatrix}
-1 & 1 \\
-1 & 0 \\ 
+1 & 1 \cr
+1 & 0 \cr
 \end{pmatrix} 
 \begin{pmatrix}
-F_{n-1} \\
-F_{n-2} \\ 
+F_{n-1} \cr
+F_{n-2} \cr
 \end{pmatrix} 
 }
 \end{multline}
@@ -51,17 +51,17 @@ $$
 \shoveleft
 { 
 \begin{pmatrix}
-F_{n-1} \\
-F_{n-2} \\ 
+F_{n-1} \cr
+F_{n-2} \cr
 \end{pmatrix} 
 = 
 \begin{pmatrix}
-1 & 1 \\
-1 & 0 \\ 
+1 & 1 \cr
+1 & 0 \cr
 \end{pmatrix} 
 \begin{pmatrix}
-F_{n-2} \\
-F_{n-3} \\ 
+F_{n-2} \cr
+F_{n-3} \cr
 \end{pmatrix} 
 }
 \end{multline}
@@ -74,39 +74,39 @@ $$
 \shoveleft
 { 
 \begin{pmatrix}
-F_{n} \\
-F_{n-1} \\ 
+F_{n} \cr
+F_{n-1} \cr 
 \end{pmatrix} 
 = 
 \begin{pmatrix}
-1 & 1 \\
-1 & 0 \\ 
+1 & 1 \cr
+1 & 0 \cr 
 \end{pmatrix} 
 \begin{pmatrix}
-F_{n-1} \\
-F_{n-2} \\ 
+F_{n-1} \cr
+F_{n-2} \cr 
 \end{pmatrix} 
 =
 \begin{pmatrix}
-1 & 1 \\
-1 & 0 \\ 
+1 & 1 \cr
+1 & 0 \cr 
 \end{pmatrix} 
 \begin{pmatrix}
-1 & 1 \\
-1 & 0 \\ 
+1 & 1 \cr
+1 & 0 \cr 
 \end{pmatrix} 
 \begin{pmatrix}
-F_{n-2} \\
-F_{n-3} \\ 
+F_{n-2} \cr
+F_{n-3} \cr 
 \end{pmatrix} 
 =
 { \begin{pmatrix}
-1 & 1 \\
-1 & 0 \\ 
+1 & 1 \cr
+1 & 0 \cr 
 \end{pmatrix} }^2
 \begin{pmatrix}
-F_{n-2} \\
-F_{n-3} \\ 
+F_{n-2} \cr
+F_{n-3} \cr 
 \end{pmatrix} 
 }
 \end{multline}
@@ -119,34 +119,34 @@ $$
 \shoveleft
 { 
 \begin{pmatrix}
-F_{n} \\
-F_{n-1} \\ 
+F_{n} \cr
+F_{n-1} \cr 
 \end{pmatrix} 
 = 
 { \begin{pmatrix}
-1 & 1 \\
-1 & 0 \\ 
+1 & 1 \cr
+1 & 0 \cr 
 \end{pmatrix} }^2
 \begin{pmatrix}
-F_1 \\
-F_0 \\ 
+F_1 \cr
+F_0 \cr 
 \end{pmatrix} 
 }
 \end{multline}
 $$
 
-행렬 $\begin{pmatrix} 1 & 1 \\ 1 & 0 \\ \end{pmatrix} $을 $W$라 하면 아래와 같은 식을 만들 수 있다.
+행렬 $\begin{pmatrix} 1 & 1 \cr 1 & 0 \cr \end{pmatrix} $을 $W$라 하면 아래와 같은 식을 만들 수 있다.
 
 $$
 \begin{pmatrix}
-F_{n} \\
-F_{n-1} \\ 
+F_{n} \cr
+F_{n-1} \cr 
 \end{pmatrix} 
 = 
 W^{n-1}
 \begin{pmatrix}
-F_1 \\
-F_0 \\ 
+F_1 \cr
+F_0 \cr 
 \end{pmatrix} 
 $$
 
@@ -154,14 +154,14 @@ $$
 
 $$
 \begin{pmatrix}
-F_{n+1} & F_n \\
-F_n & F_{n-1} \\ 
+F_{n+1} & F_n \cr
+F_n & F_{n-1} \cr 
 \end{pmatrix} 
 = 
 { 
 \begin{pmatrix}
-1 & 1 \\
-1 & 0 \\
+1 & 1 \cr
+1 & 0 \cr
 \end{pmatrix} 
 }^n
 $$

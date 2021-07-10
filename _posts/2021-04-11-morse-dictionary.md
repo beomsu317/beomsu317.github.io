@@ -44,10 +44,10 @@ void generate2(int n,int m,string s){
 
 위의 코드는 신호를 하나하나 만들어야 해서 k가 크다면 시간 안에 답을 구할 수 없다. 이를 좀 더 빠르게 구현하는 방법이 있다. `generate2(n,m,s)`가 호출되어 n개의 장점과 m개의 단점을 s뒤에 이어야 하는데, 이를 조합할 수 있는 방법은 이항 계수로 표현할 수 있다.
 
-$ $
+$$
 \eqalign{
 \frac {(n+m)!}{n!m!}
-&= \frac {(n+m)!}{n!((n+m)-n)!} \\ 
+&= \frac {(n+m)!}{n!((n+m)-n)!} \cr
 &= \binom {n+m}{n}
 } 
 $$
@@ -94,7 +94,7 @@ void generate3(int n,int m,string s){
 $ 
 kth(n,m,k) = 
 \begin{cases}
-{"-" + kth(n-1,m,k)} & \text{ if } n > 0, k < \binom {n+m-1}{n-1} \\
+{"-" + kth(n-1,m,k)} & \text{ if } n > 0, k < \binom {n+m-1}{n-1} \cr
 {"o" + kth(n,m-1,k - \binom {n+m-1}{n-1})} & \text{ else }
 \end{cases}
 $

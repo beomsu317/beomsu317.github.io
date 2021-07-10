@@ -56,8 +56,8 @@ void curve(const string &seed,int generation){
 이 코드에서 p번째 글자만 출력하도록 하는 방법은 재귀 호출 시마다 재귀 호출이 몇 글자를 출력할지 미리 알고 있으면 skip과 비교할 수 있다. 따라서 문자열 "X"를 n세대 진화한 길이와 "Y"를 n세대 진화한 길이를 구해보자. X 또는 Y가 확장했을 때의 결과의 길이이다.
 
 $$
-xLength(n)=xLength(n-1)+yLength(n-1)+2\\
-yLength(n)=xLength(n-1)+yLength(n-1)+2\\
+xLength(n)=xLength(n-1)+yLength(n-1)+2\cr
+yLength(n)=xLength(n-1)+yLength(n-1)+2\cr
 $$
 
 결과적으론 $ xLength(n)=yLength(n) $이다. 따라서 다음과 같이 단순화할 수 있다.
