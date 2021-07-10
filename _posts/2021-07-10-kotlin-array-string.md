@@ -1,7 +1,7 @@
 ---
 title: Kotlin Array & String
 author: Beomsu Lee
-category: [Development,Kotlin]
+category: [Android,Kotlin]
 tags: [kotlin]
 ---
 
