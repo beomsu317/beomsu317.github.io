@@ -4,5 +4,11 @@ icon: fas fa-info
 order: 4
 ---
 
+I'm a researcher & developer of NHN, living in Seoul. This blog is a documentation of researches. I like to learn programming(especially problem solving) technologies. 
 
-> **Note**: Add Markdown syntax content to file `_tabs/about.md` and it will show up on this page.
+If you have any questions, send me a letter. 
+
+**u may need✨**
+
+- beomsu317@gmail.com
+- github.com/beomsu317
