@@ -1,7 +1,7 @@
 ---
 title: Annotation
 author: Beomsu Lee
-category: [Android]
+category: [Development]
 tags: [annotation]
 ---
 

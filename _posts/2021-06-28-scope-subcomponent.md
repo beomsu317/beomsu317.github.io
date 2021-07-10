@@ -1,7 +1,7 @@
 ---
 title: Scope / Subcomponent
 author: Beomsu Lee
-category: [Android]
+category: [Development]
 tags: [dagger]
 ---
 
