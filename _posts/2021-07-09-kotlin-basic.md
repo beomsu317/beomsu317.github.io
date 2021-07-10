@@ -1,7 +1,7 @@
 ---
 title: Kotlin Basic
 author: Beomsu Lee
-category: [Development]
+category: [Development,Kotlin]
 tags: [kotlin]
 ---
 
