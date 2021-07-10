@@ -3,8 +3,6 @@ title: Location with GPS
 author: Beomsu Lee
 category: [Android]
 tags: [gps]
-math: true
-mermaid: true
 ---
 
 ## Description
@@ -25,9 +23,9 @@ mermaid: true
 
 ```mermaid
 sequenceDiagram
-    Activity->>LocationManager : 내 위치 요청
-    LocationManager->>LocationManager : 현재 위치 제공
-    LocationManager->>Activity : 화면에 표시
+    Activity->>LocationManager: 내 위치 요청
+    LocationManager->>LocationManager: 현재 위치 제공
+    LocationManager->>Activity: 화면에 표시
 ```
 
 ## Implementation
