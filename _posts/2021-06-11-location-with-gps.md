@@ -3,6 +3,7 @@ title: Location with GPS
 author: Beomsu Lee
 category: [Android]
 tags: [gps]
+mermaid: true
 ---
 
 ## Description
