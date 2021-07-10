@@ -1,7 +1,7 @@
 ---
 title: Scope / Subcomponent
 author: Beomsu Lee
-category: [Development]
+category: [Development, Dagger]
 tags: [dagger]
 ---
 

@@ -1,7 +1,7 @@
 ---
 title: Android Dagger
 author: Beomsu Lee
-category: [Android]
+category: [Android, Dagger]
 tags: [dagger]
 ---
 

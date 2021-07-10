@@ -1,7 +1,7 @@
 ---
 title: Context Injection
 author: Beomsu Lee
-category: [Android]
+category: [Android, Dagger]
 tags: [dagger]
 ---
 
