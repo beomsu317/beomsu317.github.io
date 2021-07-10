@@ -1,7 +1,8 @@
 ---
 title: Multi Touch View
 author: Beomsu Lee
-tags: [android]
+category: [Android]
+tags: [multi touch]
 ---
 
 ## Description

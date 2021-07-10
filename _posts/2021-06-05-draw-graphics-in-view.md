@@ -1,7 +1,8 @@
 ---
 title: Draw Graphics in View
 author: Beomsu Lee
-tags: [android]
+category: [Android]
+tags: [graphic]
 ---
 
 ## Description

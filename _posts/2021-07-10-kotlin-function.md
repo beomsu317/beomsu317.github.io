@@ -1,6 +1,7 @@
 ---
 title: Kotlin Function
 author: Beomsu Lee
+category: [Android]
 tags: [kotlin]
 ---
 

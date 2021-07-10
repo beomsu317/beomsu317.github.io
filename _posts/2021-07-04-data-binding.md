@@ -1,7 +1,8 @@
 ---
 title: Data Binding
 author: Beomsu Lee
-tags: [android]
+category: [Android]
+tags: [data binding]
 ---
 
 ## Data Binding

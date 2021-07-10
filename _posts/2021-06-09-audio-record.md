@@ -1,7 +1,8 @@
 ---
 title: Audio Record
 author: Beomsu Lee
-tags: [android]
+category: [Android]
+tags: [record]
 ---
 
 ## Description

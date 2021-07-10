@@ -1,7 +1,8 @@
 ---
 title: Music Player
 author: Beomsu Lee
-tags: [android]
+category: [Android]
+tags: [audio]
 ---
 
 ## Description

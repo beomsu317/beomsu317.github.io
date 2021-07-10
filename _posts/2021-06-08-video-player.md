@@ -1,7 +1,8 @@
 ---
 title: Video Player
 author: Beomsu Lee
-tags: [android]
+category: [Android]
+tags: [widget]
 ---
 
 ## Description

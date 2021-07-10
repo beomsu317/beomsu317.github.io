@@ -1,7 +1,8 @@
 ---
 title: Dependency Injection
 author: Beomsu Lee
-tags: [android, dagger]
+category: [Android]
+tags: [dagger]
 ---
 
 ## Dependency Injection

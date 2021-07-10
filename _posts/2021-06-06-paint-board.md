@@ -1,7 +1,8 @@
 ---
 title: Paint Board
 author: Beomsu Lee
-tags: [android]
+category: [Android]
+tags: [paint board]
 ---
 
 ## Description

@@ -1,7 +1,8 @@
 ---
 title: Play YouTube Video
 author: Beomsu Lee
-tags: [android]
+category: [Android]
+tags: [youtube]
 ---
 
 ## Description

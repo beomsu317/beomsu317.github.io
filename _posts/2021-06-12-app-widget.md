@@ -1,7 +1,8 @@
 ---
 title: App Widget
 author: Beomsu Lee
-tags: [android]
+category: [Android]
+tags: [app widget]
 ---
 
 ## Description

@@ -1,7 +1,8 @@
 ---
 title: Location with GPS
 author: Beomsu Lee
-tags: [android]
+category: [Android]
+tags: [gps]
 ---
 
 ## Description

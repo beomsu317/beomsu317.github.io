@@ -1,6 +1,7 @@
 ---
 title: Annotation
 author: Beomsu Lee
+category: [Android]
 tags: [annotation]
 ---
 

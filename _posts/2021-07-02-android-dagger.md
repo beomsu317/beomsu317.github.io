@@ -1,7 +1,8 @@
 ---
 title: Android Dagger
 author: Beomsu Lee
-tags: [android, dagger]
+category: [Android]
+tags: [dagger]
 ---
 
 ## Component Module을 이용한 구현

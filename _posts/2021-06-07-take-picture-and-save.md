@@ -1,7 +1,8 @@
 ---
 title: Take Picture and Save
 author: Beomsu Lee
-tags: [android]
+category: [Android]
+tags: [take picture]
 ---
 
 ## Description

@@ -1,7 +1,8 @@
 ---
 title: Multi Window Mode
 author: Beomsu Lee
-tags: [android]
+category: [Android]
+tags: [multi window]
 ---
 
 ## Description

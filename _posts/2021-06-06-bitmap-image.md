@@ -1,7 +1,8 @@
 ---
 title: Bitmap Image
 author: Beomsu Lee
-tags: [android]
+category: [Android]
+tags: [image]
 ---
 
 ## Description

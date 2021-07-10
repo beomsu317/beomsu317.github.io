@@ -1,7 +1,8 @@
 ---
 title: Camera Preview
 author: Beomsu Lee
-tags: [android]
+category: [Android]
+tags: [camera]
 ---
 
 ## Description

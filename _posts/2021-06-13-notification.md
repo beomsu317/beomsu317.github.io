@@ -1,7 +1,8 @@
 ---
 title: Notification
 author: Beomsu Lee
-tags: [android]
+category: [Android]
+tags: [notification]
 ---
 
 ## Description

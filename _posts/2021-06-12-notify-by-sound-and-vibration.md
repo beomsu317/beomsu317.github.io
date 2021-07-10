@@ -1,7 +1,8 @@
 ---
 title: Notify by Sound and Vibration
 author: Beomsu Lee
-tags: [android]
+category: [Android]
+tags: [sound, vibration]
 ---
 
 ## Description
