@@ -68,11 +68,11 @@ Average Case Time \cr
 \end{multline}
 $$ -->
 
-## Best Case Analysis
+<!-- ## Best Case Analysis
 
 Best Case 분석은 알고리즘의 실행 시간 하한을 계산한다. 최소의 명령어 개수가 실행되는 케이스를 알아야한다. 선형 탐색의 경우 Best Case는 $x$가 처음에 존재하는 것이다. 따라서 시간 복잡도는 $\Theta (1)$이다. 
 
-일부 알고리즘의 경우 모든 케이스들이 점근적으로 동일하다. Worst, Best 케이스가 없는 경우인데 예로 병합 정렬이 있다. 병합 정렬은 모든 케이스에 대해 $ \Theta (n\log n)$이다. 대부분의 다른 정렬 알고리즘은 Worst, Best 케이스를 가진다. 예를 들어, 퀵소트의 경우 Worst Case는 주어진 배열이 이미 정렬되어 있는 경우이며, Best Case는 Pivot이 항상 절반으로 나누는 경우이다. 선택 정렬의 경우 Worst Case는 배열이 거꾸로 정렬되어 있는 경우이며, Best Case는 정렬된 경우이다.
+일부 알고리즘의 경우 모든 케이스들이 점근적으로 동일하다. Worst, Best 케이스가 없는 경우인데 예로 병합 정렬이 있다. 병합 정렬은 모든 케이스에 대해 $ \Theta (n\log n)$이다. 대부분의 다른 정렬 알고리즘은 Worst, Best 케이스를 가진다. 예를 들어, 퀵소트의 경우 Worst Case는 주어진 배열이 이미 정렬되어 있는 경우이며, Best Case는 Pivot이 항상 절반으로 나누는 경우이다. 선택 정렬의 경우 Worst Case는 배열이 거꾸로 정렬되어 있는 경우이며, Best Case는 정렬된 경우이다. -->
 
 ##### Resources
 - [Worst, Average and Best Cases](https://www.geeksforgeeks.org/analysis-of-algorithms-set-2-asymptotic-analysis/)
