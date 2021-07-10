@@ -1,8 +1,8 @@
 ---
 title: Bitmap Image
 author: Beomsu Lee
-category: [Android]
-tags: [image]
+category: [Android, Graphic]
+tags: [android, graphic]
 math: true
 mermaid: true
 ---

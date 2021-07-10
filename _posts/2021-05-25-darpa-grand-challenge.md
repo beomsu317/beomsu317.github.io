@@ -1,9 +1,10 @@
 ---
 title: DARPA Grand Challenge
 author: Beomsu Lee
+category: [Algorithm, Dicision Problem]
+tags: [algorithm, dicision problem]
 math: true
 mermaid: true
-tags: [dicision problem]
 ---
 
 ## Problem

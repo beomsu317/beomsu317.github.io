@@ -1,9 +1,10 @@
 ---
 title: Worst / Average / Best Cases
 author: Beomsu Lee
+category: [Algorithm]
+tags: [algorithm]
 math: true
 mermaid: true
-category: [Algorithm]
 ---
 
 이 절에선 선형 탐색을 점근 분석을 통해 예를 들어보겠다. 알고리즘 분석하기 위한 3가지 방법이 있다.

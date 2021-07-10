@@ -2,7 +2,7 @@
 title: Location with GPS
 author: Beomsu Lee
 category: [Android]
-tags: [gps]
+tags: [android, gps]
 math: true
 mermaid: true
 ---

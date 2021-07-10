@@ -1,9 +1,10 @@
 ---
 title: ViewPager
 author: Beomsu Lee
+category: [Android]
+tags: [android, viewpager]
 math: true
 mermaid: true
-tags: [android]
 ---
 
 ## Description

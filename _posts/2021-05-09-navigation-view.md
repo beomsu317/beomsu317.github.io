@@ -1,9 +1,10 @@
 ---
 title: Navigation View
 author: Beomsu Lee
+category: [Android, Navigation]
+tags: [android, navigation view]
 math: true
 mermaid: true
-tags: [android]
 ---
 
 ## Description

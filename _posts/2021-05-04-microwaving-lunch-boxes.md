@@ -1,9 +1,10 @@
 ---
 title: Microwaving Lunch Boxes
 author: Beomsu Lee
+category: [Algorithm, Greedy Algorithm]
+tags: [algorithm, greedy algorithm]
 math: true
 mermaid: true
-tags: [greedy algorithm]
 ---
 
 ## Problem

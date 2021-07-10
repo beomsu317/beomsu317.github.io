@@ -1,9 +1,10 @@
 ---
 title: Create Animation with Thread
 author: Beomsu Lee
+category: [Android, Thread]
+tags: [android, thread]
 math: true
 mermaid: true
-tags: [android]
 ---
 
 ## Description

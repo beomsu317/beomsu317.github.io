@@ -1,9 +1,10 @@
 ---
 title: Synchronizing Clocks
 author: Beomsu Lee
+category: [Algorithm, brute force]
+tags: [algorithm, brute force]
 math: true
 mermaid: true
-tags: [brute force]
 ---
 
 ## Problem

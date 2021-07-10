@@ -1,9 +1,10 @@
 ---
 title: Content Provider
 author: Beomsu Lee
+category: [Android, Component]
+tags: [android, component, content provider]
 math: true
 mermaid: true
-tags: [android]
 ---
 
 ## Description

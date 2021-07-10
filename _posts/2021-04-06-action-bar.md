@@ -1,9 +1,10 @@
 ---
 title: Action Bar
 author: Beomsu Lee
+category: [Android, Widget]
+tags: [android, widget, action bar]
 math: true
 mermaid: true
-tags: [android]
 ---
 
 ## Description

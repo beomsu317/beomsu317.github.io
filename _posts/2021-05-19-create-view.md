@@ -1,9 +1,10 @@
 ---
 title: Create View
 author: Beomsu Lee
+category: [Android, View]
+tags: [android, view, create view]
 math: true
 mermaid: true
-tags: [android]
 ---
 
 ## Description

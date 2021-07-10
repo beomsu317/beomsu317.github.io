@@ -1,9 +1,10 @@
 ---
 title: Board Cover
 author: Beomsu Lee
+category: [Algorithm, Brute Force]
+tags: [algorithm, brute force]
 math: true
 mermaid: true
-tags: [brute force]
 ---
 
 ## Problem

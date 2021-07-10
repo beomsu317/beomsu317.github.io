@@ -1,9 +1,10 @@
 ---
 title:  Greatest Common Divisor, Least Common Multiple
 author: Beomsu Lee
+category: [Algorithm, Math]
+tags: [algorithm, math, gcm, lcm]
 math: true
 mermaid: true
-tags: [math]
 ---
 
 GCM(Greatest Common Divisor)은 최대공약수이며 LSM(Least Common Multiple)은 최소공배수이다. 최대공약수는 두 수를 소인수분해 한 뒤, 두 수의 공통된 소인수를 모두 곱하면 최대공약수, 두 수의 모든 소인수를 곱하면 최소공배수가 된다.

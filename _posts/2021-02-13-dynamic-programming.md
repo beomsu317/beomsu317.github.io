@@ -1,9 +1,10 @@
 ---
 title:  Dynamic Programming
 author: Beomsu Lee
+category: [Algorithm, Dynamic Programming]
+tags: [algorithm, dynamic programming]
 math: true
 mermaid: true
-tags: [algorithm,dynamic programming]
 ---
 
 동적 계획법은 큰 문제를 여러 개의 하위 문제로 나누어 풀고, 이것을 결합하여 최종적으로 목표를 달성하는 알고리즘이다. 

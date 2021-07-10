@@ -1,10 +1,10 @@
 ---
 title: Asymptotic Analysis
 author: Beomsu Lee
+category: [Algorithm, Asymptotic Analysis]
+tags: [algorithm, asymptotic analysis]
 math: true
 mermaid: true
-category: [Algorithm]
-tags: [asymptotic analysis]
 ---
 
 ## Why performance analysis?

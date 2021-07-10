@@ -1,9 +1,10 @@
 ---
 title:  Introduction to angr Part 2
 author: Beomsu Lee
+category: [Binary Analysis, Angr]
+tags: [binary analysis, angr]
 math: true
 mermaid: true
-tags: [angr]
 ---
 
 구글에서 글쓴이의 block과 blank 페이지의 공포와 싸우는 방법을 검색하는 것? 확인해봐. 이번엔 정말 어떻게 시작해야 할지 모르겠다. 내가 정신이 없어서 그런 것 같은데 바로 봐보자.

@@ -1,9 +1,10 @@
 ---
 title: Navigation Drawer
 author: Beomsu Lee
+category: [Android, Navigation]
+tags: [android, navigation drawer]
 math: true
 mermaid: true
-tags: [android]
 ---
 
 ## Description

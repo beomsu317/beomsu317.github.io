@@ -1,9 +1,10 @@
 ---
 title:  Introduction to angr Part 0
 author: Beomsu Lee
+category: [Binary Analysis, Angr]
+tags: [binary analysis, angr]
 math: true
 mermaid: true
-tags: [angr]
 ---
 
 나에겐 휴식이 필요하다. 꼭 필요하다. 하지만 CTF에서 angr 사용법을 배우지 못했다면 휴가를 가는 이유가 있을까? 잠깐, 너 지금 휴가 안 갈 이유가 없다고 말하는 거야? 음, 안됐네, 내가 이 시리즈를 시작히기 전에 미리 말해줬어야지.

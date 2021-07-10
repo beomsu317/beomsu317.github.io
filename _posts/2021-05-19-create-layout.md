@@ -1,9 +1,10 @@
 ---
 title: Create Layout
 author: Beomsu Lee
+category: [Android, Layout]
+tags: [android, layout, create layout]
 math: true
 mermaid: true
-tags: [android]
 ---
 
 ## Description

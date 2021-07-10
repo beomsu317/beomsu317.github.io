@@ -1,9 +1,10 @@
 ---
 title:  Sieve of Eratosthenes
 author: Beomsu Lee
+category: [Algorithm, Math]
+tags: [algorithm, math, sieve of eratosthenes]
 math: true
 mermaid: true
-tags: [math]
 ---
 
 에라토스테네스가 만들어 낸 소수를 찾는 방법이다. 체로 치듯이 수를 걸러낸다 하여 에라토스테네스의 체라고 불린다.

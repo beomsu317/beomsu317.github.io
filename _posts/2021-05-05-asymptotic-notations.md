@@ -1,9 +1,10 @@
 ---
 title: Asymptotic Notations
 author: Beomsu Lee
+category: [Algorithm, Asymptotic Analysis]
+tags: [algorithm, asymptotic notations]
 math: true
 mermaid: true
-tags: [algorithm]
 ---
 
 점근 표기법은 알고리즘의 시간 복잡도를 나타낸다. 다음 3개의 점근 표기법은 주로 알고리즘의 시간 복잡도를 나타내는데 사용한다.

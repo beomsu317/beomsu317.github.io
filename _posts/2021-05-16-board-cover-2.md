@@ -1,9 +1,10 @@
 ---
 title: Board Cover 2
 author: Beomsu Lee
+category: [Algorithm, Combinatorial Search]
+tags: [algorithm, combinatorial search]
 math: true
 mermaid: true
-tags: [combinatorial search]
 ---
 
 ## Problem

@@ -1,9 +1,10 @@
 ---
 title: Permission
 author: Beomsu Lee
+category: [Android]
+tags: [android, permission]
 math: true
 mermaid: true
-tags: [android]
 ---
 
 ## Description

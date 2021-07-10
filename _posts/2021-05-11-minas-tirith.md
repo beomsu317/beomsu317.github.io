@@ -1,9 +1,10 @@
 ---
 title: Minas Tirith
 author: Beomsu Lee
+category: [Algorithm, Greedy Algorithm]
+tags: [algorithm, greedy algorithm]
 math: true
 mermaid: true
-tags: [greedy algorithm]
 ---
 
 ## Problem

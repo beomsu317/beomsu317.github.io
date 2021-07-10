@@ -1,8 +1,8 @@
 ---
 title: Camera Preview
 author: Beomsu Lee
-category: [Android]
-tags: [camera]
+category: [Android, Camera]
+tags: [android, camera]
 math: true
 mermaid: true
 ---

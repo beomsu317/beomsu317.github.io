@@ -1,9 +1,10 @@
 ---
 title: Joined Longest Increasing Subsequence
 author: Beomsu Lee
+category: [Algorithm, Dynamic Programming]
+tags: [algorithm, dynamic programming]
 math: true
 mermaid: true
-tags: [dynamic programming]
 ---
 
 

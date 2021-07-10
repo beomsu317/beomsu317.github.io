@@ -1,9 +1,10 @@
 ---
 title: Matrix Multiplication Fibonacci Algorithm
 author: Beomsu Lee
+category: [Algorithm, Math]
+tags: [algorithm, math]
 math: true
 mermaid: true
-tags: [math]
 ---
 
 ## Overview

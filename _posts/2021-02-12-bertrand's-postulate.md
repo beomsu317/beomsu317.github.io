@@ -1,9 +1,10 @@
 ---
 title: Bertrand's Postulate
 author: Beomsu Lee
+category: [Algorithm, Math]
+tags: [algorithm, math, bertrand's postulate]
 math: true
 mermaid: true
-tags: [math]
 ---
 
 두 자연수 n과 2n 사이 적어도 소수는 1개 이상 존재한다는 이론이다.

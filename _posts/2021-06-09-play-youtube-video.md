@@ -2,7 +2,7 @@
 title: Play YouTube Video
 author: Beomsu Lee
 category: [Android]
-tags: [youtube]
+tags: [android, youtube]
 math: true
 mermaid: true
 ---

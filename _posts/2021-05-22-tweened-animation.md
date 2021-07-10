@@ -1,9 +1,10 @@
 ---
 title: Tweened Animation
 author: Beomsu Lee
+category: [Android, Animation]
+tags: [android, animation, tweened animation]
 math: true
 mermaid: true
-tags: [android]
 ---
 
 ## Description

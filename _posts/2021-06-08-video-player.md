@@ -1,8 +1,8 @@
 ---
 title: Video Player
 author: Beomsu Lee
-category: [Android]
-tags: [video]
+category: [Android, Video]
+tags: [android, video]
 math: true
 mermaid: true
 ---

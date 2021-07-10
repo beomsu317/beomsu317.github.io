@@ -1,8 +1,8 @@
 ---
 title: Music Player
 author: Beomsu Lee
-category: [Android]
-tags: [audio]
+category: [Android, Audio]
+tags: [android, audio]
 math: true
 mermaid: true
 

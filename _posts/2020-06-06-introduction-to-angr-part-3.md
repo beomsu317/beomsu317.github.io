@@ -1,9 +1,10 @@
 ---
 title:  Introduction to angr Part 3
 author: Beomsu Lee
+category: [Binary Analysis, Angr]
+tags: [binary analysis, angr]
 math: true
 mermaid: true
-tags: [angr]
 ---
 
 나는 휴일이 필요하다. 나 여기서 뭐하고 있지? 새벽 5시에 무심코 컴퓨터를 켜고, 내가 실제로 무언가를 배우고 있다고 생각하도록 나 자신을 속였다. 나는 달리거나(?) 악기를 연주하는걸 배우거나(??) 일반사람처럼 자야할 것이다. bytecode를 읽고 파이썬 같은 것을 쓰는 동안 프로그래밍 방식으로 자신을 해치는 방법에 대해 post를 하나 더 써보는 건 어떨까? 맞다. 일하러 가자.

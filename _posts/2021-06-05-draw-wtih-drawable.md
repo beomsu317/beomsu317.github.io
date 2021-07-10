@@ -1,8 +1,8 @@
 ---
 title: Draw with Drawable
 author: Beomsu Lee
-category: [Android]
-tags: [graphic]
+category: [Android, Graphic]
+tags: [android, graphic]
 math: true
 mermaid: true
 ---

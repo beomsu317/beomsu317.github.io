@@ -1,9 +1,10 @@
 ---
 title: Allergic Friends
 author: Beomsu Lee
+category: [Algorithm, Combinatorial Search]
+tags: [algorithm, combinatorial search]
 math: true
 mermaid: true
-tags: [combinatorial search]
 ---
 
 ## Problem

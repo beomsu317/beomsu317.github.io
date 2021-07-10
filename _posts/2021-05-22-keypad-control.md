@@ -1,9 +1,10 @@
 ---
 title: Keypad Control
 author: Beomsu Lee
+category: [Android]
+tags: [android, keypad]
 math: true
 mermaid: true
-tags: [android]
 ---
 
 ## Description

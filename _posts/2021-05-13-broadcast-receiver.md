@@ -1,9 +1,10 @@
 ---
 title: Broadcast Receiver
 author: Beomsu Lee
+category: [Android, Component]
+tags: [android, component, broadcast receiver]
 math: true
 mermaid: true
-tags: [android]
 ---
 
 ## Description

@@ -1,9 +1,10 @@
 ---
 title:  Enigma 2017 Crackme 0 Writeup
 author: Beomsu Lee
+category: [Reversing]
+tags: [reversing]
 math: true
 mermaid: true
-tags: [reversing]
 ---
 
 어제 Binary Ninja 사용 에디션을 구매했고 이것을 테스트하길 원해서 reverse engineering challenge를 찾아봤다. reverse engineering에 소질이 있기 때문에 난 간단한 enigma 2017 CTF의 crackme 0을 선택하기로 했다. 제공된 C 소스코드를 볼 수 있었는데, 이미 소스가 있다면 reverse engineering이 무슨 소용인가? 소스코드를 화이트해커에게 남겨두지 않을럐?

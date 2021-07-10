@@ -1,9 +1,10 @@
 ---
 title: Fan Meeting
 author: Beomsu Lee
+category: [Algorithm, Divide and Conquer]
+tags: [algorithm, divide and conquer]
 math: true
 mermaid: true
-tags: [divide and conquer]
 ---
 
 

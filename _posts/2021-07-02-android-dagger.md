@@ -2,7 +2,7 @@
 title: Android Dagger
 author: Beomsu Lee
 category: [Android, Dagger]
-tags: [dagger]
+tags: [android, dagger]
 math: true
 mermaid: true
 ---

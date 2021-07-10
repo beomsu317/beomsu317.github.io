@@ -1,9 +1,10 @@
 ---
 title: Karatsuba
 author: Beomsu Lee
+category: [Algorithm, Divide and Conquer]
+tags: [algorithm, divide and conquer]
 math: true
 mermaid: true
-tags: [divide and conquer]
 ---
 
 카라츠바 알고리즘은 일반 곱셈 알고리즘보다 빠른 곱셈 알고리즘으로 두 개의 정수를 곱하는 알고리즘이다. 수백 자리, 수만 자리 같은 큰 숫자를 다룰 때 주로 사용한다. 

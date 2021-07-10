@@ -1,9 +1,10 @@
 ---
 title: Async Task
 author: Beomsu Lee
+category: [Android]
+tags: [android, asynctask]
 math: true
 mermaid: true
-tags: [android]
 ---
 
 ## Description

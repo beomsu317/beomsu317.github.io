@@ -2,7 +2,7 @@
 title: Multi Touch View
 author: Beomsu Lee
 category: [Android]
-tags: [multi touch]
+tags: [android, multi touch]
 math: true
 mermaid: true
 ---

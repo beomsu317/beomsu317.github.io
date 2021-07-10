@@ -1,9 +1,10 @@
 ---
 title:  Introduction to angr Part 1
 author: Beomsu Lee
+category: [Binary Analysis, Angr]
+tags: [binary analysis, angr]
 math: true
 mermaid: true
-tags: [angr]
 ---
 
 이 시리즈의 [zeroth part](https://blog.notso.pro/2019-03-20-angr-introduction-part0/)에서 간단한 바이너리의 매우 기본적인 symbolic execution 하는 방법을 배웠다. 이 시간에는 symbolic bitvectors와 원하지 않는 state를 피하여 실행 시간을 줄이는 방법에 대해 말해볼 것이다. 

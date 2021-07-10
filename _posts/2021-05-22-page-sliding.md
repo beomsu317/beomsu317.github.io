@@ -1,9 +1,10 @@
 ---
 title: Page Sliding
 author: Beomsu Lee
+category: [Android]
+tags: [android, page sliding]
 math: true
 mermaid: true
-tags: [android]
 ---
 
 ## Description

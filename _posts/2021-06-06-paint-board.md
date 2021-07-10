@@ -2,7 +2,7 @@
 title: Paint Board
 author: Beomsu Lee
 category: [Android]
-tags: [paint board]
+tags: [android, paint board]
 math: true
 mermaid: true
 ---

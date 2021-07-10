@@ -1,9 +1,10 @@
 ---
 title: Recycler View
 author: Beomsu Lee
+category: [Android, View]
+tags: [android, view, recycler view]
 math: true
 mermaid: true
-tags: [android]
 ---
 
 ## Description

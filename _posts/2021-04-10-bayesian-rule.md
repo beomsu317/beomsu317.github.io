@@ -1,9 +1,10 @@
 ---
 title: Bayesian Rule
 author: Beomsu Lee
+category: [Algorithm, Math]
+tags: [algorithm, math]
 math: true
 mermaid: true
-tags: [math]
 ---
 
 ## Overview

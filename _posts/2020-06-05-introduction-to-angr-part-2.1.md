@@ -1,9 +1,10 @@
 ---
 title:  Introduction to angr Part 2.1
 author: Beomsu Lee
+category: [Binary Analysis, Angr]
+tags: [binary analysis, angr]
 math: true
 mermaid: true
-tags: [angr]
 ---
 
 [Enigma 2017 Crackme 0 Writeup](https://beomsu317.github.io/2020-06-04/Enigma-2017-Crackme-0-Writeup)

@@ -1,9 +1,10 @@
 ---
 title: Http Connection
 author: Beomsu Lee
+category: [Android]
+tags: [android, http]
 math: true
 mermaid: true
-tags: [android]
 ---
 
 ## Description

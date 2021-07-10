@@ -2,7 +2,7 @@
 title: Canada Trip
 author: Beomsu Lee
 category: [Algorithm, Dicision Problem]
-tags: [dicision problem]
+tags: [algorithm, dicision problem]
 math: true
 mermaid: true
 ---
