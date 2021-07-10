@@ -17,11 +17,11 @@ mermaid: true
 
 ```mermaid
 sequenceDiagram
-    Device ->> "Google Cloud Server" : register device
-    Device <<- "Google Cloud Server" : get registration id
-    Device ->> "Application Server" : send registration id and wait
-    "Google Cloud Server" <<- "Application Server" : send message
-    Device <<- "Google Cloud Server" : receive message 
+    Device->>"Google Cloud Server" : register device
+    "Google Cloud Server"->>Device : get registration id
+    Device->>"Application Server" : send registration id and wait
+    "Application Server"->>"Google Cloud Server" : send message
+    "Google Cloud Server"->>Device : receive message 
 ```
 
 ## Implementation
