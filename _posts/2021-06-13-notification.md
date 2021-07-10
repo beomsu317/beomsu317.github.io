@@ -2,7 +2,7 @@
 title: Notification
 author: Beomsu Lee
 category: [Android]
-tags: [notification]
+tags: [android, notification]
 ---
 
 ## Description

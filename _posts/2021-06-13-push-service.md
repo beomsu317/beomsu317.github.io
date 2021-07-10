@@ -2,7 +2,7 @@
 title: Push Service
 author: Beomsu Lee
 category: [Android]
-tags: [push service]
+tags: [android, push service]
 ---
 
 ## Description

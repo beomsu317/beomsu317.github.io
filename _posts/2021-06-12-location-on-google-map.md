@@ -2,7 +2,7 @@
 title: Location on Google Map
 author: Beomsu Lee
 category: [Android]
-tags: [widget]
+tags: [google map]
 ---
 
 ## Description

@@ -23,9 +23,9 @@ tags: [gps]
 
 ```mermaid
 sequenceDiagram
-    Activity ->> LocationManager : 내 위치 요청
-    LocationListener <<- LocationManager : 현재 위치 제공
-    Activity <<- LocationListener : 화면에 표시
+    Activity->>LocationManager : 내 위치 요청
+    LocationListener<<-LocationManager : 현재 위치 제공
+    Activity<<-LocationListener : 화면에 표시
 ```
 
 ## Implementation

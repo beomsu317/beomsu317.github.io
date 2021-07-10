@@ -2,7 +2,7 @@
 title: System Service
 author: Beomsu Lee
 category: [Android]
-tags: [system service]
+tags: [android, system service]
 ---
 
 ## Description
