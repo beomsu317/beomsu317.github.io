@@ -1,7 +1,7 @@
 --- 
 title: Course Withdrawal
 author: Beomsu Lee
-category: [Algorithm]
+category: [Algorithm, Dicision Problem]
 tags: [dicision problem]
 ---
 

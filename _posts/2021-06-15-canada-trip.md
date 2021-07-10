@@ -1,7 +1,7 @@
 ---
 title: Canada Trip
 author: Beomsu Lee
-category: [Algorithm]
+category: [Algorithm, Dicision Problem]
 tags: [dicision problem]
 ---
 
