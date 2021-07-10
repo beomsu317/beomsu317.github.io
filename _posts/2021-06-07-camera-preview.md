@@ -9,11 +9,12 @@ tags: [camera]
 
 앱에서 카메라 미리보기 화면에 증강현실을 표현할 아이콘이나 그래픽 등을 보여주고 싶거나 직접 사진을 찍고 싶을 때 `SurfaceView`를 사용해 구현할 수 있다. `SurfaceView`는 다음과 같이 사용된다.
 
-```plantuml!
-SurfaceHolder --> Camera : 프리뷰 설정
-Camera --> Camera : 프리뷰 시작
-SurfaceHolder <-- Camera : 프리뷰 디스플레이
-SurfaceView <-- SurfaceHolder : 프리뷰 표시
+```mermaid
+sequenceDiagram
+    SurfaceHolder->>Camera: 프리뷰 설정
+    Camera->>Camera: 프리뷰 시작
+    SurfaceHolder<<-Camera : 프리뷰 디스플레이
+    SurfaceView<<-SurfaceHolder : 프리뷰 표시
 ```
 
 카메라 미리보기 기능을 구현하려면 일반 `View`가 아니라 `SurfaceView`를 사용해야 한다. `SurfaceView`는 `SurfaceHolder` 객체에 의해 생성되고 제어되기 때문에 둘 사이 관계를 이해해야 한다. 만약 카메라 객체를 만든 후 미리보기 화면을 `SurfaceView`에 보여주고 싶다면 `SurfaceHolder` 객체의 `setPreviewDisplay()` 메서드를 호출해 미리보기를 설정하면 된다. 이 때 타입은 `SURFACE_TYPE_PUSH_BUFFERS`가 되어야 한다. 

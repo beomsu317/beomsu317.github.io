@@ -2,7 +2,7 @@
 title: Audio Record
 author: Beomsu Lee
 category: [Android]
-tags: [record]
+tags: [audio]
 ---
 
 ## Description

@@ -2,7 +2,7 @@
 title: Video Record
 author: Beomsu Lee
 category: [Android]
-tags: [record]
+tags: [video]
 ---
 
 ## Description

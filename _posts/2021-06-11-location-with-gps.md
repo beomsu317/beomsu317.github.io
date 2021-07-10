@@ -21,10 +21,11 @@ tags: [gps]
 
 다음은 위치 정보를 요청하는 흐름을 그림으로 표현한 것이다.
 
-```plantuml!
-Activity --> LocationManager : 내 위치 요청
-LocationListener <-- LocationManager : 현재 위치 제공
-Activity <-- LocationListener : 화면에 표시
+```mermaid
+sequenceDiagram
+    Activity ->> LocationManager : 내 위치 요청
+    LocationListener <<- LocationManager : 현재 위치 제공
+    Activity <<- LocationListener : 화면에 표시
 ```
 
 ## Implementation

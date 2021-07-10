@@ -13,12 +13,13 @@ tags: [push service]
 
 다음은 안드로이드에서 제공하는 FCM 푸시 메시지 처리 과정이다.
 
-```plantuml!
-Device --> "Google Cloud Server" : register device
-Device <-- "Google Cloud Server" : get registration id
-Device --> "Application Server" : send registration id and wait
-"Google Cloud Server" <-- "Application Server" : send message
-Device <-- "Google Cloud Server" : receive message 
+```mermaid
+sequenceDiagram
+    Device ->> "Google Cloud Server" : register device
+    Device <<- "Google Cloud Server" : get registration id
+    Device ->> "Application Server" : send registration id and wait
+    "Google Cloud Server" <<- "Application Server" : send message
+    Device <<- "Google Cloud Server" : receive message 
 ```
 
 ## Implementation

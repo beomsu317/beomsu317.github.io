@@ -3,6 +3,7 @@ title: Music Player
 author: Beomsu Lee
 category: [Android]
 tags: [audio]
+
 ---
 
 ## Description
@@ -17,11 +18,13 @@ tags: [audio]
 
 음악 파일을 재생하는 과정을 다음과 같다. 첫 번째 단계는 대상 파일을 알려줌으로써 `setDataSource()` 메서드로 URL을 지정한다. 두 번째 단계는 `prepare()` 메서드를 호출해 재생을 준비한다. 이 단계에서 `MediaPlayer`는 대상 파일 몇 프레임을 읽어 정보를 확인한다. 세 번째 단계에서는 음악 파일을 재생한다.
 
-```plantuml!
-MediaPlayer --> File : 데이터 소스 지정
-MediaPlayer --> MediaPlayer : prepare()
-MediaPlayer --> MediaPlayer : start()
+```mermaid
+sequenceDiagram
+    MediaPlayer->>File: 데이터 소스 지정
+    MediaPlayer->>MediaPlayer: prepare()
+    MediaPlayer->>MediaPlayer: start()
 ```
+
 
 `MediaPlayer`의 `stop()` 메서드로 재생을 중지했을 때 다른 작업을 수행하고 싶다면 `MediaPlayer.OnCompletionListener`를 구현한 후 `MediaPlayer` 객체에 등록하면 된다.
 
