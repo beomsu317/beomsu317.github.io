@@ -1,7 +1,7 @@
 ---
 title: Synchronizing Clocks
 author: Beomsu Lee
-category: [Algorithm, brute force]
+category: [Algorithm, Brute Force]
 tags: [algorithm, brute force]
 math: true
 mermaid: true
