@@ -33,14 +33,14 @@ github:
 social:
   # Change to your full name.
   # It will be displayed as the default author of the posts and the copyright owner in the Footer
-  name: your_full_name
-  email: example@doamin.com             # change to your email address
+  name: Beomsu Lee
+  email: beomsu317@gmail.com             # change to your email address
   links:
     # The first element serves as the copyright owner's link
     - https://twitter.com/username      # change to your twitter homepage
     - https://github.com/beomsu317       # change to your github homepage
     # Uncomment below to add more social links
-    # - https://www.facebook.com/username
+    - https://www.facebook.com/username
     - https://www.linkedin.com/in/이-범수-848b63207/
 
 google_site_verification: google_meta_tag_verification # change to your verification string
