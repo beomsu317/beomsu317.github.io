@@ -28,6 +28,14 @@ sequenceDiagram
     Activity<<-LocationListener : 화면에 표시
 ```
 
+```mermaid
+ gantt
+  title  Adding GANTT diagram functionality to mermaid
+  apple :a, 2017-07-20, 1w
+  banana :crit, b, 2017-07-23, 1d
+  cherry :active, c, after b a, 1d
+```
+
 ## Implementation
 
 우선 위치 정보를 사용하기 위해 `AndroidManifest.xml`에 다음 권한을 추가한다.
