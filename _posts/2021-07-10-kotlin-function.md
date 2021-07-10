@@ -50,7 +50,31 @@ fun main(args: Array<String>) {
 
 ### Kotlin user-defined function
 
+코틀린은 함수는 맨 위에 선언될 수 있고, 함수를 가지고 있는 클래스를 만들 필요가 없다. 
 
+일반적으로 함수는 다음과 같이 정의된다. 
+
+```kotlin
+fun fun_name(a: data_type, b: data_type, ......): return_type  {
+    // other codes
+    return
+}
+```
+
+- fun : 함수를 정의하기 위한 키워드
+- fun_name : 함수의 이름
+- a: data_type : a는 인자이며, data_type은 인자의 데이터 타입
+- return_type : 함수의 반환 값의 데이터 타입
+- {....} : 함수의 블록
+
+```kotlin
+fun mul(num1: Int, num2: Int): Int {
+    var number = num1.times(num2)
+    return number
+}
+```
+
+## Default and Named argument
 
 ### References
 - [geeksforgeeks - kotlin](https://www.geeksforgeeks.org/kotlin-programming-language/)

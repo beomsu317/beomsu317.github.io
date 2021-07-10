@@ -20,7 +20,7 @@ mermaid: true
 3. Identify gaps in your explanation; Go back to the source material, to better understand it.
 4. Review and simplify (optional)
 
-# Introduction
+## Introduction
 
 angr 개발자들의 말을 인용하면
 
@@ -176,5 +176,5 @@ if __name__ == '__main__':
 
 그리고 이것이 이 1번째 파트의 전부이다. 다음에 우리는 경로 폭발 문제에 대한 해결책을 찾고, 프로그램 내부에 주입할 symbolic buffer를 만드는 방법을 볼 것이다. cya!
 
-##### Resources 
+## Resources 
 - [Introduction to angr Part 0](https://blog.notso.pro/2019-03-20-angr-introduction-part0/)

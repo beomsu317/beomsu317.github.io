@@ -422,5 +422,5 @@ if __name__ == '__main__':
 
 좋아. 그리고 컴퓨터 과학이 어떻게 이루어지는지 알아? 다음 게시판에서 stack frame을 구성하고 기능 중간에 점프하는 방법에 대해 알아볼거야. 
 
-##### Resources
+## References
 - [Introduction to angr Part 1](https://blog.notso.pro/2019-03-25-angr-introduction-part1/)
