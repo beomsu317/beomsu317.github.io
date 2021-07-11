@@ -1,12 +1,11 @@
 ---
-title: Frame Pointer Overwrite - x86
+title: Frame Pointer Overwrite
 author: Beomsu Lee
 category: [Exploitation, Stack]
-tags: [exploitation, frame pointer overwrite]
+tags: [exploitation, stack, frame pointer overwrite]
 math: true
 mermaid: true
 ---
-
 
 ## Description
 
