@@ -43,7 +43,7 @@ typedef struct
 
 _dl_fixup()함수는 다음과 같이 write() 함수의 이름을 찾는다.
 
-JMPREL(.rel.plt) -> SYMTAB(.dynsym) -> STRTAB(.dynstr)
+JMPREL(.rel.plt) -\> SYMTAB(.dynsym) -\> STRTAB(.dynstr)
 
 ## Proof of Concept
 
