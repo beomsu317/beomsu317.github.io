@@ -9,7 +9,7 @@ mermaid: true
 
 ## Description
 
-ROP를 통해 메모리 영역 할당(mmap)하거나 할당된 메모리 영역의 권한을 변경(mprotect)하여 공격하는 방법이다.
+ROP를 통해 메모리 영역 할당(mmap)하거나 할당된 메모리 영역의 권한을 변경하여 공격하는 방법이다. 
 
 ## Proof of concept
 
