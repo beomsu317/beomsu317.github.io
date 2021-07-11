@@ -147,4 +147,4 @@ $ sudo sysctl -w fs.protected_symlinks=1
 ```
 
 ## References
-- [Race condition](https://www.lazenca.net/display/TEC/09.Race+condition)
+- [09.Race condition](https://www.lazenca.net/display/TEC/09.Race+condition)
