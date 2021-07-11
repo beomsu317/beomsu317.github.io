@@ -44,13 +44,13 @@ esp 레지스터에 저장된 값과 0xfffffff0을 AND 연산한 값을 저장(0
 0x080485d7 <+4>: and    esp,0xfffffff0
 ```
 
-stack에 [ecx-0x4]주소에 저장된 값 저장한다. (main() 함수가 종료되고 되돌아갈 Return address)
+stack에 \[ecx-0x4\]주소에 저장된 값 저장한다. (main() 함수가 종료되고 되돌아갈 Return address)
 
 ```
 0x080485da <+7>: push   DWORD PTR [ecx-0x4]
 ```
 
-ESP 레지스터의 값이 leave 코드에 의해 변경되는 것이 아니라 lea esp,[ecx-0x4] 코드에 의해 변경된다.
+ESP 레지스터의 값이 leave 코드에 의해 변경되는 것이 아니라 lea esp,\[ecx-0x4\] 코드에 의해 변경된다.
 
 ## Proof of Concept
 
@@ -95,7 +95,7 @@ gdb-peda$ x/24x $ebp
 0xbfa07d12: 0x47474747  0x48484848  0x80ecb70a  0x0002b7d2
 ```
 
-mov ecx,DWORD PTR [ebp-0x4] 명령으로 0xbfa07cfe가 ecx 레지스터에 저장된다.
+mov ecx,DWORD PTR \[ebp-0x4\] 명령으로 0xbfa07cfe가 ecx 레지스터에 저장된다.
 
 ```
 gdb-peda$ x/24x $ecx-0x4
