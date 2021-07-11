@@ -2,7 +2,7 @@
 title: Return-to-dl-resolve - x86
 author: Beomsu Lee
 category: [Exploitation, Stack]
-tags: [exploitation, stack, return-to-dl-resolve, x86]
+tags: [exploitation, stack, return-to-dl-resolve]
 math: true
 mermaid: true
 ---

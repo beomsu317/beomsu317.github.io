@@ -2,7 +2,7 @@
 title: Return-to-csu
 author: Beomsu Lee
 category: [Exploitation, Stack]
-tags: [exploitation, stack, return-to-csu, x64]
+tags: [exploitation, stack, return-to-csu]
 math: true
 mermaid: true
 ---

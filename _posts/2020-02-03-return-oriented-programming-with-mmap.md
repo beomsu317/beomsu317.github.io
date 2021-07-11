@@ -2,7 +2,7 @@
 title: Return-Oriented Programming with mmap
 author: Beomsu Lee
 category: [Exploitation, Stack]
-tags: [exploitation, stack, return-oriented programming, x64]
+tags: [exploitation, stack, return-oriented programming]
 math: true
 mermaid: true
 ---

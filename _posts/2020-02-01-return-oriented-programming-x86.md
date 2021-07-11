@@ -2,7 +2,7 @@
 title: Return-Oriented Programming - x86
 author: Beomsu Lee
 category: [Exploitation, Stack]
-tags: [exploitation, stack, return-oriented programming, x86]
+tags: [exploitation, stack, return-oriented programming]
 math: true
 mermaid: true
 ---

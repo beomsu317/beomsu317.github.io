@@ -2,7 +2,7 @@
 title: Return-to-libc - x86
 author: Beomsu Lee
 category: [Exploitation, Stack]
-tags: [exploitation, stack, return-to-libc, x86]
+tags: [exploitation, stack, return-to-libc]
 math: true
 mermaid: true
 ---

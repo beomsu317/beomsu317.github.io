@@ -2,7 +2,7 @@
 title: Return-to-shellcode - arm
 author: Beomsu Lee
 category: [Exploitation, Stack]
-tags: [exploitation, stack, return-to-shellcode, arm]
+tags: [exploitation, stack, return-to-shellcode]
 math: true
 mermaid: true
 ---

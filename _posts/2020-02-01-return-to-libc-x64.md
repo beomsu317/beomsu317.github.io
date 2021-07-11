@@ -2,7 +2,7 @@
 title: Return-to-libc - x64
 author: Beomsu Lee
 category: [Exploitation, Stack]
-tags: [exploitation, stack, return-to-libc, x64]
+tags: [exploitation, stack, return-to-libc]
 math: true
 mermaid: true
 ---
