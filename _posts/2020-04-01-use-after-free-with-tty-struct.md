@@ -101,7 +101,7 @@ struct tty_operations {
 
 ## ptmx
 
-ptmx_open() 함수에서 tty_struct 구조체 변수를 선언한다. 해당 변수에 tty_init_dev() 함수 리턴값을 저장한다.
+`ptmx_open()` 함수에서 tty_struct 구조체 변수를 선언한다. 해당 변수에 `tty_init_dev()` 함수 리턴값을 저장한다.
 
 ```c
 // /drivers/tty/pty.c
@@ -173,7 +173,7 @@ struct tty_struct *tty_init_dev(struct tty_driver *driver,intidx)
 ...
 ```
 
-tty_struct 구조체 변수를 선언한다. 해당 변수에 kzalloc() 호출하여 할당받은 heap 영역의 시작 주소 저장한다. tty_struct 구조체 크기의 heap 영역 할당한다. 즉, 해당 영역을 uaf 취약점 대상으로 사용 가능하다.
+`tty_struct` 구조체 변수를 선언한다. 해당 변수에 `kzalloc()` 호출하여 할당받은 heap 영역의 시작 주소 저장한다. `tty_struct` 구조체 크기의 heap 영역 할당한다. 즉, 해당 영역을 uaf 취약점 대상으로 사용 가능하다.
 
 ```c
 // /drivers/tty/tty_io.c
@@ -195,10 +195,11 @@ struct tty_struct *alloc_tty_struct(struct tty_driver *driver, int idx)
 
 ## kzalloc
 
-kmalloc() 함수와 같이 kernel 영역에 heap 영역을 할당하고, 해당 영역의 값을 0으로 설정한다.
+`kmalloc()` 함수와 같이 kernel 영역에 heap 영역을 할당하고, 해당 영역의 값을 0으로 설정한다.
 
 1. 1번째 인자(크기)
-2. 2번째 인자(유형) <- kernel ram에 메모리를 할당하기 위해 GFP_KERNEL flag 사용
+2. 2번째 인자(유형) 
+    - kernel ram에 메모리를 할당하기 위해 GFP_KERNEL flag 사용
 
 ## Set environment
 
@@ -208,14 +209,14 @@ use-after-free(struct cred)에서 사용한 모듈과 동일한 모듈을 사용
 
 ## Exploit plan
 
-1. chardev_ioctl() 함수를 이용해 tty_struct 크기만큼 heap 영역 할당
+1. chardev_ioctl() 함수를 이용해 `tty_struct` 크기만큼 heap 영역 할당
 2. 할당된 heap 영역 해제
-3. ptmx() 디바이스 open
+3. `ptmx()` 디바이스 open
 4. ptmx 디바이스의 tty_struct를 유저 공간으로 받아와 "const struct tty_operations *ops" 멤버를 생성한 가짜 tty_operations로 덮음
 5. 생성한 가짜 tty_operations를 ptmx의 struct tty_struct가 있는 heap 영역에 덮어씀
-6. ptmx 디바이스를 write() 함수로 호출하면 fake tty_struct -> fake tty_operations -> ret2usr 순으로 호출하며 root 권한 획득
+6. ptmx 디바이스를 `write()` 함수로 호출하면 fake tty_struct -> fake tty_operations -> ret2usr 순으로 호출하며 root 권한 획득
 
-tty_struct 크기
+**tty_struct 크기**
 
 ```
 (gdb) p sizeof(struct tty_struct)
