@@ -83,7 +83,7 @@ gdb-peda$ x/24gx $rbp-0x60
 0x7fffffffe260: 0x00007fffffffe2c8  0x0000000000f0b5ff
 ```
 
-a 포인터에 &fake_chunk[2] 저장한다.
+a 포인터에 &fake_chunk\[2\] 저장한다.
 
 ```
 Now we will overwrite our pointer with the address of the fake region inside the fake first chunk, 0x7fffffffe258.

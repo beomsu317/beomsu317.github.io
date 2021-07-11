@@ -563,7 +563,7 @@ addr                prev                size                 status             
 0x602400            0x0                 0xbe0                Freed     0x7ffff7dd1b78    0x7ffff7dd1b78
 ```
 
-top\[2\] + 0x9a8 = 0x00007ffff7dd2520 \<- `_IO_list_all`
+top\[2\] + 0x9a8 = 0x00007ffff7dd2520 : `_IO_list_all`
 
 old Top chunk의 bk 영역에 "_IO_list_all - 0x10" 삽입하여 _IO_list_all에 main_arena+88 영역이 등록되도록 한다.
 
@@ -573,7 +573,7 @@ gdb-peda$ x/24gx 0x602400
 0x602410:   0x00007ffff7dd1b78  0x00007ffff7dd2510 <- _IO_list_all - 0x10
 ```
 
-`_IO_OVERFLOW(fp, EOF)` \<- fp를 인자로 입력받아서 _IO_OVERFLOW(system)을 실행시킬 것이다. fp-\>chain을 통해 fp를 변조하기 위해 size를 smallbin\[4\]의 크기로 변조한다.
+`_IO_OVERFLOW(fp, EOF)` : fp를 인자로 입력받아서 _IO_OVERFLOW(system)을 실행시킬 것이다. fp-\>chain을 통해 fp를 변조하기 위해 size를 smallbin\[4\]의 크기로 변조한다.
 
 ```
 gdb-peda$ x/24gx 0x602400

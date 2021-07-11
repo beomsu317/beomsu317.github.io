@@ -362,7 +362,7 @@ struct ioctl_info{
 #endif
 ```
 
-등록된 장치 디바이스를 오픈 후 ioctl() 함수를 통해 GIVE_ME_ROOT를 실행하는 코드를 작성한다.
+등록된 장치 디바이스를 오픈 후 `ioctl()` 함수를 통해 GIVE_ME_ROOT를 실행하는 코드를 작성한다.
 
 ```c
 // test.c

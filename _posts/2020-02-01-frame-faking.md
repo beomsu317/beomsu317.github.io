@@ -59,7 +59,7 @@ gdb-peda$ x/24wx $ebp
 0xbfe98a78: 0x41414141  0x42424242  0xb7f233dc  0xbfe98aa0
 ```
 
-변조된 메모리 구조
+**변조된 메모리 구조**
 
 ```
 gdb-peda$ x/24wx 0xbfc64e3a(&buf)
