@@ -22,7 +22,7 @@ int main(){
 
 ## Exploit plan
 
-overflow를 통해 shellcode 위치를 pc에 덮어씌우면 exploit이 가능하다.
+overflow를 통해 shellcode 위치를 `pc`에 덮어씌우면 exploit이 가능하다.
 
 ```
 Dump of assembler code for function main:

@@ -13,7 +13,7 @@ one gadget이란 해당 gadget 하나만을 이용하여 shell을 획득할 수 
 
 ## one-gadget of libc
 
-libc-2.23.so의 do_system() 함수 내 __execve() 함수
+libc-2.23.so의 `do_system()` 함수 내 `__execve()` 함수
 
 ```c
 ...
@@ -44,7 +44,7 @@ else
 ...
 ```
 
-libc-2.23.so의 exec_comm_child() 함수 내 __execve() 함수
+libc-2.23.so의 exec_comm_child() 함수 내 `__execve()` 함수
 
 ```c
 /* Function called by child process in exec_comm() */
@@ -118,7 +118,7 @@ int main()
 }
 ```
 
-read() 함수를 통해 3번의 입력을 받는데 index 변수의 타입이 "long long"이기 때문에 음수 저장이 가능하다. 따라서 2번째 입력값을 원하는 주소에 입력할 수 있다. 2번째 read() 함수 수행 전 &index([rbp-0x10]) 와 asd(0x601080)를 더한 값을 2번째 인자로 전달하고 있다. 1번째 값으로 0x4141414141414141(AAAAAAAA) 입력 시 0x601080을 더하여 0x4141414141a151c1 위치에 2번째 값을 쓸 수 있다.
+read() 함수를 통해 3번의 입력을 받는데 index 변수의 타입이 `long long`이기 때문에 음수 저장이 가능하다. 따라서 2번째 입력값을 원하는 주소에 입력할 수 있다. 2번째 `read()` 함수 수행 전 `&index([rbp-0x10])`와 `asd(0x601080)`를 더한 값을 2번째 인자로 전달하고 있다. 1번째 값으로 0x4141414141414141(AAAAAAAA) 입력 시 0x601080을 더하여 0x4141414141a151c1 위치에 2번째 값을 쓸 수 있다.
 
 ```
 ...
@@ -135,7 +135,7 @@ $1 = 0x4141414141a151c1
 
 read@got 영역에 One Gadget 주소를 저장하면 Shell을 획득할 수 있다.
 
-0x601020(read@got) - 0x601080(asdf) = 0xffffffa0
+- 0x601020(read@got) - 0x601080(asdf) = 0xffffffa0
 
 ```
 gdb-peda$ elfsymbol
@@ -205,7 +205,7 @@ EFLAGS: 0x203 (CARRY parity adjust zero sign trap INTERRUPT direction overflow)
 => 0x7f938a40d294 <do_system+1140>: call   0x7f938a494770 <execve>
 ```
 
-따라서 취약한 코드에 memset() 함수를 추가하여 [rsp+30] 영역이 NULL이 되도록 한다.
+따라서 취약한 코드에 `memset()` 함수를 추가하여 `[rsp+30]` 영역이 NULL이 되도록 한다.
 
 ```c
 // Vuln Code

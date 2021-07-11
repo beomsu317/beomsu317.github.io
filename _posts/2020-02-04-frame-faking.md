@@ -9,15 +9,15 @@ mermaid: true
 
 ## Description
 
-가짜 스택 프레임 포인터(Stack Frame Pointer)를 만들어 프로그램의 실행 흐름을 변경한다. return address 영역 까지만 덮어쓸 수 있을 경우 사용한다. fake EBP라고도 한다.
+가짜 스택 프레임 포인터(Stack Frame Pointer)를 만들어 프로그램의 실행 흐름을 변경한다. return address 영역 까지만 덮어쓸 수 있을 경우 사용한다. Fake EBP라고도 한다.
 
 ### LEAVE
 
-EBP 레지스터에 저장된 값을 ESP에 저장 후 ESP 레지스터가 가리키는 stack 영역에 값을 EBP 레지스터에 저장한다.
+`ebp` 레지스터에 저장된 값을 `esp`에 저장 후 `esp` 레지스터가 가리키는 stack 영역에 값을 `ebp` 레지스터에 저장한다.
 
 ### RET
 
-EBP 레지스터가 가리키는 stack 영역의 값을 RIP 레지스터에 저장 후 JMP 명령을 통해 RIP에 저장된 영역으로 이동한다.
+`ebp` 레지스터가 가리키는 stack 영역의 값을 `rip` 레지스터에 저장 후 `jmp` 명령을 통해 `rip`에 저장된 영역으로 이동한다.
 
 ```
 ; LEAVE
@@ -52,7 +52,7 @@ void main(){
 }
 ```
 
-"A"66+"B"4 입력 시 vuln() 함수의 stack frame과 return address가 변조된다.
+"A"66+"B"4 입력 시 `vuln()` 함수의 stack frame과 return address가 변조된다.
 
 ```
 gdb-peda$ x/24wx $ebp

@@ -57,7 +57,7 @@ gdb-peda$ x/24x $ebp
 0xbfa07d12:	0x47474747	0x48484848	0x80ecb70a	0x0002b7d2
 ```
 
-1 byte 오버플로를 통해 rbp 변경 확인한다.
+1 byte 오버플로를 통해 `rbp` 변경 확인한다.
 
 ```
 gdb-peda$ x/24gx $rbp
@@ -66,7 +66,7 @@ gdb-peda$ x/24gx $rbp
 0x7ffe119a2962:	0x29894ef138aa26b6	0x00004ff63f51fb46
 ```
 
-leave 명령으로 인해 rbp 레지스터 값은 rsp에 저장된다. 따라서 1 byte 변조하여 RTL 코드 또는 Shellcode가 저장된 영역을 가리키게 한다면 Shell 획득이 가능하다.
+`leave` 명령으로 인해 `rbp` 레지스터 값은 `rsp`에 저장된다. 따라서 1 byte 변조하여 RTL 코드 또는 Shellcode가 저장된 영역을 가리키게 한다면 Shell 획득이 가능하다.
 
 ## Exploit code
 

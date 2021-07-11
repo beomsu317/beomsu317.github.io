@@ -44,7 +44,7 @@ void main(){
 }
 ```
 
-buf 크기는 50byte이지만 100byte를 입력받아 bof가 발생한다.
+buf 크기는 50 byte이지만 100 byte를 입력받아 bof가 발생한다.
 
 ```
 gdb-peda$ x/24wx $ebp

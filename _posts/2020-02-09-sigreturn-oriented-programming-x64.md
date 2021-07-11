@@ -40,7 +40,7 @@ Signal        Stop  Print   Pass to program Description
 SIGINT        No    Yes Yes     Interrupt
 ```
 
-"CTRL + C" SIGINT 시그널 발생시키고 "bt"로 frame을 확인한다.
+"CTRL + C" SIGINT 시그널 발생시키고 `bt`로 frame을 확인한다.
 
 ```
 Breakpoint 1, handle_signal (signum=0x2) at sig.c:8
@@ -55,7 +55,7 @@ gdb-peda$ bt
 #4  0x0000000000400499 in _start ()
 ```
 
-frame 0의 stack에 저장된 값이 frame 2의 레지스터 값인 것을 확인할 수 있다.
+`frame 0`의 stack에 저장된 값이 `frame 2`의 레지스터 값인 것을 확인할 수 있다.
 
 ```
 gdb-peda$ frame 0
@@ -108,7 +108,7 @@ gdb-peda$ x/2i $rip
 0x7ffff7a424b7 <__restore_rt+7>:    syscall
 ```
 
-x64이기 때문에 사용되는 레지스터가 다르며, sigcontext 구조체의 형태도 다르다.
+x64이기 때문에 사용되는 레지스터가 다르며, `sigcontext` 구조체의 형태도 다르다.
 
 ```c
 # else /* __x86_64__: */
@@ -178,7 +178,13 @@ void main(){
 
 ### Exploit Method
 
-sigreturn() 함수를 이용해 레지스터에 필요한 값 저장한다. * RSP : sigreturn() 함수 호출 후 이동할 주소("int 0x80") * RDI : "/bin/sh" 문자열 저장된 주소 * RAX : execve() 함수 시스템 콜 번호 * RIP : "int 0x80" * CS : User Code(0x33) * SS : User Data / Stack(0x2b)
+`sigreturn()` 함수를 이용해 레지스터에 필요한 값 저장한다. 
+* `rsp` : `sigreturn()` 함수 호출 후 이동할 주소("int 0x80") 
+* `rdi` : "/bin/sh" 문자열 저장된 주소 
+* `rax` : execve() 함수 시스템 콜 번호 
+* `rip` : "int 0x80" 
+* `cs` : User Code(0x33) 
+* `ss` : User Data / Stack(0x2b)
 
 libc offset을 계산한다.
 
@@ -254,7 +260,7 @@ root@bs-virtual-machine:~/pwnable# rp-lin-x64 -f /lib/x86_64-linux-gnu/libc-2.23
 0x00122198: syscall  ; ret  ;  (1 found)
 ```
 
-빌드된 x64 파일의 리눅스 커널 버전이 3.3 이하일 경우 vsyscall 영역에서 "syscall & return" 명령어 찾을 수 있다. kernel의 boot option 중 "vsyscall"의 값이 "emulate"로 설정되어 있기 때문에 해당 gadget을 이용하여 시스템 함수를 호출하면 error 발생한다.
+빌드된 x64 파일의 리눅스 커널 버전이 3.3 이하일 경우 vsyscall 영역에서 `syscall & return` 명령어 찾을 수 있다. kernel의 boot option 중 `vsyscall`의 값이 `emulate`로 설정되어 있기 때문에 해당 gadget을 이용하여 시스템 함수를 호출하면 error 발생한다.
 
 ```
 gdb-peda$ vmmap

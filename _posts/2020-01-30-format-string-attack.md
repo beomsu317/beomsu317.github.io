@@ -9,7 +9,7 @@ mermaid: true
 
 ## Description
 
-format string은 형태를 지정해주는 문자열을 의미한다. 형식지정자를 사용하지 않고 바로 printf() 함수에 인자를 입력받을 경우 발생하는 취약점이다.
+format string은 형태를 지정해주는 문자열을 의미한다. 형식지정자를 사용하지 않고 바로 `printf()` 함수에 인자를 입력받을 경우 발생하는 취약점이다.
 
 ## Proof of concept
 
@@ -30,7 +30,7 @@ int main(int argc,char* argv[]){
 }
 ```
 
-고정된 Stack 영역을 사용하기 위해 randomize_va_space의 값을 0으로 변경한다.
+고정된 Stack 영역을 사용하기 위해 `randomize_va_space`의 값을 0으로 변경한다.
 
 ```bash
 echo 0 > /proc/sys/kernel/randomize_va_space
