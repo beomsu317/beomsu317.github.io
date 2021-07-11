@@ -10,16 +10,6 @@ mermaid: true
 ## Description
 
 ROP를 통해 메모리 영역 할당(mmap)하거나 할당된 메모리 영역의 권한을 변경(mprotect)하여 공격하는 방법이다.
-a
-a
-a
-a
-a
-a
-a
-a
-aa
-a
 
 ## Proof of concept
 
@@ -52,9 +42,8 @@ gdb-peda$ x/24gx $rsp
 0x7fffffffe450: 0x4141414141414141  0x000000000040070a
 ```
 
-mprotect() 함수를 이용하여 shellcode가 저장된 메모리 영역의 권한을 rwx로 변경 -\> address 값은 페이지 경계에 맞게 정렬되어 있어야 한다.
-
-mprotect(address of shellcode,0x2000,0x7)
+mprotect() 함수를 이용하여 shellcode가 저장된 메모리 영역의 권한을 rwx로 변경한다. address 값은 페이지 경계에 맞게 정렬되어 있어야 한다.
+- mprotect(address of shellcode,0x2000,0x7)
 
 ### Exploit code
 
