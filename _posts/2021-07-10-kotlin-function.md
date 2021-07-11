@@ -567,8 +567,8 @@ fun main(args: Array<String>) {
 
 ```kotlin
 // 멤버 함수이여야 하므로 math 클래스의 함수로 등록
-// infix 키워드 사용, 하나의 파라미터만 받고, 기본 값은 없으며 반환 값은 Integer이다.
 class Math {
+    // infix 키워드 사용, 하나의 파라미터만 받고, 기본 값은 없으며 반환 값은 Integer이다.
     infix fun square(n : Int): Int {
         val num = n * n
         return num
