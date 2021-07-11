@@ -9,7 +9,7 @@ mermaid: true
 
 ## Description 
 
-prepare_kernel_cres(), commit_creds() 함수를 통해 root 권한을 획득할 수 있다.
+`prepare_kernel_cres()`, `commit_creds()` 함수를 통해 root 권한을 획득할 수 있다.
 
 ## prepare_kernel_cred()
 

@@ -20,12 +20,12 @@ mermaid: true
 2. 첫 번째 fast chunk(A) 해제
 3. 두 번째 fast chunk(B) 해제
 4. 첫 번째 fast chunk(A) 해제
-5. 이전과 동일한 크기로 힙을 할당하고 해당 chunk 영역에 "stack 영역 주소 값 - prev_size 공간(0x8)" 덮어씀
+5. 이전과 동일한 크기로 힙을 할당하고 해당 chunk 영역에 `stack 영역 주소 값 - prev_size 공간(0x8)` 덮어씀
 6. 동일한 크기로 fast chunk 2개 생성
 7. 다음에 할당하는 영역에 원하는 값을 씀
-    - 할당된 영역은 "stack 영역의 주소 값 + 0x8" 영역
+    - 할당된 영역은 `stack 영역의 주소 값 + 0x8` 영역
 
-A -\> B -\> A 로 해제하는 이유는 동일한 공간을 연속으로 해제하는 경우 double free or corruption이 발생하기 때문이다. 5번째에 동일한 크기로 힙을 할당하는 경우 첫 번째 A가 할당되는데 여기에 값을 쓸 수 있다면 Fake Chunk로 조작이 가능하다.
+A -> B -> A 로 해제하는 이유는 동일한 공간을 연속으로 해제하는 경우 double free or corruption이 발생하기 때문이다. 5번째에 동일한 크기로 힙을 할당하는 경우 첫 번째 A가 할당되는데 여기에 값을 쓸 수 있다면 Fake Chunk로 조작이 가능하다.
 
 원래 3 번째 A의 FD 값에는 아무 값도 없기 때문에 다음 청크가 없었지만, 첫 번째 A가 할당되면서 FD, BK 부분이 데이터 영역으로 변했고, Fake Chunk 값을 쓰면 세 번째 A의 FD가 변조된다.
 
@@ -70,7 +70,7 @@ int main()
 }
 ```
 
-buf1을 2번 free 후 buf4에 scanf로 입력받는다. tail buf1의 fd는 null이지만 현재 buf4로 malloc을 해준 상태로 tail의 fd를 조작할 수 있다.
+`buf1`을 2번 free 후 `buf4`에 scanf로 입력받는다. tail `buf1`의 `fd`는 null이지만 현재 `buf4`로 malloc을 해준 상태로 tail의 `fd`를 조작할 수 있다.
 
 ```
 gdb-peda$ heapinfo
@@ -111,7 +111,7 @@ gdb-peda$ heapinfo
             unsortbin: 0x0
 ```
 
-read를 통해 main의 return 값을 변조하여 call_me로 분기가 가능하다.
+`read()`를 통해 `main()`의 return 값을 변조하여 `call_me`로 분기가 가능하다.
 
 ```
 gdb-peda$ x/24gx $rbp-0x48

@@ -113,7 +113,7 @@ Start              End                Perm  Name
 
 ### DEFAULT_MMAP_THRESHOLD_MIN
 
-linux에서 heap spray를 사용할 때 할당 크기가 0x20000(128 * 1024) 이상일 경우 heap 영역을 확장하지 않는다. mmap을 사용하여 새로 할당 된 메모리 영역에 데이터를 저장하기 때문에 heap spray 공격이 어렵다.
+linux에서 heap spray를 사용할 때 할당 크기가 0x20000(128 * 1024) 이상일 경우 heap 영역을 확장하지 않는다. `mmap()`을 사용하여 새로 할당 된 메모리 영역에 데이터를 저장하기 때문에 heap spray 공격이 어렵다.
 
 ```c
 /*
@@ -138,7 +138,9 @@ linux에서 heap spray를 사용할 때 할당 크기가 0x20000(128 * 1024) 이
 #endif
 ```
 
-malloc은 DEFAULT_MMAP_THRESHOLD_MIN의 값을 이용하여 할당할 heap의 크기가 크거나 같은지 확인한다. * 값이 작을 경우 기존 할당된 heap 영역에 공간을 확장 * 값이 클 경우 mmap으로 새로운 메모리 영역 할당
+`malloc()`은 `DEFAULT_MMAP_THRESHOLD_MIN`의 값을 이용하여 할당할 heap의 크기가 크거나 같은지 확인한다. 
+* 값이 작을 경우 기존 할당된 heap 영역에 공간을 확장 
+* 값이 클 경우 `mmap()`으로 새로운 메모리 영역 할당
 
 ```c
 #define M_MMAP_THRESHOLD      -3
@@ -183,7 +185,7 @@ if (av == NULL
         size = ALIGN_UP (nb + SIZE_SZ, pagesize);
 ```
 
-heap spray 전
+**heap spray 전**
 
 ```
 gdb-peda$ vmmap
@@ -220,7 +222,7 @@ Start              End                Perm  Name
 0xffffffffff600000 0xffffffffff601000 r-xp  [vsyscall]
 ```
 
-heap spray 후 heap 영역 확장되지 않고 mmap(0x00007f45ff0f9000 ~ 0x00007f460f72b000)으로 새로운 영역이 mapping 된다.
+heap spray 후 heap 영역 확장되지 않고 `mmap(0x00007f45ff0f9000 ~ 0x00007f460f72b000)`으로 새로운 영역이 mapping 된다.
 
 ```
 gdb-peda$ vmmap
@@ -331,7 +333,7 @@ int main(){
 
 1. heap spray를 이용해 heap 영역을 one gadget 주소로 채움
 2. UAF를 이용해 heap spray된 Heap 주소를 유추하여 저장
-3. uaf-\>target() 코드는 heap spray된 영역에 저장된 one gadget 주소를 `target()` 함수의 시작 주소로 판단하고 실행
+3. `uaf->target()` 코드는 heap spray된 영역에 저장된 one gadget 주소를 `target()` 함수의 시작 주소로 판단하고 실행
 
 ## Exploit code
 

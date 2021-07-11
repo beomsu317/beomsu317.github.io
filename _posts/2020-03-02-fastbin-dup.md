@@ -9,7 +9,7 @@ mermaid: true
 
 ## Description
 
-fastbins는 free chunk를 single list로 관리한다. 동일한 크기의 fast chunk 여러개가 해제되면, chunk의 fd 영역을 이용해 관리한다.
+fastbins는 free chunk를 single list로 관리한다. 동일한 크기의 fast chunk 여러개가 해제되면, chunk의 `fd` 영역을 이용해 관리한다.
 
 ## Conditions
 
@@ -47,7 +47,7 @@ int main()
 }
 ```
 
-3번째 Free 다음 fastbin 구조
+**3번째 Free 다음 fastbin 구조**
 
 ```
 gdb-peda$ heapinfo
@@ -66,7 +66,7 @@ gdb-peda$ heapinfo
             unsortbin: 0x0
 ```
 
-buf4 malloc 후 구조
+**buf4 malloc 후 구조**
 
 ```
 gdb-peda$ heapinfo
@@ -85,7 +85,7 @@ gdb-peda$ heapinfo
             unsortbin: 0x0
 ```
 
-buf5 malloc 후 구조
+**buf5 malloc 후 구조**
 
 ```
 gdb-peda$ heapinfo
@@ -104,7 +104,7 @@ gdb-peda$ heapinfo
             unsortbin: 0x0
 ```
 
-buf6 malloc 후 구조
+**buf6 malloc 후 구조**
 
 ```
 gdb-peda$ heapinfo
@@ -124,7 +124,7 @@ gdb-peda$ heapinfo
 ```
 
 fastbinsY의 변화
-* 0x602000 -\> 0x602080 -\> 0x602000 -\> 0x602080
+- 0x602000 -> 0x602080 -> 0x602000 -> 0x602080
 
 ## References
 

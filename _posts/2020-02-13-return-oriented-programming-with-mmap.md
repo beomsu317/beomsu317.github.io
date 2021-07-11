@@ -41,7 +41,7 @@ gdb-peda$ x/24wx $ebp
 0xbffff538: 0x41414141  0x0804850a  0xb7fb63dc  0xbffff560
 ```
 
-POPAD: 스택에 존재하는 값을 EAX, ECX, EDX, EBX, ESP, EBP, ESI, EDI 레지스터에 저장
+`POPAD` : 스택에 존재하는 값을 `EAX`, `ECX`, `EDX`, `EBX`, `ESP`, `EBP`, `ESI`, `EDI` 레지스터에 저장
 
 ```
 gdb-peda$ x/24wx $esp
@@ -49,7 +49,7 @@ gdb-peda$ x/24wx $esp
 0xbfdfca60: 0x45454545  0x46464646  0x47474747  0x48484848
 ```
 
-이 상태에서 POPAD할 경우 다음과 같이 레지스터에 저장된다.
+이 상태에서 `POPAD`할 경우 다음과 같이 레지스터에 저장된다.
 
 ```
 EAX: 0x48484848 ('HHHH')
@@ -62,9 +62,9 @@ EBP: 0x43434343 ('CCCC')
 ESP: 0xbfdfca70 ("IIIIlg۷n313337277")
 ```
 
-PUSHAD: EAX, ECX, EDX, EBX, ESP, EBP, ESI, EDI 순으로 레지스터의 값을 스택에 저장
+`PUSHAD`: `EAX`, `ECX`, `EDX`, `EBX`, `ESP`, `EBP`, `ESI`, `EDI` 순으로 레지스터의 값을 스택에 저장
 
-위와 같이 POPAD 한 상태에서 PUSHAD 한 경우의 esp의 결과를 확인한다.
+위와 같이 `POPAD` 한 상태에서 `PUSHAD` 한 경우의 `esp`의 결과를 확인한다.
 
 ```
 gdb-peda$ x/24wx $esp
@@ -74,18 +74,18 @@ gdb-peda$ x/24wx $esp
 
 ## Exploit plan
 
-1. mmap() 함수를 이용하여 새로운 메모리 영역 할당
-2. POPAD gadget에 의해 memcpy() 함수 주소가 저장된 영역으로 이동
-    - Libc의 memcpy() 함수는 exploit code에서 사용할 memory 값을 복사할 수 없음
-    - memcpy() 함수는 CPU가 지원하는 streaming SIMD 확장에 맞는 함수의 주소값을 리턴(EAX에 저장됨)
-3. XCHG EAX,EDI gadget에 의해 리턴받은 __memcpy_sse2_unaligned() 함수의 주소를 EDI 레지스터에 저장
-4. POP ESI Gadget에 의해 memcpy()함수 호출 후 이동할 return address를 ESI 레지스터에 저장
-5. POP EBP Gadget에 의해 1번째 인자 값을 EBP 레지스터에 저장
-6. POP EBX Gadget에 의해 3번째 인자 값을 EBX 레지스터에 저장
-7. PUSHAD Gadget에 의해 레지스터에 저장된 값들을 stack 에 저장하고 0x1028 영역(0x1048 - (0x4 * 레지스터 개수(8))으로 이동
-    - 2 번째 인자 값은 ESP 레지스터에 저장되어 있기 때문에 별도의 조작이 필요하지 않음
-8. 0x1028 영역에서 memcpy() 함수로 인해 stack에 저장된 shellcode가 mmap()에 의해 생성된 메모리 영역으로 복사
-9. memcpy() 함수가 종료되면 mmap()에 의해 생성된 메모리 영역으로 이동하여 shellcode를 실행
+1. `mmap()` 함수를 이용하여 새로운 메모리 영역 할당
+2. `POPAD` gadget에 의해 `memcpy()` 함수 주소가 저장된 영역으로 이동
+    - Libc의 `memcpy()` 함수는 exploit code에서 사용할 memory 값을 복사할 수 없음
+    - `memcpy()` 함수는 CPU가 지원하는 streaming SIMD 확장에 맞는 함수의 주소값을 리턴(`EAX`에 저장됨)
+3. `XCHG EAX,EDI` gadget에 의해 리턴받은 `__memcpy_sse2_unaligned()` 함수의 주소를 `EDI` 레지스터에 저장
+4. `POP ESI` Gadget에 의해 `memcpy()`함수 호출 후 이동할 return address를 `ESI` 레지스터에 저장
+5. `POP EBP` Gadget에 의해 1번째 인자 값을 `EBP` 레지스터에 저장
+6. `POP EBX` Gadget에 의해 3번째 인자 값을 `EBX` 레지스터에 저장
+7. `PUSHAD` Gadget에 의해 레지스터에 저장된 값들을 stack 에 저장하고 0x1028 영역(0x1048 - (0x4 * 레지스터 개수(8))으로 이동
+    - 2 번째 인자 값은 `ESP` 레지스터에 저장되어 있기 때문에 별도의 조작이 필요하지 않음
+8. 0x1028 영역에서 `memcpy()` 함수로 인해 stack에 저장된 shellcode가 `mmap()`에 의해 생성된 메모리 영역으로 복사
+9. `memcpy()` 함수가 종료되면 `mmap()`에 의해 생성된 메모리 영역으로 이동하여 shellcode를 실행
     - 해당 영역은 RWX 권한이 설정되어 있기 때문에 shellcode 실행이 가능
 
 ## Exploit code

@@ -10,23 +10,23 @@ mermaid: true
 ## Conditions
 
 - 공격자에 의해 heap을 생성, 해제가 가능해야 함
-- 공격자에 의해 stack 영역에 fake chunk를 생성할 수 있어야 함
-- 공격자에 의해 allocated chunk의 size 값에서 "prev_inuse" flag 값 제거할 수 있어야 함
-- 공격자에 의해 변경된 allocated chunk의 size 값 앞 영역(prev_size)에 값을 저장할 수 있어야 함
-    - heap 영역의 시작 주소 - heap header size(8/16) - fake chunk address
+- 공격자에 의해 stack 영역에 `fake chunk`를 생성할 수 있어야 함
+- 공격자에 의해 allocated chunk의 size 값에서 `prev_inuse` flag 값 제거할 수 있어야 함
+- 공격자에 의해 변경된 allocated chunk의 size 값 앞 영역(`prev_size`)에 값을 저장할 수 있어야 함
+    - heap 영역의 시작 주소 - heap header size(8/16) - `fake chunk` address
 
 ## Exploit plan
 
-1. stack 영역에 fake chunk(free chunk) 생성
+1. stack 영역에 `fake chunk`(free chunk) 생성
 2. 3개의 heap 영역 할당
-3. 2번째 heap 영역의 size 값에서 "prev_inuse" flag 값 제거
-4. 2번째 heap 영역의 prev_size 영역에 값 저장
-    - 2번째 heap 영역 시작 주소 - heap header size - fake chunk address
+3. 2번째 heap 영역의 size 값에서 `prev_inuse` flag 값 제거
+4. 2번째 heap 영역의 `prev_size` 영역에 값 저장
+    - 2번째 heap 영역 시작 주소 - heap header size - `fake chunk` address
 5. 2번째 heap 영역 해제
-    - fake chunk의 size 값이 변경됨
-6. fake chunk의 size 값을 원하는 값으로 변경
+    - `fake chunk`의 `size` 값이 변경됨
+6. `fake chunk`의 size 값을 원하는 값으로 변경
 7. 원하는 크기의 메모리 영역 할당
-    - fake chunk address + 0x10 영역 할당됨
+    - `fake chunk` address + 0x10 영역 할당됨
 
 ## Proof of concept
 
@@ -140,7 +140,7 @@ int main()
 }
 ```
 
-a에 malloc(0x38) 할당한다.
+`a`에 `malloc(0x38)` 할당한다.
 
 ```
 Welcome to House of Einherjar!
@@ -152,7 +152,7 @@ a: 0x603010
 Since we want to overflow 'a', we need the 'real' size of 'a' after rounding: 0x38
 ```
 
-stack에 fake chunk 생성한다.
+stack에 `fake chunk` 생성한다.
 
 ```
 We create a fake chunk wherever we want, in this case we'll create the chunk on the stack
@@ -176,7 +176,7 @@ gdb-peda$ x/24gx 0x7fffffffe4b0
 0x7fffffffe4d0: 0x00007fffffffe4b0  0x00007fffffffe4b0
 ```
 
-b의 metadata인 size에서 "prev_inuse" flag를 해제한다.
+`b`의 metadata인 `size`에서 `prev_inuse` flag를 해제한다.
 
 ```
 We allocate 0xf8 bytes for 'b'.
@@ -189,28 +189,28 @@ This is easiest if b.size is a multiple of 0x100 so you don't change the size of
 If it had been modified, we would need a fake chunk inside b where it will try to consolidate the next chunk
 ```
 
-b의 size, "prev_inuse" flag가 해제되어 병합이 일어난다.
+`b`의 `size`, `prev_inuse` flag가 해제되어 병합이 일어난다.
 
 ```
 gdb-peda$ x/24gx 0x603040
 0x603040:   0x0000000000000000  0x0000000000000100 <-
 ```
 
-b의 "prev_size"에 b - fake chunk 한 값을 입력한다.
+`b`의 `prev_size`에 `b - fake chunk` 한 값을 입력한다.
 
 ```
 We write a fake prev_size to the last 8 bytes of a so that it will consolidate with our fake chunk
 Our fake prev_size will be 0x603040 - 0x7fffffffe4b0 = 0xffff800000604b90
 ```
 
-fake_size
+**fake_size**
 
 ```
 gdb-peda$ x/gx $rbp-0x50
 0x7fffffffe4a0: 0xffff800000604b90
 ```
 
-fake chunk의 size를 fake_size로 변조한다.
+`fake chunk`의 size를 `fake_size`로 변조한다.
 
 ```
 gdb-peda$ x/24gx 0x7fffffffe4b0
@@ -219,7 +219,7 @@ gdb-peda$ x/24gx 0x7fffffffe4b0
 0x7fffffffe4d0: 0x00007fffffffe4b0  0x00007fffffffe4b0
 ```
 
-b를 free한다. b의 "prev_inuse"가 해제되어 있어 b와 fake chunk가 병합된다.
+`b`를 `free`한다. `b`의 `prev_inuse`가 해제되어 있어 `b`와 `fake chunk`가 병합된다.
 
 ```
 Now we free b and this will consolidate with our fake chunk since b prev_inuse is not set
@@ -245,14 +245,14 @@ gdb-peda$ heapinfo
             unsortbin: 0x0
 ```
 
-다음 malloc 시 Stack 영역에 할당된다.
+다음 `malloc()` 시 Stack 영역에 할당된다.
 
 ```
 Now we can call malloc() and it will begin in our fake chunk
 Next malloc(0x200) is at 0x7fffffffe4c0
 ```
 
-할당된 영역
+**할당된 영역**
 
 ```
 gdb-peda$ x/24gx 0x7fffffffe4c0-0x10

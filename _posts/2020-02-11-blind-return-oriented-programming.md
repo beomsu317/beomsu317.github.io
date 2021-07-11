@@ -9,14 +9,14 @@ mermaid: true
 
 ## Description
 
-BROP는 closed-binary and source의 서비스를 공격할 때 사용한다. 공격 대상 바이너리 파일이 없는 상황에서 Exploit code를 작성할 수 있는 방법이다. BROP 공격을 사용하기 위해서 스택 오버플로와 Crash가 발생한 후 다시 시작되는 서비스가 필요하다. BROP 공격은 서비스가 crash가 발생한 후 서비스의 반응(연결이 닫히거나 유지되거나)을 이용해 완전한 원격 공격코드를 구성할 수 있다. BROP 공격은 원격 시스템으로 부터 write()와 같은 유용한 gadget을 가젯을 유출할 수 있다. 이러한 가젯들을 이용하여 프로그램의 메모리를 덤프 또는 서비스 프로그램의 바이너리를 추출할 수 있다. 그리고 일반적인 ROP 공격도 수행 할 수 있다.
+BROP는 closed-binary and source의 서비스를 공격할 때 사용한다. 공격 대상 바이너리 파일이 없는 상황에서 Exploit code를 작성할 수 있는 방법이다. BROP 공격을 사용하기 위해서 스택 오버플로와 Crash가 발생한 후 다시 시작되는 서비스가 필요하다. BROP 공격은 서비스가 crash가 발생한 후 서비스의 반응(연결이 닫히거나 유지되거나)을 이용해 완전한 원격 공격코드를 구성할 수 있다. BROP 공격은 원격 시스템으로 부터 `write()`와 같은 유용한 gadget을 가젯을 유출할 수 있다. 이러한 가젯들을 이용하여 프로그램의 메모리를 덤프 또는 서비스 프로그램의 바이너리를 추출할 수 있다. 그리고 일반적인 ROP 공격도 수행 할 수 있다.
 
 ### BROP 공격 순서
 
 1. stack overflow영역을 찾고 canaries 값도 추출
-2. 다른 가젯을 찾을 수 있도록 ROP 체인을 중지하는 "stop gadget" 확보
-3. "stop gadget"을 이용하여 레지스터에 값을 저장할 수 있는 "BROP gadget" 확보
-4. "BROP gadget","stop gadget"을 이용하여 필요한 함수 확보 (read, write, strcmp 등등)
+2. 다른 가젯을 찾을 수 있도록 ROP 체인을 중지하는 stop gadget 확보
+3. stop gadget을 이용하여 레지스터에 값을 저장할 수 있는 BROP gadget 확보
+4. BROP gadget, stop gadget을 이용하여 필요한 함수 확보 (read, write, strcmp 등등)
 5. 이 이후 부터는 일반적인 ROP와 동일하게 공격
 
 ### BROP Struct
@@ -166,7 +166,7 @@ root@bs-virtual-machine:~/pwnable# python exploit.py
 [*] Stop Address : 0x4005c0
 ```
 
-해당 주소는 _start() 함수의 시작주소이다.
+해당 주소는 `_start()` 함수의 시작주소이다.
 
 ```
 gdb-peda$ x/3i 0x4005c0
@@ -177,7 +177,7 @@ gdb-peda$ x/3i 0x4005c0
 
 ### Check BROP Gadget
 
-POP instruction이 6개인 BROP를 찾는다.
+`POP` instruction이 6개인 BROP를 찾는다.
 
 ```python
 def find_brop_gadget(size,stop_gadget):
@@ -238,7 +238,7 @@ def is_brop_gadget(size,addr):
         return True
 ```
 
-다음과 같이 BROP gadget을 찾을 수 있고 "pop rdi ; ret" gadget도 찾을 수 있다.
+다음과 같이 BROP gadget을 찾을 수 있고 `pop rdi ; ret` gadget도 찾을 수 있다.
 
 ```
 [+] Searching for BROP gadget : Done
@@ -279,7 +279,7 @@ def is_brop_gadget(size,addr):
 
 ### Get puts@plt address
 
-해당 프로그램이 puts, printf 사용한다고 가정한다. 해당 바이너리에 PIE 설정되지 않았기 때문에 프로세스의 기본시작 주소는 0x400000이고 해당 주소엔 "7fELF"가 저장되어 있다. 즉, 다음과 같이 addr의 값을 증가시키면서, 화면에 "7fELF"가 출력된다면 해당 주소는 puts의 주소라고 판단할 수 있다.
+해당 프로그램이 `puts`, `printf` 사용한다고 가정한다. 해당 바이너리에 PIE 설정되지 않았기 때문에 프로세스의 기본시작 주소는 0x400000이고 해당 주소엔 `7fELF`가 저장되어 있다. 즉, 다음과 같이 addr의 값을 증가시키면서, 화면에 `7fELF`가 출력된다면 해당 주소는 `puts()`의 주소라고 판단할 수 있다.
 
 ```python
 def find_puts_addr(size,stop_gadget,rdi_ret):
@@ -324,7 +324,7 @@ def find_puts_addr(size,stop_gadget,rdi_ret):
 
 ### Dump memory
 
-앞에서 찾은 puts@plt주소를 이용하여 프로그램 메모리를 덤프가 가능하다.
+앞에서 찾은 `puts@plt`주소를 이용하여 프로그램 메모리를 덤프가 가능하다.
 
 ```python
 def memory_dump(size,stop_gadget,rdi_ret,puts_plt):
@@ -359,7 +359,7 @@ def memory_dump(size,stop_gadget,rdi_ret,puts_plt):
     p.success('Done')
 ```
 
-radare2로 분석 시 puts의 plt 주소(0x400560) 및 got 주소(0x400566 + 0x200ab2)를 알 수 있다.
+radare2로 분석 시 `puts()`의 `plt` 주소(0x400560) 및 `got` 주소(0x400566 + 0x200ab2)를 알 수 있다.
 
 ```
 root@bs-virtual-machine:~/pwnable# r2 -B 0x400000 memory.dump 
@@ -381,7 +381,7 @@ Warning: Cannot initialize strings table
 
 ### Leak address
 
-puts@got 영역에 저장된 libc address를 추출할 수 있다.
+`puts@got` 영역에 저장된 libc address를 추출할 수 있다.
 
 ```python
 def leak_libc(r,size,stop_gadget,rdi_ret,puts_plt,puts_got):

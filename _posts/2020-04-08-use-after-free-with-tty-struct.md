@@ -9,13 +9,13 @@ mermaid: true
 
 ## struct tty_struct
 
-tty_struct 변수는 특정 tty 포트의 현재 상태를 유지하기 위해 tty 코어에서 사용된다. uaf 취약점을 이용해 권한상승에 사용할 필드는 *ops 필드이다.
+`tty_struct` 변수는 특정 tty 포트의 현재 상태를 유지하기 위해 tty 코어에서 사용된다. uaf 취약점을 이용해 권한상승에 사용할 필드는 `*ops` 필드이다.
 
 ## Exploit plan
 
-1. user 프로그램에서 tty_operation 구조체 생성
+1. user 프로그램에서 `tty_operation` 구조체 생성
 2. 권한상승에 사용할 필드에 권한상승 함수의 주소 저장(ret2usr)
-3. uaf 취약점을 이용해 *ops 필드에 유저 프로그램에 생성된 "가짜 tty_operation 구조체의 주소"를 저장
+3. uaf 취약점을 이용해 `*ops` 필드에 유저 프로그램에 생성된 `가짜 tty_operation 구조체의 주소`를 저장
 
 ```c
 // /include/linux/tty.h
@@ -101,7 +101,7 @@ struct tty_operations {
 
 ## ptmx
 
-`ptmx_open()` 함수에서 tty_struct 구조체 변수를 선언한다. 해당 변수에 `tty_init_dev()` 함수 리턴값을 저장한다.
+`ptmx_open()` 함수에서 `tty_struct` 구조체 변수를 선언한다. 해당 변수에 `tty_init_dev()` 함수 리턴값을 저장한다.
 
 ```c
 // /drivers/tty/pty.c
@@ -199,22 +199,22 @@ struct tty_struct *alloc_tty_struct(struct tty_driver *driver, int idx)
 
 1. 1번째 인자(크기)
 2. 2번째 인자(유형) 
-    - kernel ram에 메모리를 할당하기 위해 GFP_KERNEL flag 사용
+    - kernel ram에 메모리를 할당하기 위해 `GFP_KERNEL` flag 사용
 
 ## Set environment
 
-use-after-free(struct cred)에서 사용한 모듈과 동일한 모듈을 사용한다.
+use-after-free(`struct cred`)에서 사용한 모듈과 동일한 모듈을 사용한다.
 
 ## Proof of concept
 
 ## Exploit plan
 
-1. chardev_ioctl() 함수를 이용해 `tty_struct` 크기만큼 heap 영역 할당
+1. `chardev_ioctl()` 함수를 이용해 `tty_struct` 크기만큼 heap 영역 할당
 2. 할당된 heap 영역 해제
 3. `ptmx()` 디바이스 open
-4. ptmx 디바이스의 tty_struct를 유저 공간으로 받아와 "const struct tty_operations *ops" 멤버를 생성한 가짜 tty_operations로 덮음
-5. 생성한 가짜 tty_operations를 ptmx의 struct tty_struct가 있는 heap 영역에 덮어씀
-6. ptmx 디바이스를 `write()` 함수로 호출하면 fake tty_struct -> fake tty_operations -> ret2usr 순으로 호출하며 root 권한 획득
+4. `ptmx` 디바이스의 `tty_struct`를 유저 공간으로 받아와 `const struct tty_operations *ops` 멤버를 생성한 가짜 `tty_operations`로 덮음
+5. 생성한 가짜 `tty_operations`를 `ptmx`의 struct `tty_struct`가` 있는 heap 영역에 덮어씀
+6. `ptmx` 디바이스를 `write()` 함수로 호출하면 fake `tty_struct` -> fake `tty_operations` -> ret2usr 순으로 호출하며 root 권한 획득
 
 **tty_struct 크기**
 
@@ -223,7 +223,7 @@ use-after-free(struct cred)에서 사용한 모듈과 동일한 모듈을 사용
 $6 = 736
 ```
 
-alloc_tty_struct() 함수의 kzalloc()으로 heap 영역 할당 시 사용된 영역이 할당된다.
+`alloc_tty_struct()` 함수의 `kzalloc()`으로 heap 영역 할당 시 사용된 영역이 할당된다.
 
 ```
 1: x/i $rip
@@ -237,7 +237,7 @@ rdi            0xffff880123523400  -131936507776000
 rax            0xffff880123522400  -131936507780096
 ```
 
-tty_struct, file_operations 확인한다.
+`tty_struct`, `file_operations` 확인한다.
 
 ```
 (gdb) p *(struct tty_struct*)0xffff880078598c00

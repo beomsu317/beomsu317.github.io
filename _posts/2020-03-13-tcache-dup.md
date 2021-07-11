@@ -14,10 +14,10 @@ fastbin dup과 유사하다. double free 검사 로직 존재하지 않는다.
 
 ## Exploit plan
 
-1. 1개의 Heap 영역(a) 할당
-2. 할당된 Heap 영역(a) 2번 free
-3. a size와 같은 크기 2번 malloc
-    - 2번째 malloc 시 a 영역 다시 할당됨
+1. 1개의 Heap 영역 `a` 할당
+2. 할당된 Heap 영역 `a` 2번 `free()`
+3. `a` size와 같은 크기 2번 `malloc()`
+    - 2번째 `malloc()` 시 `a` 영역 다시 할당됨
 
 ## Proof of Conecpt
 
@@ -52,7 +52,7 @@ Allocating buffer.
 malloc(8): 0x555555756260
 ```
 
-할당된 heap 영역
+**할당된 heap 영역**
 
 ```
 gdb-peda$ parseheap
@@ -61,13 +61,13 @@ addr                prev                size                 status             
 0x555555756250      0x0                 0x20                 Used                None              None
 ```
 
-a를 2번 free 후 tcahce 메모리 상태
+**`a`를 2번 `free()` 후 tcahce 메모리 상태**
 
 ```
 (0x20)   tcache_entry[0](2): 0x555555756260 --> 0x555555756260 (overlap chunk with 0x555555756250(freed) )
 ```
 
-free list엔 a(0x555555756260)가 2개 존재한다. 같은 크기로 할당 시 0x555555756260 영역이 2번 할당한다.
+`free list`엔 `a(0x555555756260)`가 2개 존재한다. 같은 크기로 할당 시 0x555555756260 영역이 2번 할당한다.
 
 ```
 Now the free list has [ 0x555555756260, 0x555555756260 ].

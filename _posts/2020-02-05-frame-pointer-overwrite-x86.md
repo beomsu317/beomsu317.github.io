@@ -9,11 +9,11 @@ mermaid: true
 
 ## Description
 
-frame poineter를 1byte 덮어써 코드의 흐름을 변경하는 기법이다. One-byte Overflow 라고도 한다.
+frame poineter를 1 byte 덮어써 코드의 흐름을 변경하는 기법이다. One-byte Overflow 라고도 한다.
 
 ## Stack alignment
 
-x86-64 ABI는 16Byte stack alignment가 필요하다. ABI와 호환되지 않는 환경에서 스택 공간을 제한해서 사용하기 위함이다.
+x86-64 ABI는 16 byte stack alignment가 필요하다. ABI와 호환되지 않는 환경에서 스택 공간을 제한해서 사용하기 위함이다.
 
 ### Stack alignment at 4-byte boundary
 
@@ -27,12 +27,12 @@ x86-64 ABI는 16Byte stack alignment가 필요하다. ABI와 호환되지 않는
 
 ### Stack alignment at 16-byte boundary
 
-1. main() 함수가 시작되는 부분에서 이전 함수에서 사용하던 Frame Pointer를 Stack에 저장하기 전에 Stack alignment 수행
-2. main() 함수가 종료되는 부분에서 `leave` 명령 실행 전, `ebp` 레지스터에 저장된 주소에 0x4를 뺀 주소 값을 `esp` 레지스터에 저장
+1. `main()` 함수가 시작되는 부분에서 이전 함수에서 사용하던 Frame Pointer를 Stack에 저장하기 전에 Stack alignment 수행
+2. `main()` 함수가 종료되는 부분에서 `leave` 명령 실행 전, `ebp` 레지스터에 저장된 주소에 0x4를 뺀 주소 값을 `esp` 레지스터에 저장
 3. Stack alignment 코드가 적용되면 `ret` 코드가 실행되기 전에 `lea esp,\[ecx-0x4\]` 명령에 의해 `esp` 레지스터가 변경됨
 4. `ecx` 레지스터의 값은 `leave` 코드가 실행되기전에 `ebp` 레지스터를 이용해 값을 저장하기 때문에 `esp` 레지스터의 값을 변경할 수 있음
 
-esp 레지스터에 저장된 값에 0x4를 더한 주소를 ecx에 저장한다.
+`esp` 레지스터에 저장된 값에 0x4를 더한 주소를 `ecx`에 저장한다.
 
 ```
 0x080485d3 <+0>: lea    ecx,[esp+0x4]
@@ -44,13 +44,13 @@ esp 레지스터에 저장된 값과 0xfffffff0을 AND 연산한 값을 저장(0
 0x080485d7 <+4>: and    esp,0xfffffff0
 ```
 
-stack에 \[ecx-0x4\]주소에 저장된 값 저장한다. (main() 함수가 종료되고 되돌아갈 Return address)
+stack에 `[ecx-0x4]`주소에 저장된 값 저장한다. (`main()` 함수가 종료되고 되돌아갈 Return address)
 
 ```
 0x080485da <+7>: push   DWORD PTR [ecx-0x4]
 ```
 
-ESP 레지스터의 값이 leave 코드에 의해 변경되는 것이 아니라 `lea esp,\[ecx-0x4\]` 코드에 의해 변경된다.
+`ESP` 레지스터의 값이 `leave` 코드에 의해 변경되는 것이 아니라 `lea esp,\[ecx-0x4\]` 코드에 의해 변경된다.
 
 ## Proof of Concept
 
@@ -79,7 +79,7 @@ void main(int argc, char *argv[]){
 }
 ```
 
-63byte를 입력받으면 ebp의 마지막 1byte가 overflow 된다.
+63 byte를 입력받으면 `ebp`의 마지막 1 byte가 overflow 된다.
 
 ```
 gdb-peda$ x/24wx 0xbfa07cfa(&buf)
@@ -87,7 +87,7 @@ gdb-peda$ x/24wx 0xbfa07cfa(&buf)
 0xbfa07d0a: 0x45454545  0x46464646  0x47474747  0x48484848
 ```
 
-&buf+4(0xbfa07cfe)의 마지막 byte(0xfe)를 EBP의 마지막 바이트에 삽입한다.
+&buf+4(0xbfa07cfe)의 마지막 byte(0xfe)를 `ebp`의 마지막 바이트에 삽입한다.
 
 ```
 gdb-peda$ x/24x $ebp

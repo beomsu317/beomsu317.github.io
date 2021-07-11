@@ -10,13 +10,13 @@ mermaid: true
 ## Conditions
 
 - 공격자에 의해 free chunk을 생성할 수 있어야 함
-- 공격자에 의해 free chunk의 size 영역에 값을 저장할 수 있어야 함
+- 공격자에 의해 free chunk의 `size` 영역에 값을 저장할 수 있어야 함
 
 ## Exploit plan
 
 1. 3개의 heap 영역을 생성
 2. 2번째 heap 영역을 해제
-3. free chunk의 size 영역에 재할당 받을 크기 값을 저장
+3. free chunk의 `size` 영역에 재할당 받을 크기 값을 저장
 4. 할당받기 원하는 크기의 heap 영역 할당
     - 이를 통해 3번째 영역에 값을 덮어쓸 수 있음
 
@@ -98,7 +98,7 @@ int main(int argc , char* argv[]){
 }
 ```
 
-3개의 heap 영역 생성 후 memset.
+3개의 heap 영역 생성 후 `memset()` 함수 호출
 
 ```
 gdb-peda$ parseheap
@@ -115,13 +115,13 @@ p2=0x603110
 p3=0x603210
 ```
 
-p2를 free한다.
+`p2`를 `free()`한다.
 
 ```
 Now let's free the chunk p2
 ```
 
-unsortedbin에 p2 등록된다.
+unsorted bin에 `p2` 등록된다.
 
 ```
 gdb-peda$ heapinfo
@@ -151,7 +151,7 @@ We are going to set the size of chunk p2 to to 385, which gives us
 a region size of 376
 ```
 
-free된 p2의 size를 변조한다.
+`free()`된 `p2`의 `size`를 변조한다.
 
 ```
 gdb-peda$ x/24gx 0x603100
@@ -159,7 +159,7 @@ gdb-peda$ x/24gx 0x603100
 0x603110:   0x00007ffff7dd1b78  0x00007ffff7dd1b78
 ```
 
-변조한 size로 malloc 시 p2 영역이 해당 size로 재할당된다.
+변조한 size로 `malloc()` 시 `p2` 영역이 해당 size로 재할당된다.
 
 ```
 Now let's allocate another chunk with a size equal to the data
@@ -175,7 +175,7 @@ chunk p3, and data written to chunk p3 can overwrite data
 stored in the p4 chunk.
 ```
 
-p4를 이용해 p3 영역을 덮어쓸 수 있다.
+`p4`를 이용해 `p3` 영역을 덮어쓸 수 있다.
 
 ```
 Let's run through an example. Right now, we have:

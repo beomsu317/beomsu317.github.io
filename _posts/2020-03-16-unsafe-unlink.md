@@ -7,7 +7,6 @@ math: true
 mermaid: true
 ---
 
-
 ## Conditions
 
 - 공격자에 의해 생성된 heap 영역이 전역 변수에서 관리되어야 함
@@ -20,16 +19,16 @@ mermaid: true
 
 1. 2개의 heap 영역 할당
     - 할당받은 첫 번째 heap 영역의 주소는 전역변수에 저장
-2. 1번째 heap 영역에 fake chunk(Free) 구조를 저장(fd, bk)
-    - prev_size : 0x0
-    - size : 0x0
-    - fd : target address(전역변수 주소) - 0x18
-    - bk : target address(전역변수 주소) - 0x10
+2. 1번째 heap 영역에 fake chunk(free) 구조를 저장(`fd`, `bk`)
+    - `prev_size` : 0x0
+    - `size` : 0x0
+    - `fd` : target address(전역변수 주소) - 0x18
+    - `bk` : target address(전역변수 주소) - 0x10
 3. 2번쨰 Heap 영역의 header 값을 변조
-    - "prev_size" 설정(second chunk - prev_size = fake chunk)
-    - "PREV_INUSE" flag 해제
+    - `prev_size` 설정(second chunk - `prev_size` = fake chunk)
+    - `PREV_INUSE` flag 해제
 4. 2번째 heap 영역 해제
-5. 전역변수 영역에 fake chunk의 fd 값이 저장됨
+5. 전역변수 영역에 fake chunk의 `fd` 값이 저장됨
 6. 전역변수[3] 영역에 공격자가 접근하려는 주소 값 저장
     - 전역변수를 통해 원하는 영역에 값을 쓸 수 있음
 
@@ -37,15 +36,14 @@ mermaid: true
 
 ### P->bk != P || BK->fd != P
 
-- P->fd->bk, P->bk->fd의 값이 P의 값과 다른지 확인
-- fd에 "fake chunk가 저장된 변수의 주소 - 0x18" 값을 저장
-- bk에 "fake chunk가 저장된 변수의 주소 - 0x10" 값을 저장
+- `P->fd->bk`, `P->bk->fd`의 값이 P의 값과 다른지 확인
+- `fd`에 `fake chunk가 저장된 변수의 주소 - 0x18` 값을 저장
+- `bk`에 `fake chunk가 저장된 변수의 주소 - 0x10` 값을 저장
 
 ### chunksize(P) != prev_size (next_chunk(P))
 
-- unlink() 함수에서 P->size와 next chunk->prev_size의 값이 다른지 확인
-- prev_size(0x0), size(0x0)으로 변조하여 우회
-- size 영역의 값이 0x0이기 때문에 next chunk(fake chunk + 0x0)의 주소는 결국 fake chunk의 주소가 됨
+- `unlink()` 함수에서 `P->size`와 `prev_size (next_chunk(P))`의 값이 다른지 확인
+- `prev_size(0x0)`, `size(0x0)`으로 변조하여 우회
 
 ```c
 /* Take a chunk off a bin list */
@@ -145,7 +143,7 @@ int main()
 }
 ```
 
-할당된 chunk이다.
+**할당된 chunk**
 
 ```
 gdb-peda$ x/24gx 0x603000
@@ -169,7 +167,7 @@ gdb-peda$ x/24gx 0x603000
 0x603110:   0x0000000000000000  0x0000000000000000
 ```
 
-chunk0 영역에 fake chunk를 만들어준다.
+`chunk0` 영역에 fake chunk를 만들어준다.
 
 ```
 We create a fake chunk inside chunk0.
@@ -196,7 +194,7 @@ We mark our fake chunk as free by setting 'previous_in_use' of chunk1 as False.
 You can find the source of the unlink macro at https://sourceware.org/git/?p=glibc.git;a=blob;f=malloc/malloc.c;h=ef04360b918bceca424482c6db03cc5ec90c3e00hb=07c18a008c2ed8f5660adba2b778671db159a141#l1344
 ```
 
-chunk1의 prev_size를 0x90 - 0x10로 변조하면 Fake Chunk를 가리키게 된다. previous_in_use flag를 변조하여 chunk0을 freed 영역으로 만들었다.
+`chunk1`의 `prev_size`를 0x90 - 0x10로 변조하면 Fake Chunk를 가리키게 된다. `previous_in_use` flag를 변조하여 `chunk0`을 freed 영역으로 만들었다.
 
 ```
 gdb-peda$ x/24gx 0x603000
@@ -216,7 +214,7 @@ addr                prev                size                 status             
 0x603090            0x80                0x90                 Used                None              None
 ```
 
-다음 코드로 인해 FD->bk와 BK->fd는 둘 다 chunk0_ptr을 가리키게 되어 mitigation bypass가 가능하다. BK(0x602060)->fd(0x602070) = FD 에 의해 0x602058로 overwrite 된다.
+다음 코드로 인해 `FD->bk`와 `BK->fd`는 둘 다 `chunk0_ptr`을 가리키게 되어 mitigation bypass가 가능하다. `BK(0x602060)->fd(0x602070) = FD` 에 의해 0x602058로 overwrite 된다.
 
 ```
 if (__builtin_expect (FD->bk != P || BK->fd != P, 0))
@@ -228,7 +226,7 @@ else {
 }
 ```
 
-free 후 chunk0_ptr이 0x602058로 overwrite 됐다.
+`free()` 후 `chunk0_ptr`이 0x602058로 overwrite 됐다.
 
 ```
 gdb-peda$ parseheap
@@ -239,7 +237,7 @@ gdb-peda$ p chunk0_ptr
 $1 = 0x602058
 ```
 
-chunk0_ptr(0x602070) 변수에 저장된 주소는 0x602058이다.즉, 0x602058 + 0x18 영역에 값을 쓸 수 있다면, chunk0_ptr에 저장된 주소 값을 변조할 수 있게 된다. 이로 인해 stack, .got, .plt 영역에 접근하여 값을 변조할 수 있다.
+`chunk0_ptr(0x602070)` 변수에 저장된 주소는 0x602058이다.즉, 0x602058 + 0x18 영역에 값을 쓸 수 있다면, chunk0_ptr에 저장된 주소 값을 변조할 수 있게 된다. 이로 인해 `stack`, `.got`, `.plt` 영역에 접근하여 값을 변조할 수 있다.
 
 ```
 gdb-peda$ x/24gx 0x0000000000602058
@@ -249,7 +247,7 @@ gdb-peda$ x/gx &chunk0_ptr
 0x602070 <chunk0_ptr>:  0x00007fffffffe4f0
 ```
 
-전역변수 포인터(chunk0_ptr)에 입력 scanf로 입력받으면 해당 주소 값이 변조된다.
+전역변수 포인터(`chunk0_ptr`)에 입력 scanf로 입력받으면 해당 주소 값이 변조된다.
 
 ```
 At this point we can use chunk0_ptr to overwrite itself to point to an arbitrary location.

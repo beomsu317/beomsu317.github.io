@@ -91,9 +91,9 @@ struct USER{
 
 ### AddAUser
 
-- a1를 인자로 전달받아 al(size) 만큼 malloc 후 userInfo를 0x80만큼 malloc
-- desc를 userInfo의 desc에 저장
-- 이름을 입력받은 후 (char *)gUserList[(unsigned __int8)gCnt] + 4(userInfo-\>name)에 저장
+- `a1`를 인자로 전달받아 `al(size)` 만큼 `malloc` 후 `userInfo`를 0x80만큼 `malloc`
+- desc를 `userInfo`의 `desc`에 저장
+- 이름을 입력받은 후 `(char *)gUserList[(unsigned __int8)gCnt] + 4(userInfo->name)`에 저장
 - `UpdateAUserDescription`에 `gCnt`를 전달
 
 ```
@@ -116,7 +116,7 @@ return userInfo;
 
 ### DeleteAUser
 
-- a1을 인자로 전달받아 *(void )gUserList\[a1\](desc)와 gUserList\[a1\]을 free 후 0 저장
+- `a1`을 인자로 전달받아 `*(void )gUserList[a1](desc)`와 `gUserList[a1]`을 `free` 후 0 저장
 
 ```
 unsigned int __cdecl DeleteAUser(unsigned __int8 a1)
@@ -135,7 +135,7 @@ return __readgsdword(0x14u) ^ v2;
 
 ### DisplayAUser
 
-- a1을 전달받아 name과 description 출력
+- `a1`을 전달받아 `name`과 `description` 출력
 
 ```
 unsigned int __cdecl DisplayAUser(unsigned __int8 a1)
@@ -153,9 +153,9 @@ return __readgsdword(0x14u) ^ v2;
 
 ### UpdateAUserDescription
 
-- a1이 gCnt보다 작고 gUserList\[a1\]이 0이 아닌지 체크
-- text_length를 입력받고 "&gUserList\[a1\]->desc\[textLength\]"의 주소가 "gUserList\[a1\] - 4" 보다 큰지 체크
-- desc 영역에 입력할 값이 userInfo 영역을 침범하는지 확인하는 바운더리 체크
+- `a1`이 `gCnt`보다 작고 `gUserList[a\]`이 0이 아닌지 체크
+- `text_length`를 입력받고 `&gUserList[a1]->desc[textLength]`의 주소가 `gUserList[a1] - 4` 보다 큰지 체크
+- `desc` 영역에 입력할 값이 `userInfo` 영역을 침범하는지 확인하는 바운더리 체크
 
 ```
 unsigned int __cdecl UpdateAUserDescription(unsigned __int8 a1)
@@ -183,9 +183,9 @@ return __readgsdword(0x14u) ^ v4;
 
 ### Vulnerabilities
 
-순차적으로 description, userinfo 영역이 할당된다. 하지만 처음 등록된 유저를 삭제할 경우 할당된 heap 영역이 해제되어 fastbin\[0\], unsortedbin(136) 공간이 생성되고, 새로운 유저 등록 시 description의 영역으로 unsortedbin(136) 영역 할당한다. 해당 계정이 할당받은 description 영역과, User *userInfo 영역 사이 다른 계정 정보가 위치하게 된다. 이로 인해 heap feng shui가 뜻하는 heap 레이아웃을 활용하여 exploit 가능하다.
+순차적으로 `description`, `userinfo` 영역이 할당된다. 하지만 처음 등록된 유저를 삭제할 경우 할당된 heap 영역이 해제되어 `fastbin[0]`, `unsortedbin(136)` 공간이 생성되고, 새로운 유저 등록 시 `description`의 영역으로 `unsortedbin(136)` 영역 할당한다. 해당 계정이 할당받은 `description` 영역과, `User *userInfo` 영역 사이 다른 계정 정보가 위치하게 된다. 이로 인해 heap feng shui가 뜻하는 heap 레이아웃을 활용하여 exploit 가능하다.
 
-"text_length"의 값으로 유저 생성 시 입력했던 Description 영역의 크기보다 큰 값을 입력하여 조건문 통과 가능하며, 조건문을 우회함으로써 heap overflow도 가능하다.
+`text_length`의 값으로 유저 생성 시 입력했던 `description` 영역의 크기보다 큰 값을 입력하여 조건문 통과 가능하며, 조건문을 우회함으로써 heap overflow도 가능하다.
 
 ## Exploit code
 

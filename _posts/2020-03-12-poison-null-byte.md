@@ -12,20 +12,20 @@ mermaid: true
 - 공격자에 의해 다음과 같은 heap 영역을 할당, 해제할 수 있어야 함
     - 0x200 이상의 heap 영역
     - fast bin 이상의 heap 영역(heap size : 0x80 이상)
-- 공격자에 의해 free chunk의 size 영역에 1byte를 Null로 변경할 수 있어야 함
+- 공격자에 의해 free chunk의 size 영역에 1 byte를 Null로 변경할 수 있어야 함
 - 공격자에 의해 free chunk의 size보다 작은 heap 영역을 2개 할당할 수 있어야 하며 fast chunk는 사용할 수 없음
 
 ## Exploit plan
 
-1. 3개의 heap 영역 할당(heap1, heap2, heap3)
-2. heap2 영역(heap2 주소 + heap2 size(null로 변조한 heap size))에 1byte를 null로 변조한 값을 저장
-3. heap2 영역 해제
-4. free chunk의 size 영역에 1byte를 null로 변조
-5. 변경된 free chunk 영역 안에서 생성 가능한 크기의 heap 영역 2개 할당(heap4, heap5)
-6. heap4 영역 해제
-7. heap3 영역 해제
-8. "heap4 + heap5" 이상의 heap 영역 할당
-    - 할당 받은 영역으로 인해 heap5 영역의 값을 덮어쓸 수 있음
+1. 3개의 heap 영역 할당(`heap1`, `heap2`, `heap3`)
+2. `heap2` 영역(`heap2` 주소 + `heap2` size(null로 변조한 heap size))에 1 byte를 null로 변조한 값을 저장
+3. `heap2` 영역 해제
+4. free chunk의 `size` 영역에 1 byte를 null로 변조
+5. 변경된 free chunk 영역 안에서 생성 가능한 크기의 heap 영역 2개 할당(`heap4`, `heap5`)
+6. `heap4` 영역 해제
+7. `heap3` 영역 해제
+8. `heap4 + heap5` 이상의 heap 영역 할당
+    - 할당 받은 영역으로 인해 `heap5` 영역의 값을 덮어쓸 수 있음
 
 ## Proof of concept
 
@@ -140,7 +140,7 @@ int main()
 }
 ```
 
-a(0x100), b(0x200), c(0x100) heap 영역 할당한다.
+`a(0x100)`, `b(0x200)`, `c(0x100)` heap 영역 할당한다.
 
 ```
 Welcome to poison null byte 2.0!
@@ -161,7 +161,8 @@ We allocate a barrier at 0x603440, so that c is not consolidated with the top-ch
 The barrier is not strictly necessary, but makes things less confusing
 ```
 
-b + 0x200 위치에 0x200(heap) 저장한다. * 0x603110 + 0x200 = 0x603310
+b + 0x200 위치에 0x200(heap) 저장한다. 
+* 0x603110 + 0x200 = 0x603310
 
 ```
 In newer versions of glibc we will need to have our updated size inside b itself to pass the check 'chunksize(P) != prev_size (next_chunk(P))'
@@ -174,7 +175,7 @@ gdb-peda$ x/24gx 0x603310
 0x603310:   0x0000000000000200  0x0000000000000000
 ```
 
-off-by-one을 통해 b의 size 변조한다.
+off-by-one을 통해 `b`의 `size`를 변조한다.
 
 ```
 b.size: 0x211
@@ -184,7 +185,7 @@ b.size: 0x200
 c.prev_size is 0x210
 ```
 
-b1을 0x100 할당 시 b영역에 재할당(0x603110)한다. b2를 0x80 만큼 할당 시 b영역에 재할당(0x603110 + 0x110)한다. b2에 memset을 통해 ‘B’ 저장한다.
+`b1`을 0x100 할당 시 `b`영역에 재할당(0x603110)한다. `b2`를 0x80 만큼 할당 시 `b`영역에 재할당(0x603110 + 0x110)한다. `b2`에 `memset()`을 통해 `B`를 저장한다.
 
 ```
 We will pass the check since chunksize(P) == 0x200 == 0x200 == prev_size (next_chunk(P))
@@ -197,13 +198,13 @@ Current b2 content:
 BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
 ```
 
-b1을 free한다. c를 free하면 c의 prev_size를 확인하는데 이 때 0x210으로 되어 있어 "c - 0x210" 위치를 확인하여 free chunk인지 확인한다. b1을 free 했기 때문에 free 영역으로 인식하여 b1과 c를 병합하게 된다.
+`b1`을 `free()`한다. `c`를 `free()`하면 `c`의 `prev_size`를 확인하는데 이 때 0x210으로 되어 있어 `c - 0x210` 위치를 확인하여 free chunk인지 확인한다. `b1`을 `free()` 했기 때문에 free 된 영역으로 인식하여 `b1`과 `c`를 병합하게 된다.
 
 ```
 Now we free 'b1' and 'c': this will consolidate the chunks 'b1' and 'c' (forgetting about 'b2').
 ```
 
-b1과 c가 병합(0x603110)되어 0x320이 되었다.
+`b1`과 `c`가 병합(0x603110)되어 0x320이 되었다.
 
 ```
 gdb-peda$ parseheap
@@ -213,7 +214,7 @@ addr                prev                size                 status             
 0x603430            0x320               0x110                Used                None              None
 ```
 
-새로 할당한 d와 b2가 overlapping 된다. d를 ’D’로 memset 한 후 b2를 확인하면 ’D’로 저장되있는 것을 확인할 수 있다.
+새로 할당한 `d`와 `b2`가 overlapping 된다. `d`를 `D`로 `memset()` 한 후 `b2`를 확인하면 `D`로 저장되있는 것을 확인할 수 있다.
 
 ```
 Finally, we allocate 'd', overlapping 'b2'.

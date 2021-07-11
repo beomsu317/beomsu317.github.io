@@ -13,7 +13,7 @@ mermaid: true
 
 ## Set environment
 
-`chardev_ioctl()` 함수의 switch 분기문에 IOCTL_WWW를 추가한다. `chardev_ioctl()` 함수의 세번째 인자값(arg)을 `ioctl_www_arg` 구조체로 형변환하여 `para` 변수에 값을 저장한다.
+`chardev_ioctl()` 함수의 switch 분기문에 IOCTL_WWW를 추가한다. `chardev_ioctl()` 함수의 세번째 인자값(`arg`)을 `ioctl_www_arg` 구조체로 형변환하여 `para` 변수에 값을 저장한다.
 
 ```c
 // chardev.c
@@ -202,10 +202,10 @@ struct ioctl_www_arg {
 
 ## Proof of concept
 
-IOCTL_WWW 매크로를 호출한다. 임의의 주소에 임의의 값을 덮어쓸 수 있는지 확인한다.
+`IOCTL_WWW` 매크로를 호출한다. 임의의 주소에 임의의 값을 덮어쓸 수 있는지 확인한다.
 
-- arg.ptr = 0x4141414141414141
-- arg.value = 0x4242424242424242
+- `arg.ptr` = 0x4141414141414141
+- `arg.value` = 0x4242424242424242
 
 0x4141414141414141 영역에 0x4242424242424242 값을 덮어쓸 수 있다.
 
@@ -235,7 +235,7 @@ int main(){
 }
 ```
 
-\[rax\](0x4141414141414141)에 rdx(0x4242424242424242)로 값을 저장하려고 하지만 0x4141414141414141은 사용할 수 없는 영역이라 `general_protection` 함수가 호출된다.
+`[rax](0x4141414141414141)`에 `rdx(0x4242424242424242)`로 값을 저장하려고 하지만 0x4141414141414141은 사용할 수 없는 영역이라 `general_protection` 함수가 호출된다.
 
 ```
 1: x/i $rip
@@ -270,12 +270,12 @@ bs@bs-virtual-machine:~/Desktop$ find /dev/ -type c -perm -6 2>/dev/null
 /dev/null
 ```
 
-해당 디바이스 파일들 중 `struct file_operations`를 사용한 변수가 있는지 확인이 필요하다. 리눅스에선 `struct file_operations` 사용할 경우 "디바이스명_fops" 같은 형태로 변수명을 작성한다. 중요한 것은 2번째 필드이며, 심볼의 유형에 대한 정보이다.
+해당 디바이스 파일들 중 `struct file_operations`를 사용한 변수가 있는지 확인이 필요하다. 리눅스에선 `struct file_operations` 사용할 경우 `디바이스명_fops` 같은 형태로 변수명을 작성한다. 중요한 것은 2번째 필드이며, 심볼의 유형에 대한 정보이다.
 
-- ‘R’, ‘r’: 읽기 전용 데이터 섹션 사용
-- ‘B’, ‘b’: 초기화되지 않은 데이터 섹션(BSS) 사용
+- `R`, `r`: 읽기 전용 데이터 섹션 사용
+- `B`, `b`: 초기화되지 않은 데이터 섹션(BSS) 사용
 
-즉, 읽고 쓰기가 가능한 fops 구조체 변수는 ptmx_fops 뿐이다.
+즉, 읽고 쓰기가 가능한 `fops` 구조체 변수는 `ptmx_fops` 뿐이다.
 
 ```
 bs@bs-virtual-machine:~/Desktop$ cat /proc/kallsyms | grep tun_fops
@@ -288,7 +288,7 @@ ffffffff81870dc0 r hung_up_tty_fops
 ffffffff81870f80 r tty_fops
 ```
 
-ptmx 드라이버에 사용하는 ptmx_fops 변수는 const 형태로 선언되지 않았기 떄문에 read, write가 가능하다. 즉, write-what-where 취약점을 이용해 ptmx_fops 변수의 값을 변조할 수 있다.
+`ptmx` 드라이버에 사용하는 `ptmx_fops` 변수는 `const` 형태로 선언되지 않았기 떄문에 `read()`, `write()`가 가능하다. 즉, write-what-where 취약점을 이용해 `ptmx_fops` 변수의 값을 변조할 수 있다.
 
 ```c
 // /linux/v4.4/source/drivers/tty/pty.c
@@ -359,7 +359,7 @@ static void __init unix98_pty_init(void)
 }
 ```
 
-다른 fops 구조체 변수는 const 형으로 선언된다.
+다른 `fops` 구조체 변수는 `const` 형으로 선언된다.
 
 ```c
 static const struct file_operations tun_fops = {
@@ -370,9 +370,9 @@ static const struct file_operations tun_fops = {
 
 ### struct file_operations
 
-모듈은 등록될 때 디바이스 번호를 등록하고 이와 함께 file_operations라는 구조체를 커널에 알려준다. 모든 디바이스는 file_operations를 사용해 등록해 준 표준회된 인터페이스를 사용해 입/출력 등 작업한다. 유닉스에서는 디바이스, 네트워크 모두 하나의 파일처럼 동작하도록 되어있는데 이에 따른 함수들이 등록되어 있다. 예를 들어 디바이스로부터 읽기 동작을 원한다면 file_operations에 등록된 read 함수를 통해 읽는다.
+모듈은 등록될 때 디바이스 번호를 등록하고 이와 함께 `file_operations`라는 구조체를 커널에 알려준다. 모든 디바이스는 `file_operations`를 사용해 등록해 준 표준회된 인터페이스를 사용해 입/출력 등 작업한다. 유닉스에서는 디바이스, 네트워크 모두 하나의 파일처럼 동작하도록 되어있는데 이에 따른 함수들이 등록되어 있다. 예를 들어 디바이스로부터 읽기 동작을 원한다면 `file_operations`에 등록된 `read)_` 함수를 통해 읽는다.
 
-이러한 file_operations 역할을 악용하여 권한상승 가능하다. file_operations의 release 영역을 이용해 권한상승 시도할 수 있다. release 영역을 이용하기 위해 해당 변수가 file_operations 구조체의 시작 주소로부터 얼마나 떨어져 있는지 확인해야 한다. release 변수는 file_operations 구조체 내 14번째에 선언된다. 해당 변수 앞에 선언된 변수들은 모두 포인터 변수이기 때문에 사용하는 공간의 크기는 8byte 이다. 즉, ptmx_fops->release의 offset은 0x68(8*13).
+이러한 `file_operations` 역할을 악용하여 권한상승 가능하다. `file_operations`의 `release` 영역을 이용해 권한상승 시도할 수 있다. `release` 영역을 이용하기 위해 해당 변수가 `file_operations` 구조체의 시작 주소로부터 얼마나 떨어져 있는지 확인해야 한다. `release` 변수는 `file_operations` 구조체 내 14번째에 선언된다. 해당 변수 앞에 선언된 변수들은 모두 포인터 변수이기 때문에 사용하는 공간의 크기는 8 byte 이다. 즉, `ptmx_fops->release`의 offset은 0x68(8*13).
 
 ```c
 // /linux/v4.4/source/include/linux/fs.h
@@ -414,13 +414,13 @@ struct file_operations {
 ### Exploit plan
 
 1. 권한 상승을 위한 ret2usr 코드 구현
-    - commit_creds(prepare_kernel_cred())
-2. 구현된 ret2usr 코드의 시작 주소를 ptmx_fops->release 영역에 덮어씀
-3. system() 함수를 이용해 "/bin/sh" 실행
+    - `commit_creds(prepare_kernel_cred())`
+2. 구현된 ret2usr 코드의 시작 주소를 `ptmx_fops->release` 영역에 덮어씀
+3. `system()` 함수를 이용해 "/bin/sh" 실행
 
-필요한 정보는 prepare_kernel_cred, commit_creds, ptmx_fops->release 영역의 주소이다.
+필요한 정보는 `prepare_kernel_cred`, `commit_creds`, `ptmx_fops->release` 영역의 주소이다.
 
-ptmx_fops->release 주소는 0xFFFFFFFF81FE34A8(0xffffffff81fe3440 + 0x68)
+`ptmx_fops->release` 주소는 0xFFFFFFFF81FE34A8(0xffffffff81fe3440 + 0x68)
 
 ```bash
 bs@bs-virtual-machine:~/Desktop$ cat /proc/kallsyms | grep ptmx_fops

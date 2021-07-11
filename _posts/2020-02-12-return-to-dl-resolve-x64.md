@@ -9,7 +9,7 @@ mermaid: true
 
 ## Description
 
-Lazy Binding을 악용해 원하는 함수를 호출하는 기법이다. x86과 비슷하지만 Elf32_Rel(8Byte), Elf32_Sym(16Byte) 대신 Elf64_Rela(24Byte), Elf64_Sym(24Byte) 구조를 사용한다.
+Lazy Binding을 악용해 원하는 함수를 호출하는 기법이다. x86과 비슷하지만 `Elf32_Rel`(8 byte), `Elf32_Sym`(16 byte) 대신 `Elf64_Rela`(24 byte), `Elf64_Sym`(24 byte) 구조를 사용한다.
 
 ```c
 typedef uint64_t Elf64_Addr;
@@ -41,9 +41,9 @@ typedef struct
 } Elf64_Sym;
 ```
 
-_dl_fixup()함수는 다음과 같이 write() 함수의 이름을 찾는다.
+`_dl_fixup()`함수는 다음과 같이 `write()` 함수의 이름을 찾는다.
 
-JMPREL(.rel.plt) -\> SYMTAB(.dynsym) -\> STRTAB(.dynstr)
+`JMPREL(.rel.plt)` -> `SYMTAB(.dynsym)` -> `STRTAB(.dynstr)`
 
 ## Proof of Concept
 
@@ -69,10 +69,10 @@ void main(){
 
 ## Exploit Method
 
-1. `write()` 함수를 이용하여 ".got.plt"영역에 저장된 link_map 구조체의 주소(".rela.plt" addr + 0x8)를 추출
-2. `read()` 함수를 이용하여 ".bss" 영역에 2번째 ROP코드를 저장
-3. "leave; ret;" Gadget을 이용하여 "2번째 ROP코드"가 저장된 영역으로 이동
-4. `read()` 함수를 이용하여 "l-\> l_info [VERSYMIDX (DT_VERSYM)" 영역에 0 을 저장
+1. `write()` 함수를 이용하여 `.got.plt` 영역에 저장된 `link_map` 구조체의 주소(`.rela.plt` addr + 0x8)를 추출
+2. `read()` 함수를 이용하여 `.bss` 영역에 2번째 ROP코드를 저장
+3. `leave; ret;` Gadget을 이용하여 "2번째 ROP코드"가 저장된 영역으로 이동
+4. `read()` 함수를 이용하여 `l-> l_info [VERSYMIDX (DT_VERSYM)` 영역에 0 을 저장
 5. `_dl_runtime_resolve()` 함수에 전달될 인자 값을 설정
 6. `_dl_runtime_resolve()` 함수를 호출
 
@@ -100,7 +100,7 @@ _dl_runtime_resolve(struct link_map *l, fake_reloc_offset)
     0x0000000000000000  --> 0x2f006d6574737973 <- "system"
 ```
 
-해당 binary에서 "pop rdi" 가젯이 없고 library 주소도 제공되지 않아 return-to-csu를 이용한다.
+해당 binary에서 `pop rdi` 가젯이 없고 library 주소도 제공되지 않아 return-to-csu를 이용한다.
 
 ```
 root@bs-virtual-machine:~/pwnable/return-to-resolve# objdump -d rop
@@ -146,7 +146,7 @@ root@bs-virtual-machine:~/pwnable/return-to-resolve# objdump -d rop
 40061d: 00 00 00 
 ```
 
-base_stage 영역에 쓰기권한이 없으면 _dl_lookup_symbol_x() 함수에서 에러가 발생한다. 따라서 0x601000 ~ 0x602000 사이에 base_stage가 존재해야 원하는 값을 쓸 수 있다.
+base_stage 영역에 쓰기권한이 없으면 `_dl_lookup_symbol_x()` 함수에서 에러가 발생한다. 따라서 0x601000 ~ 0x602000 사이에 base_stage가 존재해야 원하는 값을 쓸 수 있다.
 
 ```
 gdb-peda$ vmmap
@@ -350,7 +350,7 @@ gdb-peda$ bt
     at ../sysdeps/x86_64/dl-trampoline.h:129
 ```
 
-l->l_info[VERSYMIDX (DT_VERSYM)] 부분에서 에러가 발생한다. if문 안에 있는 코드들은 return-to-dl-resolve에 영향을 주지 않으므로 해당 영역(l->l_info[VERSYMIDX (DT_VERSYM))에 값을 변조하여 우회할 수 있다.
+`l->l_info[VERSYMIDX (DT_VERSYM)]` 부분에서 에러가 발생한다. if문 안에 있는 코드들은 return-to-dl-resolve에 영향을 주지 않으므로 해당 영역(`l->l_info[VERSYMIDX (DT_VERSYM)`)에 값을 변조하여 우회할 수 있다.
 
 ```c
 const struct r_found_version *version = NULL;

@@ -15,7 +15,7 @@ mermaid: true
 ## Exploit plan
 
 1. stack에 fake chunk(fastbin) 구조 저장
-2. free() 함수의 인자값으로 fake chunk 주소 전달
+2. `free()` 함수의 인자값으로 fake chunk 주소 전달
 3. fake chunk(fastbin)의 크기와 같은 크기의 heap 영역 할당
 
 ## Proof of concept
@@ -58,7 +58,7 @@ int main()
 }
 ```
 
-fake_chunks[10] (0x7fffffffe400)
+**fake_chunks[10] (0x7fffffffe400)**
 
 ```
 gdb-peda$ x/24gx $rbp-0x60
@@ -81,14 +81,14 @@ gdb-peda$ x/24gx $rbp-0x60
 0x7fffffffe450: 0x00007fffffffe540  0x85d0ee78a5ccc700
 ```
 
-변수 a에 fake chunk를 넣는다.
+변수 `a`에 fake chunk를 넣는다.
 
 ```
 gdb-peda$ x/24gx $rbp-0x68
 0x7fffffffe3f8: 0x00007fffffffe410
 ```
 
-변수 a를 free 한다.
+변수 `a`를 `free()` 한다.
 
 ```
 Now we will overwrite our pointer with the address of the fake region inside the fake first chunk, 0x7fffffffe408.
@@ -96,7 +96,7 @@ Now we will overwrite our pointer with the address of the fake region inside the
 Freeing the overwritten pointer.
 ```
 
-free 후 fastbin에 stack 주소값으로 변조된 것을 확인할 수 있다.
+`free()` 후 fastbin에 stack 주소값으로 변조된 것을 확인할 수 있다.
 
 ```
 gdb-peda$ heapinfo
@@ -115,7 +115,7 @@ gdb-peda$ heapinfo
             unsortbin: 0x0
 ```
 
-fake chunk의 size와 같은 size를 malloc 할 경우 해당 stack 영역의 주소가 할당된다.
+fake chunk의 size와 같은 size를 `malloc()` 할 경우 해당 stack 영역의 주소가 할당된다.
 
 ```
 Now the next malloc will return the region of our fake chunk at 0x7fffffffe408, which will be 0x7fffffffe410!

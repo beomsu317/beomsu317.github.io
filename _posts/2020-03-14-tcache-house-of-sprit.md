@@ -14,10 +14,10 @@ house of spirit과 유사하다.
 
 ## Exploit plan
 
-1. fake_chunk 생성 후 fake_chunk[1]에 size(0x40) 저장
-2. a 포인터에 &fake_chunk[2] 저장
-3. free(a)
-4. malloc 시 fake_chunk가 할당됨
+1. `fake_chunk` 생성 후 `fake_chunk[1]`에 `size(0x40)` 저장
+2. `a` 포인터에 `&fake_chunk[2]` 저장
+3. `free(a)`
+4. `malloc()` 시 `fake_chunk`가 할당됨
 
 ## Proof of concept
 
@@ -60,13 +60,13 @@ int main()
 }
 ```
 
-heap memory 생성하기 위해 malloc(0x1)한다.
+heap memory 생성하기 위해 `malloc(0x1)`한다.
 
 ```
 Calling malloc() once so that it sets up its memory.
 ```
 
-fake_chunk와 a를 선언한다.
+`fake_chunk`와 `a`를 선언한다.
 
 ```
 Let's imagine we will overwrite 1 pointer to point to a fake chunk region.
@@ -75,7 +75,7 @@ This chunk size has to be falling into the tcache category (chunk.size <= 0x410;
 ... note that this has to be the size of the next malloc request rounded to the internal size used by the malloc implementation. E.g. on x64, 0x30-0x38 willall be rounded to 0x40, so they would work for the malloc parameter at the end. 
 ```
 
-fake_chunk[1] 영역(size)에 0x40 저장한다.
+`fake_chunk[1]` `size` 영역에 0x40 저장한다.
 
 ```
 gdb-peda$ x/24gx $rbp-0x60
@@ -83,7 +83,7 @@ gdb-peda$ x/24gx $rbp-0x60
 0x7fffffffe260: 0x00007fffffffe2c8  0x0000000000f0b5ff
 ```
 
-a 포인터에 &fake_chunk\[2\] 저장한다.
+`a` 포인터에 `&fake_chunk[2]` 저장한다.
 
 ```
 Now we will overwrite our pointer with the address of the fake region inside the fake first chunk, 0x7fffffffe258.
@@ -91,14 +91,14 @@ Now we will overwrite our pointer with the address of the fake region inside the
 0x7fffffffe248(a):  0x00007fffffffe260
 ```
 
-a를 free하게되면 tcache list에 a의 주소가 들어간다.
+`a`를 `free()`하게 되면 `tcache list`에 `a`의 주소가 들어간다.
 
 ```
 Freeing the overwritten pointer.
 (0x40)   tcache_entry[2](1): 0x7fffffffe260
 ```
 
-malloc 시 tcache list에 존재하는 0x7fffffffe260(a) 값 반환된다.
+`malloc()` 시 `tcache list`에 존재하는 `a(0x7fffffffe260)` 값 반환된다.
 
 ```
 Now the next malloc will return the region of our fake chunk at 0x7fffffffe258, which will be 0x7fffffffe260!

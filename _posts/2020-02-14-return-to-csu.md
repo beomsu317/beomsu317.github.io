@@ -54,11 +54,11 @@ return-to-csu는 `__libc_csu_init()` 함수의 일부 코드를 gadget으로 이
 ...
 ```
 
-gadget 1에 의해 rbx, rbp, r12, r13, r14, r15 레지스터에 값을 저장한다. gadget 2에 의해 r13, r14, r15d 레지스터에 저장된 값을 rdx, rsi, edi레지스터에 저장한다. r15에 저장된 64bit 값에서 32bit 값만 EDI 레지스터에 저장한다. 최대 3개 인자 값만 함수에 전달이 가능하다.
+gadget 1에 의해 `rbx`, `rbp`, `r12`, `r13`, `r14`, `r15` 레지스터에 값을 저장한다. gadget 2에 의해 `r13`, `r14`, `r15d` 레지스터에 저장된 값을 `rdx`, `rsi`, `edi` 레지스터에 저장한다. `r15`에 저장된 64bit 값에서 32 bit 값만 `EDI` 레지스터에 저장한다. 최대 3개 인자 값만 함수에 전달이 가능하다.
 
-gadget 2에 의해 r12 레지스터 값에 저장된 주소를 호출한다. 주의할 점은 gadget 1에 의해 rbx 레지스터에 ’0’을 저장해야 r12 레지스터 값에 저장된 주소를 호출할 수 있다.
+gadget 2에 의해 `r12` 레지스터 값에 저장된 주소를 호출한다. 주의할 점은 gadget 1에 의해 `rbx` 레지스터에 ’0’을 저장해야 `r12` 레지스터 값에 저장된 주소를 호출할 수 있다.
 
-gadget 1에 의해 rbp 레지스터에 ’1’을 저장해야 조건문을 우회할 수 있다. "call QWORD PTR [r12+rbx*8]" 명령어 처리 후 조건문을 처리한다. 그 후 cmp 명령은 rbx, rbp 레지스터의 값이 같은지를 확인한 후 두 값이 같은 경우 0x400606으로 이동한다.
+gadget 1에 의해 `rbp` 레지스터에 `1`을 저장해야 조건문을 우회할 수 있다. `call QWORD PTR [r12+rbx*8]` 명령어 처리 후 조건문을 처리한다. 그 후 `cmp` 명령은 `rbx`, `rbp` 레지스터의 값이 같은지를 확인한 후 두 값이 같은 경우 0x400606으로 이동한다.
 
 ```
 4005f9:   41 ff 14 dc             call   QWORD PTR [r12+rbx*8]
@@ -101,15 +101,15 @@ void main(){
 ## Exploit Method
 
 1. Stage
-    - write() 함수를 이용하여 __libc_start_main@GOT 영역에 저장된 libc 주소 출력
-    - read() 함수를 이용해 .bss 영역에 2 Stage의 ROP 코드를 입력받음
+    - `write()` 함수를 이용하여 `__libc_start_main@GOT` 영역에 저장된 libc 주소 출력
+    - `read()` 함수를 이용해 `.bss` 영역에 2 Stage의 ROP 코드를 입력받음
 2. Stage
-    - "/bin/sh\x00"을 .bss 영역에 저장
-    - write() 함수를 이용해 메모리에 저장된 libc 파일 추출(JIT ROP)
+    - "/bin/sh\x00"을 `.bss` 영역에 저장
+    - `write()` 함수를 이용해 메모리에 저장된 libc 파일 추출(JIT ROP)
     - 추출한 libc에서 필요한 ROP Gadget 획득
-    - read() 함수를 이용해 3 Stage의 ROP 코드를 입력받음
+    - `read()` 함수를 이용해 3 Stage의 ROP 코드를 입력받음
 3. Stage
-    - execve("/bin/sh",NULL,NULL)
+    - `execve("/bin/sh",NULL,NULL)`
 
 ```c
 write(1,__libc_start_main,8)
@@ -120,7 +120,7 @@ read(0,"base_stage + len(buf) + 8 * 10" ,100)
 execve("/bin/sh", NULL, NULL)
 ```
 
-.bss 영역 주소
+**`.bss` 영역 주소**
 
 ```
 root@bs-virtual-machine:~/pwnable/return-to-csu# readelf -S ./rop
@@ -178,7 +178,7 @@ Section Headers:
   40061d:   00 00 00 
 ```
 
-다음과 같이 POP 명령을 활용할 수 있다. 해당 exploit code에서 POP RSP를 사용하여 RSP 레지스터에 값을 저장하고 해당 영역으로 이동하여 코드를 실행한다.
+다음과 같이 `POP` 명령을 활용할 수 있다. 해당 exploit code에서 `POP RSP`를 사용하여 `RSP` 레지스터에 값을 저장하고 해당 영역으로 이동하여 코드를 실행한다.
 
 |Register|Raw Hex|Register|Raw Hex|
 |:---:|:---:|:---:|:---:|

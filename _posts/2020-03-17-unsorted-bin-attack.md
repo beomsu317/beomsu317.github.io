@@ -19,13 +19,14 @@ mermaid: true
 1. 2개의 small chunk 생성
 2. 첫번째 heap 영역 해제
     - 헤당 heap 영역은 unsorted bin에 등록
-3. 해제된 첫번째 heap의 bk영역에 공격 대상이 될 주소 값 덮어씀
+3. 해제된 첫번째 heap의 `bk`영역에 공격 대상이 될 주소 값 덮어씀
 4. 첫번째 heap 영역과 동일한 크기의 heap 영역 할당
-    - 공격 대상 영역에 main_arnea 영역의 주소가 저장됨
+    - 공격 대상 영역에 `main_arnea` 영역의 주소가 저장됨
 
 ## Vulnerability
 
-아래의 malloc.c 코드에 의해 취약성이 발생한다. unsorted_chunks() 함수는 bin[0]에 저장된 값을 리턴한다. * stack_var = &av->bins[0] (main_arena.bins[0])
+아래의 malloc.c 코드에 의해 취약성이 발생한다. `unsorted_chunks()` 함수는 `bin[0]`에 저장된 값을 리턴한다. 
+* stack_var = &av->bins[0] (main_arena.bins[0])
 
 ```c
 for (;; )
@@ -87,7 +88,7 @@ int main(){
 }
 ```
 
-stack_var(0x7fffffffe4d8)
+**`stack_var(0x7fffffffe4d8)`**
 
 ```
 This technique only works with buffers not going into tcache, either because the tcache-option for glibc was disabled, or because the buffers are bigger tha0x408 bytes. See build_glibc.sh for build instructions.
@@ -98,7 +99,7 @@ Let's first look at the target we want to rewrite on stack:
 0x7fffffffe4d8: 0
 ```
 
-2개의 heap 생성 후 1번째 heap 영역 free한다. 1개의 heap 영역을 추가로 생성하는 이유는 1번째 chunk가 top chunk와의 병합을 막기 위해서이다.
+2개의 heap 생성 후 1번째 heap 영역 `free()`한다. 1개의 heap 영역을 추가로 생성하는 이유는 1번째 chunk가 top chunk와의 병합을 막기 위해서이다.
 
 ```
 Now, we allocate first normal chunk on the heap at: 0x60010
@@ -106,7 +107,7 @@ And allocate another normal chunk in order to avoid consolidating the top chunk 
 We free the first chunk now and it will be inserted in the unsorted bin with its bk pointer point to 0x7ffff7dd1b78
 ```
 
-free된 heap 영역이 unsortedbin에 저장된다. bk pointer는 0x7ffff7dd1b78을 가리키고 있다.
+해제된 heap 영역이 unsorted bin에 저장된다. `bk` pointer는 0x7ffff7dd1b78을 가리키고 있다.
 
 ```
 gdb-peda$ heapinfo
@@ -137,7 +138,7 @@ Now emulating a vulnerability that can overwrite the victim->bk pointer
 And we write it with the target address-16 (in 32-bits machine, it should be target address-8):0x7fffffffe4c8
 ```
 
-1번째 heap 영역의 bk를 stack_var - 0x10으로 변조 후 1번째 크기와 같은 size로 malloc 할 경우 stack_var 변수에 main_arena의 top 영역이 저장된다.
+1번째 heap 영역의 `bk`를 `stack_var - 0x10`으로 변조 후 1번째 크기와 같은 size로 `malloc()` 할 경우 `stack_var` 변수에 `main_arena`의 top 영역이 저장된다.
 
 ```
 gdb-peda$ parseheap
@@ -153,7 +154,7 @@ Let's malloc again to get the chunk we just free. During this time, the target s
 0x7fffffffe4d8: 0x7ffff7dd1b78
 ```
 
-victim 주소를 컨트롤 할 수 있지만, 쓰게되는 값은 &av->bins[0] 고정이다. 따라서 main_arena 영역에 값을 덮어쓰거나, global_max_fast의 값을 변경할 때 사용한다.
+victim 주소를 컨트롤 할 수 있지만, 쓰게되는 값은 `&av->bins[0]` 고정이다. 따라서 `main_arena` 영역에 값을 덮어쓰거나, `global_max_fast`의 값을 변경할 때 사용한다.
 
 ## References
 

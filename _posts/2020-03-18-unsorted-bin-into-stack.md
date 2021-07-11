@@ -11,18 +11,18 @@ mermaid: true
 ## Conditions
 
 - tcache 옵션이 해제되어 있어야 함
-- tcache는 malloc과 free 호출 횟수를 줄여 속도를 높이기 위해 고안된 캐싱작업
+- tcache는 `malloc()`과 `free()` 호출 횟수를 줄여 속도를 높이기 위해 고안된 캐싱작업
 - 공격자에 의해 heap 영역 할당 및 해제
 - 공격자가 stack 영역에 fake chunk 구조 저장할 수 있어야 함
 
 ## Exploit plan
 
 1. 2개의 Heap 영역 할당
-2. 1번째 Heap 영역 free
+2. 1번째 Heap 영역 `free()`
     - unsorted bin에 저장
 3. stack에 fake chunk를 생성
-4. victim의 size를 0x20으로 victim->bk를 fake_chunk로 변조
-5. fake_chunk(stack) 영역 할당
+4. victim의 `size`를 0x20으로 `victim->bk`를 `fake_chunk`로 변조
+5. `fake_chunk(stack)` 영역 할당
 
 ## Proof of concept
 
@@ -76,7 +76,7 @@ Allocating another chunk to avoid consolidating the top chunk with the small one
 Freeing the chunk 0x602010, it will be inserted in the unsorted bin
 ```
 
-unsortedbin에 free chunk가 저장된다.
+unsorted bin에 free chunk가 저장된다.
 
 ```
 gdb-peda$ heapinfo
@@ -102,7 +102,7 @@ Create a fake chunk on the stack
 Set size for next allocation and the bk pointer to any writable address
 ```
 
-fake chunk(stack)
+**fake chunk(stack)**
 
 ```
 gdb-peda$ x/24gx $rbp-0x30

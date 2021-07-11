@@ -87,7 +87,7 @@ Signal        Stop  Print   Pass to program Description
 SIGINT        No    Yes Yes     Interrupt
 ```
 
-"CTRL + C" SIGINT 시그널 발생시키고 "bt"로 frame을 확인한다.
+"CTRL + C" SIGINT 시그널 발생시키고 `bt`로 frame을 확인한다.
 
 ```
 gdb-peda$ bt
@@ -99,7 +99,7 @@ gdb-peda$ bt
 #4  0x08048361 in _start ()
 ```
 
-frame 0에서 stack에 저장된 각 레지스터의 값
+`frame 0`에서 stack에 저장된 각 레지스터의 값
 
 ```
 gdb-peda$ frame 0
@@ -151,7 +151,7 @@ gdb-peda$ p ((struct sigcontext *)($ebp + 3 * 4))->cr2
 $36 = 0x0
 ```
 
-__kernel_sigreturn() 함수에서 에서 sys_sigreturn() 시스템 함수를 호출한다. x86에서 sys_sigreturn 시스템 함수의 번호는 0x77(119)
+`__kernel_sigreturn()` 함수에서 에서 `sys_sigreturn()` 시스템 함수를 호출한다. x86에서 `sys_sigreturn` 시스템 함수의 번호는 0x77(119)
 
 ```
 gdb-peda$ frame 1
@@ -162,7 +162,7 @@ gdb-peda$ x/3i $eip
 0xb7fd9d06 <__kernel_sigreturn+6>:  int    0x80
 ```
 
-frame 2는 frame 0의 stack에 저장된 값이 레지스터에 저장된다.
+`frame 2`는 `frame 0`의 stack에 저장된 값이 레지스터에 저장된다.
 
 ```
 gdb-peda$ frame 2
@@ -187,7 +187,7 @@ fs             0x0  0x0
 gs             0x33 0x33
 ```
 
-sigreturn() 시스템 함수는 signal을 처리하는 프로세스가 kernel mode에서 user mode로 돌아올 때 stack을 복원하기 위해 사용되는 함수이다. stack을 복원하기 위해 restore_sigcontext() 함수를 호출한다.
+`sigreturn()` 시스템 함수는 signal을 처리하는 프로세스가 kernel mode에서 user mode로 돌아올 때 stack을 복원하기 위해 사용되는 함수이다. stack을 복원하기 위해 `restore_sigcontext()` 함수를 호출한다.
 
 SROP를 이용할 때 stack에 다음과 같은 형태로 값을 저장해야 한다.
 
@@ -244,13 +244,19 @@ void main(){
 
 ```
 
-"A"*66 이상 입력 시 return address 변조할 수 있다. sigreturn()함수를 이용해 레지스터에 필요한 값을 저장한다.*  ESP : sigreturn() 함수 호출 후 이동할 주소("int 0x80" 명령어가 저장된 주소) * EBX : "/bin/sh" 문자열이 저장된 주소 * EAX : execve() 함수의 시스템 콜 번호 * EIP : "int 0x80" 명령어가 저장된 주소 * CS : User Code(0x23) * SS : User Data / Stack(0x2b)
+"A"*66 이상 입력 시 return address 변조할 수 있다. `sigreturn()`함수를 이용해 레지스터에 필요한 값을 저장한다.
+* `esp` : `sigreturn()` 함수 호출 후 이동할 주소(`int 0x80` 명령어가 저장된 주소) 
+* `ebx` : "/bin/sh" 문자열이 저장된 주소 
+* `eax` : `execve()` 함수의 시스템 콜 번호 
+* `eip` : `int 0x80` 명령어가 저장된 주소 
+* `cs` : User Code(0x23) 
+* `ss` : User Data / Stack(0x2b)
 
 ### CS(Code segment) & SS(Stack Segment)
 
-sigcontext 구조체 형태로 stack에 저장할 때 CS, SS 레지스터 설정을 해야한다. 공격 코드들은 user mode에서 실행되기 때문에 user code / user stack 값을 사용해야 한다.
+`sigcontext` 구조체 형태로 stack에 저장할 때 `cs`, `ss` 레지스터 설정을 해야한다. 공격 코드들은 user mode에서 실행되기 때문에 user code / user stack 값을 사용해야 한다.
 
-|Purpose|Segment(32bit)|Segment(64bit - 32bit)|
+|Purpose|Segment(32 bit)|Segment(64 bit - 32 bit)|
 |:---:|:---:|:---:|
 |Kernel Code|0x60|0x8|
 |Kernel Data / Stack|0x68|0x18|
