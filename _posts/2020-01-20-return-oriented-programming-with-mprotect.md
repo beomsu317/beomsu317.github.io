@@ -35,7 +35,7 @@ void main(){
 }
 ```
 
-“A"*72 입력 시 overflow 발생한다.
+"A"*72 입력 시 overflow 발생한다.
 
 ```
 gdb-peda$ x/24gx $rsp

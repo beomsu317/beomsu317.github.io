@@ -40,7 +40,7 @@ Signal        Stop  Print   Pass to program Description
 SIGINT        No    Yes Yes     Interrupt
 ```
 
-“CTRL + C" SIGINT 시그널 발생시키고 “bt"로 frame을 확인한다.
+"CTRL + C" SIGINT 시그널 발생시키고 "bt"로 frame을 확인한다.
 
 ```
 Breakpoint 1, handle_signal (signum=0x2) at sig.c:8
@@ -174,11 +174,11 @@ void main(){
 }
 ```
 
-“A"*72 입력 후 return address 변조할 수 있다.
+"A"*72 입력 후 return address 변조할 수 있다.
 
 ### Exploit Method
 
-sigreturn() 함수를 이용해 레지스터에 필요한 값 저장한다. * RSP : sigreturn() 함수 호출 후 이동할 주소(“int 0x80") * RDI : “/bin/sh" 문자열 저장된 주소 * RAX : execve() 함수 시스템 콜 번호 * RIP : “int 0x80" * CS : User Code(0x33) * SS : User Data / Stack(0x2b)
+sigreturn() 함수를 이용해 레지스터에 필요한 값 저장한다. * RSP : sigreturn() 함수 호출 후 이동할 주소("int 0x80") * RDI : "/bin/sh" 문자열 저장된 주소 * RAX : execve() 함수 시스템 콜 번호 * RIP : "int 0x80" * CS : User Code(0x33) * SS : User Data / Stack(0x2b)
 
 libc offset을 계산한다.
 
@@ -254,7 +254,7 @@ root@bs-virtual-machine:~/pwnable# rp-lin-x64 -f /lib/x86_64-linux-gnu/libc-2.23
 0x00122198: syscall  ; ret  ;  (1 found)
 ```
 
-빌드된 x64 파일의 리눅스 커널 버전이 3.3 이하일 경우 vsyscall 영역에서 “syscall & return" 명령어 찾을 수 있다. kernel의 boot option 중 “vsyscall"의 값이 “emulate"로 설정되어 있기 때문에 해당 gadget을 이용하여 시스템 함수를 호출하면 error 발생한다.
+빌드된 x64 파일의 리눅스 커널 버전이 3.3 이하일 경우 vsyscall 영역에서 "syscall & return" 명령어 찾을 수 있다. kernel의 boot option 중 "vsyscall"의 값이 "emulate"로 설정되어 있기 때문에 해당 gadget을 이용하여 시스템 함수를 호출하면 error 발생한다.
 
 ```
 gdb-peda$ vmmap

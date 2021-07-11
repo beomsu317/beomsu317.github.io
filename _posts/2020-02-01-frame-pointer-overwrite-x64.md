@@ -2,7 +2,7 @@
 title: Frame Pointer Overwrite - x64
 author: Beomsu Lee
 category: [Exploitation, Stack]
-tags: [exploitation, stack, fpo]
+tags: [exploitation, stack, frame pointer overwrite]
 math: true
 mermaid: true
 ---

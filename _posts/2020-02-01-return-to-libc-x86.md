@@ -52,7 +52,7 @@ gdb-peda$ x/24wx $ebp
 0xbfdcb328: 0x45454545 <- null 0x46464646 <- null    0x0000000a          0xb7e0b637
 ```
 
-execve()와 “/bin/sh" 주소를 확인한다.
+execve()와 "/bin/sh" 주소를 확인한다.
 
 ```
 gdb-peda$ p printf

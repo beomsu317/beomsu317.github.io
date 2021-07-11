@@ -104,12 +104,12 @@ void main(){
     - write() 함수를 이용하여 __libc_start_main@GOT 영역에 저장된 libc 주소 출력
     - read() 함수를 이용해 .bss 영역에 2 Stage의 ROP 코드를 입력받음
 2. Stage
-    - “/bin/sh\x00"을 .bss 영역에 저장
+    - "/bin/sh\x00"을 .bss 영역에 저장
     - write() 함수를 이용해 메모리에 저장된 libc 파일 추출(JIT ROP)
     - 추출한 libc에서 필요한 ROP Gadget 획득
     - read() 함수를 이용해 3 Stage의 ROP 코드를 입력받음
 3. Stage
-    - execve(“/bin/sh",NULL,NULL)
+    - execve("/bin/sh",NULL,NULL)
 
 ```c
 write(1,__libc_start_main,8)

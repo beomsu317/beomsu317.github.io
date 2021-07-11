@@ -185,7 +185,7 @@ return __readgsdword(0x14u) ^ v4;
 
 순차적으로 description, userinfo 영역이 할당된다. 하지만 처음 등록된 유저를 삭제할 경우 할당된 heap 영역이 해제되어 fastbin\[0\], unsortedbin(136) 공간이 생성되고, 새로운 유저 등록 시 description의 영역으로 unsortedbin(136) 영역 할당한다. 해당 계정이 할당받은 description 영역과, User *userInfo 영역 사이 다른 계정 정보가 위치하게 된다. 이로 인해 heap feng shui가 뜻하는 heap 레이아웃을 활용하여 exploit 가능하다.
 
-“text_length"의 값으로 유저 생성 시 입력했던 Description 영역의 크기보다 큰 값을 입력하여 조건문 통과 가능하며, 조건문을 우회함으로써 heap overflow도 가능하다.
+"text_length"의 값으로 유저 생성 시 입력했던 Description 영역의 크기보다 큰 값을 입력하여 조건문 통과 가능하며, 조건문을 우회함으로써 heap overflow도 가능하다.
 
 ## Exploit code
 

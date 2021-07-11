@@ -127,7 +127,7 @@ gdb-peda$ heapinfo
             unsortbin: 0x0
 ```
 
-“free@got(0x601018)" - “Chunk header size(0x10)" - “Top chunk address(0x602118)" - 0x8 = 0xffffeee8
+"free@got(0x601018)" - "Chunk header size(0x10)" - "Top chunk address(0x602118)" - 0x8 = 0xffffeee8
 
 heap 영역은 0x*0 단위로 할당하기 때문에 -0x8을 하였다. argv2에 0xffffeee8을 입력하여 해당 크기만큼 malloc을 해준다. argv3에 BBBBBBBBCCCCCCCC를 입력하면 free@got가 변조된다.
 

@@ -20,10 +20,10 @@ mermaid: true
 2. 첫 번째 fast chunk(A) 해제
 3. 두 번째 fast chunk(B) 해제
 4. 첫 번째 fast chunk(A) 해제
-5. 이전과 동일한 크기로 힙을 할당하고 해당 chunk 영역에 “stack 영역 주소 값 - prev_size 공간(0x8)" 덮어씀
+5. 이전과 동일한 크기로 힙을 할당하고 해당 chunk 영역에 "stack 영역 주소 값 - prev_size 공간(0x8)" 덮어씀
 6. 동일한 크기로 fast chunk 2개 생성
 7. 다음에 할당하는 영역에 원하는 값을 씀
-    - 할당된 영역은 “stack 영역의 주소 값 + 0x8" 영역
+    - 할당된 영역은 "stack 영역의 주소 값 + 0x8" 영역
 
 A -> B -> A 로 해제하는 이유는 동일한 공간을 연속으로 해제하는 경우 double free or corruption이 발생하기 때문이다. 5번째에 동일한 크기로 힙을 할당하는 경우 첫 번째 A가 할당되는데 여기에 값을 쓸 수 있다면 Fake Chunk로 조작이 가능하다.
 

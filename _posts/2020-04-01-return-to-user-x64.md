@@ -563,7 +563,7 @@ idtentry async_page_fault   do_async_page_fault has_error_code=1
 
 위의 에러를 해결하기 위해 SWAPGS 명령어를 이용해 GS레지스터의 값을 변경해야 한다. SWAPGS 명령어는 GS.base의 값을 MSR의 KernelGSbase(C0000102H) 값과 교환하는 명령어이다. * [https://www.felixcloutier.com/x86/swapgs](https://www.felixcloutier.com/x86/swapgs)
 
-payload() 함수에 “swapgs;" 어셈블리 코드를 추가한다.
+payload() 함수에 "swapgs;" 어셈블리 코드를 추가한다.
 
 ## Exploit code
 

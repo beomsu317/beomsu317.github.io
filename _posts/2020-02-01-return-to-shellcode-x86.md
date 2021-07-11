@@ -49,7 +49,7 @@ void main(){
 }
 ```
 
-“A"62 + “B"4 입력 시 return address 변조가 가능하다.
+"A"62 + "B"4 입력 시 return address 변조가 가능하다.
 
 ```
 gdb-peda$ x/24wx $ebp

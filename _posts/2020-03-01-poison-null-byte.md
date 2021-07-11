@@ -24,7 +24,7 @@ mermaid: true
 5. 변경된 free chunk 영역 안에서 생성 가능한 크기의 heap 영역 2개 할당(heap4, heap5)
 6. heap4 영역 해제
 7. heap3 영역 해제
-8. “heap4 + heap5" 이상의 heap 영역 할당
+8. "heap4 + heap5" 이상의 heap 영역 할당
     - 할당 받은 영역으로 인해 heap5 영역의 값을 덮어쓸 수 있음
 
 ## Proof of concept
@@ -197,7 +197,7 @@ Current b2 content:
 BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
 ```
 
-b1을 free한다. c를 free하면 c의 prev_size를 확인하는데 이 때 0x210으로 되어 있어 “c - 0x210" 위치를 확인하여 free chunk인지 확인한다. b1을 free 했기 때문에 free 영역으로 인식하여 b1과 c를 병합하게 된다.
+b1을 free한다. c를 free하면 c의 prev_size를 확인하는데 이 때 0x210으로 되어 있어 "c - 0x210" 위치를 확인하여 free chunk인지 확인한다. b1을 free 했기 때문에 free 영역으로 인식하여 b1과 c를 병합하게 된다.
 
 ```
 Now we free 'b1' and 'c': this will consolidate the chunks 'b1' and 'c' (forgetting about 'b2').

@@ -52,7 +52,7 @@ void main(){
 }
 ```
 
-“A"66+“B"4 입력 시 vuln() 함수의 stack frame과 return address가 변조된다.
+"A"66+"B"4 입력 시 vuln() 함수의 stack frame과 return address가 변조된다.
 
 ```
 gdb-peda$ x/24wx $ebp

@@ -9,7 +9,7 @@ mermaid: true
 
 ## Description
 
-one gadget이란 해당 gadget 하나만을 이용하여 shell을 획득할 수 있는 gadget이다. one gadget은 라이브러리 파일 내 “/bin/sh"를 실행한다. got 영역을 덮어쓸 수 있는 경우 많이 사용된다.
+one gadget이란 해당 gadget 하나만을 이용하여 shell을 획득할 수 있는 gadget이다. one gadget은 라이브러리 파일 내 "/bin/sh"를 실행한다. got 영역을 덮어쓸 수 있는 경우 많이 사용된다.
 
 ## one-gadget of libc
 
@@ -118,7 +118,7 @@ int main()
 }
 ```
 
-read() 함수를 통해 3번의 입력을 받는데 index 변수의 타입이 “long long"이기 때문에 음수 저장이 가능하다. 따라서 2번째 입력값을 원하는 주소에 입력할 수 있다. 2번째 read() 함수 수행 전 &index([rbp-0x10]) 와 asd(0x601080)를 더한 값을 2번째 인자로 전달하고 있다. 1번째 값으로 0x4141414141414141(AAAAAAAA) 입력 시 0x601080을 더하여 0x4141414141a151c1 위치에 2번째 값을 쓸 수 있다.
+read() 함수를 통해 3번의 입력을 받는데 index 변수의 타입이 "long long"이기 때문에 음수 저장이 가능하다. 따라서 2번째 입력값을 원하는 주소에 입력할 수 있다. 2번째 read() 함수 수행 전 &index([rbp-0x10]) 와 asd(0x601080)를 더한 값을 2번째 인자로 전달하고 있다. 1번째 값으로 0x4141414141414141(AAAAAAAA) 입력 시 0x601080을 더하여 0x4141414141a151c1 위치에 2번째 값을 쓸 수 있다.
 
 ```
 ...

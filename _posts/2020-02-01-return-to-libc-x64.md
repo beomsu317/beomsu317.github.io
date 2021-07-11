@@ -10,7 +10,7 @@ mermaid: true
 
 ## Calling Convention
 
-“System V AMD64-ABI" 호출 규약을 사용한다.(Unix 계열)
+"System V AMD64-ABI" 호출 규약을 사용한다.(Unix 계열)
 
 - 레지스터 RDI, RSI, RDX, RCX, R8, R9 정수 메모리 주소 인수 전달
 - 레지스터 XMM0, XMM1, XMM2, XMM3, XMM4, XMM5, XMM6, XMM7 부동 소수점 인수 전달
@@ -32,7 +32,7 @@ void main(){
 }
 ```
 
-`printf()` 함수의 첫 번째 인자는 “%d, %d, %d, %d"이다. 따라서 각 레지스터 값이 재배치 된다.
+`printf()` 함수의 첫 번째 인자는 "%d, %d, %d, %d"이다. 따라서 각 레지스터 값이 재배치 된다.
 
 ```
 gdb-peda$ disassemble vuln

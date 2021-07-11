@@ -76,7 +76,7 @@ bs@bs-virtual-machine:~$ cat /proc/cpuinfo | grep flags
 flags       : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ss nx pdpe1gb rdtscp lm constant_tscarch_perfmon xtopology tsc_reliable nonstop_tsc eagerfpu pni pclmulqdq ssse3 fma cx16 pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avxf16c rdrand hypervisor lahf_lm abm 3dnowprefetch arat fsgsbase tsc_adjust bmi1 avx2 smep bmi2 invpcid rdseed adx smap clflushopt xsaveopt xsavec
 ```
 
-“/etc/default/grub" 파일의 “GRUB_CMDLINE_LINUX_DEFAULT" 영역에 “nosmep, nosmap, nokaslr" 추가한다.
+"/etc/default/grub" 파일의 "GRUB_CMDLINE_LINUX_DEFAULT" 영역에 "nosmep, nosmap, nokaslr" 추가한다.
 
 ```
 GRUB_DEFAULT=0
@@ -88,7 +88,7 @@ GRUB_CMDLINE_LINUX_DEFAULT="quiet splash nokaslr nosmep nosmap"
 GRUB_CMDLINE_LINUX=""
 ```
 
-“sudo update-grub" 명령어 실행 후 재부팅한다.
+"sudo update-grub" 명령어 실행 후 재부팅한다.
 
 ```
 bs@bs-virtual-machine:~$ sudo update-grub
@@ -517,7 +517,7 @@ gdb-peda$ x/24wx 0xf399def4
 0xf399df44: 0x42424242  0xc11ae95f <- ret   0xf399df90  0xecc3fcc0
 ```
 
-return address를 “CCCC"로 변조할 경우 다음과 같이 출력된다.
+return address를 "CCCC"로 변조할 경우 다음과 같이 출력된다.
 
 ```
 bs@bs-virtual-machine:~/pwn$ ./exploit 
@@ -540,7 +540,7 @@ bs@bs-virtual-machine:~/pwn$ dmesg | tail
 
 1. prepare_kernel_cred() 함수의 인자 값으로 ’0’을 전달해 root의 credentials 준비
 2. commit_creds() 함수의 인자 값으로 prepare_kernel_cred() 함수가 리턴한 값 전달
-3. system() 함수를 이용하여 “/bin/sh" 실행
+3. system() 함수를 이용하여 "/bin/sh" 실행
 
 ### Find address
 

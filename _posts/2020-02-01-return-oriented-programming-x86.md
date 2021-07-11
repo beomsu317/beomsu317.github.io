@@ -33,7 +33,7 @@ void main(){
 
 ## Exploit Mehtod
 
-1. read 함수를 통해 “/bin/sh" 명령을 쓰기 가능한 메모리에 저장
+1. read 함수를 통해 "/bin/sh" 명령을 쓰기 가능한 메모리에 저장
 2. write 함수를 이용해 read 함수의 .got 영역에 저장된 값 출력
 3. read 함수를 이용해 read 함수의 .got 영역에 system 함수 주소를 덮어씀
 4. read 함수 호출 - read .got 영역에 system 주소 저장되어 있기 떄문에 system 함수가 호출

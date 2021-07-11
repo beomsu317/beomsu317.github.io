@@ -26,8 +26,8 @@ mermaid: true
     - fd : target address(전역변수 주소) - 0x18
     - bk : target address(전역변수 주소) - 0x10
 3. 2번쨰 Heap 영역의 header 값을 변조
-    - “prev_size" 설정(second chunk - prev_size = fake chunk)
-    - “PREV_INUSE" flag 해제
+    - "prev_size" 설정(second chunk - prev_size = fake chunk)
+    - "PREV_INUSE" flag 해제
 4. 2번째 heap 영역 해제
 5. 전역변수 영역에 fake chunk의 fd 값이 저장됨
 6. 전역변수[3] 영역에 공격자가 접근하려는 주소 값 저장
@@ -38,8 +38,8 @@ mermaid: true
 ### P->bk != P || BK->fd != P
 
 - P->fd->bk, P->bk->fd의 값이 P의 값과 다른지 확인
-- fd에 “fake chunk가 저장된 변수의 주소 - 0x18" 값을 저장
-- bk에 “fake chunk가 저장된 변수의 주소 - 0x10" 값을 저장
+- fd에 "fake chunk가 저장된 변수의 주소 - 0x18" 값을 저장
+- bk에 "fake chunk가 저장된 변수의 주소 - 0x10" 값을 저장
 
 ### chunksize(P) != prev_size (next_chunk(P))
 

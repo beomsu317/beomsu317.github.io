@@ -2,7 +2,7 @@
 title: Frame Pointer Overwrite - x86
 author: Beomsu Lee
 category: [Exploitation, Stack]
-# tags: [exploitation, stack, fpo]
+tags: [exploitation, stack, frame pointer overwrite]
 math: true
 mermaid: true
 ---
@@ -29,7 +29,7 @@ x86-64 ABI는 16Byte stack alignment가 필요하다. ABI와 호환되지 않는
 
 1. main() 함수가 시작되는 부분에서 이전 함수에서 사용하던 Frame Pointer를 Stack에 저장하기 전에 Stack alignment 수행
 2. main() 함수가 종료되는 부분에서 leave 명령 실행 전, ebp 레지스터에 저장된 주소에 0x4를 뺀 주소 값을 esp 레지스터에 저장
-3. Stack alignment 코드가 적용되면 ret 코드가 실행되기 전에 “lea esp,[ecx-0x4]" 명령에 의해 esp 레지스터가 변경됨
+3. Stack alignment 코드가 적용되면 ret 코드가 실행되기 전에 "lea esp,\[ecx-0x4\]" 명령에 의해 esp 레지스터가 변경됨
 4. ecx 레지스터의 값은 leave 코드가 실행되기전에 ebp 레지스터를 이용해 값을 저장하기 때문에 esp 레지스터의 값을 변경할 수 있음
 
 esp 레지스터에 저장된 값에 0x4를 더한 주소를 ecx에 저장한다.

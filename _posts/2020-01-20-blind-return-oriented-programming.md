@@ -14,9 +14,9 @@ BROP는 closed-binary and source의 서비스를 공격할 때 사용한다. 공
 ### BROP 공격 순서
 
 1. stack overflow영역을 찾고 canaries 값도 추출
-2. 다른 가젯을 찾을 수 있도록 ROP 체인을 중지하는 “stop gadget" 확보
-3. “stop gadget"을 이용하여 레지스터에 값을 저장할 수 있는 “BROP gadget" 확보
-4. “BROP gadget",“stop gadget"을 이용하여 필요한 함수 확보 (read, write, strcmp 등등)
+2. 다른 가젯을 찾을 수 있도록 ROP 체인을 중지하는 "stop gadget" 확보
+3. "stop gadget"을 이용하여 레지스터에 값을 저장할 수 있는 "BROP gadget" 확보
+4. "BROP gadget","stop gadget"을 이용하여 필요한 함수 확보 (read, write, strcmp 등등)
 5. 이 이후 부터는 일반적인 ROP와 동일하게 공격
 
 ### BROP Struct
@@ -238,7 +238,7 @@ def is_brop_gadget(size,addr):
         return True
 ```
 
-다음과 같이 BROP gadget을 찾을 수 있고 “pop rdi ; ret" gadget도 찾을 수 있다.
+다음과 같이 BROP gadget을 찾을 수 있고 "pop rdi ; ret" gadget도 찾을 수 있다.
 
 ```
 [+] Searching for BROP gadget : Done
@@ -279,7 +279,7 @@ def is_brop_gadget(size,addr):
 
 ### Get puts@plt address
 
-해당 프로그램이 puts, printf 사용한다고 가정한다. 해당 바이너리에 PIE 설정되지 않았기 때문에 프로세스의 기본시작 주소는 0x400000이고 해당 주소엔 “7fELF"가 저장되어 있다. 즉, 다음과 같이 addr의 값을 증가시키면서, 화면에 “7fELF"가 출력된다면 해당 주소는 puts의 주소라고 판단할 수 있다.
+해당 프로그램이 puts, printf 사용한다고 가정한다. 해당 바이너리에 PIE 설정되지 않았기 때문에 프로세스의 기본시작 주소는 0x400000이고 해당 주소엔 "7fELF"가 저장되어 있다. 즉, 다음과 같이 addr의 값을 증가시키면서, 화면에 "7fELF"가 출력된다면 해당 주소는 puts의 주소라고 판단할 수 있다.
 
 ```python
 def find_puts_addr(size,stop_gadget,rdi_ret):

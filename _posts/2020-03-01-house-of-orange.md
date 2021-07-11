@@ -23,16 +23,16 @@ mermaid: true
         - Ex) top chunk : 0x20c01 -> 0xc01
     - top chunk 영역의 값보다 큰 크기의 heap 영역 생성
         - malloc은 요청을 처리하기 위해 sysmalloc 호출
-        - sysmalloc()의 _int_free() 함수에 의해 “top chunk - 0x8" 영역이 unsorted bin에 등록
-2. write to fake "struct _IO_FILE_plus“, Fake"struct _IO_wide_data"
-    - free chunk 영역에 fake "struct _IO_FILE_plus“, Fake"struct _IO_wide_data" 구조 작성
+        - sysmalloc()의 _int_free() 함수에 의해 "top chunk - 0x8" 영역이 unsorted bin에 등록
+2. write to fake "struct _IO_FILE_plus", Fake"struct _IO_wide_data"
+    - free chunk 영역에 fake "struct _IO_FILE_plus", Fake"struct _IO_wide_data" 구조 작성
         - fake "struct _IO_FILE_plus"
             - _mode = ‘0’ 보다 큰 값
-            - vtable = “Fake vtable address"
+            - vtable = "Fake vtable address"
             - _wide_data = Fake "struct _IO_wide_data" 저장된 주소
         - fake "struct _IO_wide_data"
             - fake "struct _IO_FILE_plus"가 작성된 공간을 활용
-            - _IO_flush_all_lockp() 함수에서 사용하지 않는 “fp" 변수의 _freeres_list, "_freeres_buf" 영역 활용
+            - _IO_flush_all_lockp() 함수에서 사용하지 않는 "fp" 변수의 _freeres_list, "_freeres_buf" 영역 활용
                 - fp->_freeres_list = _wide_data->_IO_write_ptr
                 - fp->_freeres_buf = _wide_data->_IO_write_base
 3. unsorted bin attack
@@ -84,7 +84,7 @@ for (;; )
 
 ### _IO_flush_all_lockp()
 
-top chunk와 unsorted bin attack을 이용해 "_IO_list_all" 값을 변경하였으나, 변경된 값은 main_arena의 주소이다. 즉, “fp" 변수에 저장된 값은 main_arena의 주소이며, 해당 값을 "fp = fp->_chain" 코드에 의해 Fake "_IO_FILE_plus" 주소로 변경할 수 있다. _IO_flush_all_lockp() 함수는 “fp" 변수에 저장된 주소 값을 기준으로 호출할 _IO_OVERFLOW() 함수의 주소를 찾는다.
+top chunk와 unsorted bin attack을 이용해 "_IO_list_all" 값을 변경하였으나, 변경된 값은 main_arena의 주소이다. 즉, "fp" 변수에 저장된 값은 main_arena의 주소이며, 해당 값을 "fp = fp->_chain" 코드에 의해 Fake "_IO_FILE_plus" 주소로 변경할 수 있다. _IO_flush_all_lockp() 함수는 "fp" 변수에 저장된 주소 값을 기준으로 호출할 _IO_OVERFLOW() 함수의 주소를 찾는다.
 
 ```c
 // genops.c
