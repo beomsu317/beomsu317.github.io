@@ -17,7 +17,7 @@ x86-64 ABI는 16Byte stack alignment가 필요하다. ABI와 호환되지 않는
 
 ### Stack alignment at 4-byte boundary
 
-```
+```bash
 0x080485c7 <+0>:  push   ebp
 0x080485c8 <+1>:  mov    ebp,esp
 ~
@@ -34,19 +34,19 @@ x86-64 ABI는 16Byte stack alignment가 필요하다. ABI와 호환되지 않는
 
 esp 레지스터에 저장된 값에 0x4를 더한 주소를 ecx에 저장한다.
 
-```
+```bash
 0x080485d3 <+0>: lea    ecx,[esp+0x4]
 ```
 
 esp 레지스터에 저장된 값과 0xfffffff0을 AND 연산한 값을 저장(0xffffd59c & 0xfffffff0 = 0xffffd590) 이로 인해 Stack 주소가 16byte 경계에 맞춰진다.
 
-```
+```bash
 0x080485d7 <+4>: and    esp,0xfffffff0
 ```
 
 stack에 [ecx-0x4]주소에 저장된 값 저장한다. (main() 함수가 종료되고 되돌아갈 Return address)
 
-```
+```bash
 0x080485da <+7>: push   DWORD PTR [ecx-0x4]
 ```
 
@@ -81,7 +81,7 @@ void main(int argc, char *argv[]){
 
 63byte를 입력받으면 ebp의 마지막 1byte가 overflow 된다.
 
-```
+```bash
 gdb-peda$ x/24wx 0xbfa07cfa(&buf)
 0xbfa07cfa: 0x41414141  0x42424242  0x43434343  0x44444444
 0xbfa07d0a: 0x45454545  0x46464646  0x47474747  0x48484848
@@ -89,7 +89,7 @@ gdb-peda$ x/24wx 0xbfa07cfa(&buf)
 
 &buf+4(0xbfa07cfe)의 마지막 byte(0xfe)를 EBP의 마지막 바이트에 삽입한다.
 
-```
+```bash
 gdb-peda$ x/24x $ebp
 0xbfa07d02: 0x43434343  0x44444444  0x45454545  0x46464646
 0xbfa07d12: 0x47474747  0x48484848  0x80ecb70a  0x0002b7d2
@@ -97,7 +97,7 @@ gdb-peda$ x/24x $ebp
 
 mov ecx,DWORD PTR [ebp-0x4] 명령으로 0xbfa07cfe가 ecx 레지스터에 저장된다.
 
-```
+```bash
 gdb-peda$ x/24x $ecx-0x4
 0x4242423e: Cannot access memory at address 0x4242423e
 ```

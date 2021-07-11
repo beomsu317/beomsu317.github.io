@@ -32,7 +32,7 @@ void main(){
 }
 ```
 
-printf() 함수의 첫 번째 인자는 “%d, %d, %d, %d”이다. 따라서 각 레지스터 값이 재배치 된다.
+`printf()` 함수의 첫 번째 인자는 “%d, %d, %d, %d”이다. 따라서 각 레지스터 값이 재배치 된다.
 
 ```
 gdb-peda$ disassemble vuln

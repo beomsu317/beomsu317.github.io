@@ -13,7 +13,7 @@ heap 영역에 할당된 chunk의 레이아웃을 조작하여 Exploit을 용이
 
 ## Proof of concept
 
-[33c3 CTF - babyfengshui](/resources/file/babyfengshui.tar.xz)
+[33c3 CTF - babyfengshui](https://github.com/bkth/babyfengshui)
 
 ### main()
 
