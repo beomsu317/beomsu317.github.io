@@ -54,7 +54,7 @@ AAAA.0x%08x.0x%08x.0x%08x.0x%08x
 AAAA.0xffffd150.0x001ad23c.0x001ae23c.0x41414141
 ```
 
-처음에 넣은 AAAA(4Byte)가 4번째에 출력되고 있다. 즉 네번째에 들어가는 포맷스트링은 처음 입력한 AAAA(4Byte)를 가리키는 것을 알 수 있다. 따라서 “Ret Addr” + “%x%x%x” + “%n” payload를 통해 원하는 메모리 주소에 원하는 값으로 변조할 수 있다. 먼저 환경변수에 x86 eggShell을 삽입 후 출력되는 stack address를 통해 return address와 eggshell address를 계산한다.
+처음에 넣은 AAAA(4Byte)가 4번째에 출력되고 있다. 즉 네번째에 들어가는 포맷스트링은 처음 입력한 AAAA(4Byte)를 가리키는 것을 알 수 있다. 따라서 “Ret Addr" + “%x%x%x" + “%n" payload를 통해 원하는 메모리 주소에 원하는 값으로 변조할 수 있다. 먼저 환경변수에 x86 eggShell을 삽입 후 출력되는 stack address를 통해 return address와 eggshell address를 계산한다.
 
 ```
 gdb-peda$ p 0xffffd4ac-0xffffd090 (Return Address - Stack)

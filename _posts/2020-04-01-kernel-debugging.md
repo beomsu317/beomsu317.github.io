@@ -9,7 +9,7 @@ mermaid: true
 
 ## Getting -dbgsym.ddeb packages
 
-저장소 정보 “/etc/apt/sources.list.d/ddebs.list” 파일에 저장한다.
+저장소 정보 “/etc/apt/sources.list.d/ddebs.list" 파일에 저장한다.
 
 ```bash
 echo "deb http://ddebs.ubuntu.com $(lsb_release -cs) main restricted universe multiverse
@@ -40,7 +40,7 @@ vmlinux-4.4.0-148-generic
 
 ## Disable KASLR
 
-“/etc/default/grub” 내 “GRUB_CMDLINE_LINUX_DEFAULT” 필드에 “nokaslr” 추가하여 KASLR 비활성화한다.
+“/etc/default/grub" 내 “GRUB_CMDLINE_LINUX_DEFAULT" 필드에 “nokaslr" 추가하여 KASLR 비활성화한다.
 
 ```c
 # If you change this file, run 'update-grub' afterwards to update
@@ -106,7 +106,7 @@ debugStub.hideBreakpoints = "FALSE"
 monitor.debugOnStartGuest64 = "TRUE"
 ```
 
-디버깅 설정이 저장된 VMware를 실행하면 검은 화면에서 대기하게 된다. 위 상태에서 다른 guest vm에서 root 권한으로 gdb를 실행시켜 해당 VM에 연결한다. gdb 연결하기 전 반드시 해당 시스템의 architecture 설정한다. 디버거가 정상적으로 연결되면 디버깅 할 VMware는 정지되며, gdb에서 “continue” 명령을 통해 부팅한다.
+디버깅 설정이 저장된 VMware를 실행하면 검은 화면에서 대기하게 된다. 위 상태에서 다른 guest vm에서 root 권한으로 gdb를 실행시켜 해당 VM에 연결한다. gdb 연결하기 전 반드시 해당 시스템의 architecture 설정한다. 디버거가 정상적으로 연결되면 디버깅 할 VMware는 정지되며, gdb에서 “continue" 명령을 통해 부팅한다.
 
 gdb 연결 시 사용되는 포트 * 32bit : 8832 * 64bit : 8864
 
@@ -116,11 +116,11 @@ gdb 연결 시 사용되는 포트 * 32bit : 8832 * 64bit : 8864
 
 - /boot/vmlinuz*, /boot/System.map*, /sys/kernel/debug/, /proc/slabinfo
 
-Ubuntu 11.04부터 “/proc/sys/kernel/kptr_rr_rrestrict”에서 알려진 커널 주소 출력을 차단하기 위해 “1”로 설정한다. “0”으로 변경 시 비활성화가 된다.
+Ubuntu 11.04부터 “/proc/sys/kernel/kptr_rr_rrestrict"에서 알려진 커널 주소 출력을 차단하기 위해 “1"로 설정한다. “0"으로 변경 시 비활성화가 된다.
 
 - sudo sysctl -w kernel.kptr_restrict=0
 
-일반 유저로 커널의 모든 심볼 목록을 보관하고 있는 “/proc/kallsyms” 파일을 읽을 경우 해당 심볼의 주소가 “0000000000000000”으로 출력된다. root 권한으로 읽을 경우 심볼들의 주소 값이 출력되고, “kptr_restrict”의 값을 “0”으로 변경하면 일반 유저 권한으로 커널 심볼들의 주소를 확인할 수 있다.
+일반 유저로 커널의 모든 심볼 목록을 보관하고 있는 “/proc/kallsyms" 파일을 읽을 경우 해당 심볼의 주소가 “0000000000000000"으로 출력된다. root 권한으로 읽을 경우 심볼들의 주소 값이 출력되고, “kptr_restrict"의 값을 “0"으로 변경하면 일반 유저 권한으로 커널 심볼들의 주소를 확인할 수 있다.
 
 ```
 bs@bs-virtual-machine:~/Desktop/programming$ cat /proc/kallsyms | grep escal
@@ -144,7 +144,7 @@ bs@bs-virtual-machine:~/Desktop/programming$ cat /proc/kallsyms | grep escal
 
 ## pref_event_paranoid
 
-“kptr_restrict” 값을 “0”으로 변경해도 일반 유저 권한으로 커널 심볼들의 주소를 확인할 수 없는 이유는 “perf_event_paranoid” 때문이다. “perf_event_paranoid”는 Performance counters(커널의 성능 모니터링)의 액세스 제한 권한을 관리하고 있다.
+“kptr_restrict" 값을 “0"으로 변경해도 일반 유저 권한으로 커널 심볼들의 주소를 확인할 수 없는 이유는 “perf_event_paranoid" 때문이다. “perf_event_paranoid"는 Performance counters(커널의 성능 모니터링)의 액세스 제한 권한을 관리하고 있다.
 
 |Value|Description|
 |:---:|:---:|
@@ -235,7 +235,7 @@ chardev_ioctl 함수의 시작 주소 disassemble
 0xffffffffc03980ba: call   0xffffffff8118cc7b <printk>
 ```
 
-objdump -d 명령으로 메모리에 저장된 “chardev_ioctl” 함수 코드와 덤프된 코드가 일치하는 것을 확인할 수 있다.
+objdump -d 명령으로 메모리에 저장된 “chardev_ioctl" 함수 코드와 덤프된 코드가 일치하는 것을 확인할 수 있다.
 
 ```
 00000000000000a0 <chardev_ioctl>:
@@ -267,7 +267,7 @@ e4: 31 c0                   xor    %eax,%eax
 Breakpoint 1 at 0xffffffffc03980a0
 ```
 
-모듈 동작시키기 위해 “test” 프로그램 실행한다. breakpoint가 동작하게 되며 해당 모듈을 동적으로 분석할 수 있다.
+모듈 동작시키기 위해 “test" 프로그램 실행한다. breakpoint가 동작하게 되며 해당 모듈을 동적으로 분석할 수 있다.
 
 ```
 Thread 1 hit Breakpoint 1, 0xffffffffc03980a0 in ?? ()
@@ -296,7 +296,7 @@ Thread 1 hit Breakpoint 1, 0xffffffffc03980a0 in ?? ()
 0xffffffffc03980f2: pop    rbx
 ```
 
-0xffffffffc0398100(printk)에 breakpoint 설정하고 rdi 인자 확인하면 “GIVE_ME_ROOT” 이라는 문자열을 확인할 수 있다.
+0xffffffffc0398100(printk)에 breakpoint 설정하고 rdi 인자 확인하면 “GIVE_ME_ROOT" 이라는 문자열을 확인할 수 있다.
 
 ```
 0xffffffffc03980f7: mov    rdi,0xffffffffc03991a9

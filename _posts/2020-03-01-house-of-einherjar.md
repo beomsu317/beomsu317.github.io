@@ -11,7 +11,7 @@ mermaid: true
 
 - 공격자에 의해 heap을 생성, 해제가 가능해야 함
 - 공격자에 의해 stack 영역에 fake chunk를 생성할 수 있어야 함
-- 공격자에 의해 allocated chunk의 size 값에서 “prev_inuse” flag 값 제거할 수 있어야 함
+- 공격자에 의해 allocated chunk의 size 값에서 “prev_inuse" flag 값 제거할 수 있어야 함
 - 공격자에 의해 변경된 allocated chunk의 size 값 앞 영역(prev_size)에 값을 저장할 수 있어야 함
     - heap 영역의 시작 주소 - heap header size(8/16) - fake chunk address
 
@@ -19,7 +19,7 @@ mermaid: true
 
 1. stack 영역에 fake chunk(free chunk) 생성
 2. 3개의 heap 영역 할당
-3. 2번째 heap 영역의 size 값에서 “prev_inuse” flag 값 제거
+3. 2번째 heap 영역의 size 값에서 “prev_inuse" flag 값 제거
 4. 2번째 heap 영역의 prev_size 영역에 값 저장
     - 2번째 heap 영역 시작 주소 - heap header size - fake chunk address
 5. 2번째 heap 영역 해제
@@ -176,7 +176,7 @@ gdb-peda$ x/24gx 0x7fffffffe4b0
 0x7fffffffe4d0: 0x00007fffffffe4b0  0x00007fffffffe4b0
 ```
 
-b의 metadata인 size에서 “prev_inuse” flag를 해제한다.
+b의 metadata인 size에서 “prev_inuse" flag를 해제한다.
 
 ```
 We allocate 0xf8 bytes for 'b'.
@@ -189,14 +189,14 @@ This is easiest if b.size is a multiple of 0x100 so you don't change the size of
 If it had been modified, we would need a fake chunk inside b where it will try to consolidate the next chunk
 ```
 
-b의 size, “prev_inuse” flag가 해제되어 병합이 일어난다.
+b의 size, “prev_inuse" flag가 해제되어 병합이 일어난다.
 
 ```
 gdb-peda$ x/24gx 0x603040
 0x603040:   0x0000000000000000  0x0000000000000100 <-
 ```
 
-b의 “prev_size”에 b - fake chunk 한 값을 입력한다.
+b의 “prev_size"에 b - fake chunk 한 값을 입력한다.
 
 ```
 We write a fake prev_size to the last 8 bytes of a so that it will consolidate with our fake chunk
@@ -219,7 +219,7 @@ gdb-peda$ x/24gx 0x7fffffffe4b0
 0x7fffffffe4d0: 0x00007fffffffe4b0  0x00007fffffffe4b0
 ```
 
-b를 free한다. b의 “prev_inuse”가 해제되어 있어 b와 fake chunk가 병합된다.
+b를 free한다. b의 “prev_inuse"가 해제되어 있어 b와 fake chunk가 병합된다.
 
 ```
 Now we free b and this will consolidate with our fake chunk since b prev_inuse is not set

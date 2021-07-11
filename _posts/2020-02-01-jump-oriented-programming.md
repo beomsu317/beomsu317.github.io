@@ -9,7 +9,7 @@ mermaid: true
 
 ## Description
 
-JOP는 JMP 명령을 사용해 프로그램 흐름을 제어하는 exploit 기술이다. JOP gadget은 “Exploit에 필요한 code + JMP 명령어”이다. JOP는 여러개의 gadget들을 실행시키기 위해 별도의 gadget과 구조가 필요하다.
+JOP는 JMP 명령을 사용해 프로그램 흐름을 제어하는 exploit 기술이다. JOP gadget은 “Exploit에 필요한 code + JMP 명령어"이다. JOP는 여러개의 gadget들을 실행시키기 위해 별도의 gadget과 구조가 필요하다.
 
 ## Proof of concept
 
@@ -45,7 +45,7 @@ gdb-peda$ x/24gx $rbp
 ## Exploit Method
 
 1. ROP Gadget을 이용하여 rax에 system() 함수 주소 저장
-2. JOP Gadget을 이용하여 RDI 레지스터에 “/bin/sh” 저장 후 “jmp rax” 명령어로 system() 함수 호출
+2. JOP Gadget을 이용하여 RDI 레지스터에 “/bin/sh" 저장 후 “jmp rax" 명령어로 system() 함수 호출
 
 ### Find Gadget
 

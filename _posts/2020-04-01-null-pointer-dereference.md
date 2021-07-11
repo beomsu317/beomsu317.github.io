@@ -13,7 +13,7 @@ mermaid: true
 
 ## 0-address protection
 
-0-address protection은 커널과 사용자 공간이 가상 메모리 주소를 공유하기 때문에 사용자 공간 mmap’d 메모리 주소 0에서 시작할 수 없도록 “null” 메모리 공간을 보호해준다. 0-address protection으로 인해 “NULL dereference” 커널 공격 방어 가능하다. 0-address protection은 2.6.22 커널에서 가능하며 sysctl 명령어를 이용해 mmap_min_addr로 보호 영역의 크기를 설정할 수 있다. 우분투 9.04 이후, mmap_min_addr 설정은 커널에 내장된다.
+0-address protection은 커널과 사용자 공간이 가상 메모리 주소를 공유하기 때문에 사용자 공간 mmap’d 메모리 주소 0에서 시작할 수 없도록 “null" 메모리 공간을 보호해준다. 0-address protection으로 인해 “NULL dereference" 커널 공격 방어 가능하다. 0-address protection은 2.6.22 커널에서 가능하며 sysctl 명령어를 이용해 mmap_min_addr로 보호 영역의 크기를 설정할 수 있다. 우분투 9.04 이후, mmap_min_addr 설정은 커널에 내장된다.
 
 ## Set environment
 

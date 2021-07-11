@@ -113,7 +113,7 @@ gdb-peda$ x/x 0x080482e6
 0x80482e6 <puts@plt+6>: 0x00000068 
 ```
 
-_dl_fixup() 함수에서 .dynsym + 0x50에 저장되어있는 .strtab 섹션의 주소를 가져오고 .strtab 섹션 내 있는 함수명 “puts”의 Offset(0x1a)을 얻어 두 값을 더해 호출할 함수명이 있는 메모리주소를 구하게 된다.
+_dl_fixup() 함수에서 .dynsym + 0x50에 저장되어있는 .strtab 섹션의 주소를 가져오고 .strtab 섹션 내 있는 함수명 “puts"의 Offset(0x1a)을 얻어 두 값을 더해 호출할 함수명이 있는 메모리주소를 구하게 된다.
 
 ```
 ...
@@ -172,7 +172,7 @@ Elf32_Section        st_shndx;                /* Section index */
 0x0000001a, 0x00000000, 0x00000000, 0x00, 0x00, 0x0012
 ```
 
-.strtab에 0x1a를 더하면 “puts” 문자열이다.
+.strtab에 0x1a를 더하면 “puts" 문자열이다.
 
 ```
 gdb-peda$ x/s 0x80481cc + 0x50 + 0x1a
@@ -220,7 +220,7 @@ gdb-peda$ x/x 0x804a00c
 
 ### Modulate .strtab
 
-.dynsym에 쓰기 권한이 있다면 .dynsym 영역에 있는 .strtab 포인터를 write 권한이 있는 다른 메모리 주소를 가리키도록 하고, 기존의 .strtab과 함수명과 offset을 더한 곳에 원하는 함수명을 입력하면 해당 함수가 실행된다. .bss영역에 offset(0x1a)를 더한 부분에 “system” 문자열을 입력한다.
+.dynsym에 쓰기 권한이 있다면 .dynsym 영역에 있는 .strtab 포인터를 write 권한이 있는 다른 메모리 주소를 가리키도록 하고, 기존의 .strtab과 함수명과 offset을 더한 곳에 원하는 함수명을 입력하면 해당 함수가 실행된다. .bss영역에 offset(0x1a)를 더한 부분에 “system" 문자열을 입력한다.
 
 ```
 gdb-peda$ elfheader .bss

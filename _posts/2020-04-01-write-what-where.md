@@ -270,7 +270,7 @@ bs@bs-virtual-machine:~/Desktop$ find /dev/ -type c -perm -6 2>/dev/null
 /dev/null
 ```
 
-해당 디바이스 파일들 중 struct file_operations를 사용한 변수가 있는지 확인이 필요하다. 리눅스에선 struct file_operations 사용할 경우 “디바이스명_fops” 같은 형태로 변수명을 작성한다. 중요한 것은 2번째 필드이며, 심볼의 유형에 대한 정보이다.
+해당 디바이스 파일들 중 struct file_operations를 사용한 변수가 있는지 확인이 필요하다. 리눅스에선 struct file_operations 사용할 경우 “디바이스명_fops" 같은 형태로 변수명을 작성한다. 중요한 것은 2번째 필드이며, 심볼의 유형에 대한 정보이다.
 
 - ‘R’, ‘r’: 읽기 전용 데이터 섹션 사용
 - ‘B’, ‘b’: 초기화되지 않은 데이터 섹션(BSS) 사용
@@ -416,7 +416,7 @@ struct file_operations {
 1. 권한 상승을 위한 ret2usr 코드 구현
     - commit_creds(prepare_kernel_cred())
 2. 구현된 ret2usr 코드의 시작 주소를 ptmx_fops->release 영역에 덮어씀
-3. system() 함수를 이용해 “/bin/sh” 실행
+3. system() 함수를 이용해 “/bin/sh" 실행
 
 필요한 정보는 prepare_kernel_cred, commit_creds, ptmx_fops->release 영역의 주소이다.
 

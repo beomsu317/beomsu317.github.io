@@ -34,7 +34,7 @@ void main(){
 }
 ```
 
-“A”*66을 입력해 Overflow가 가능하다.
+“A"*66을 입력해 Overflow가 가능하다.
 
 ```
 gdb-peda$ x/24wx $ebp

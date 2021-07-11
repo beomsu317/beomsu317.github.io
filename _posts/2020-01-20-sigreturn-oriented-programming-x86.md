@@ -87,7 +87,7 @@ Signal        Stop  Print   Pass to program Description
 SIGINT        No    Yes Yes     Interrupt
 ```
 
-“CTRL + C” SIGINT 시그널 발생시키고 “bt”로 frame을 확인한다.
+“CTRL + C" SIGINT 시그널 발생시키고 “bt"로 frame을 확인한다.
 
 ```
 gdb-peda$ bt
@@ -244,7 +244,7 @@ void main(){
 
 ```
 
-“A”*66 이상 입력 시 return address 변조할 수 있다. sigreturn()함수를 이용해 레지스터에 필요한 값을 저장한다.*  ESP : sigreturn() 함수 호출 후 이동할 주소(“int 0x80” 명령어가 저장된 주소) * EBX : “/bin/sh” 문자열이 저장된 주소 * EAX : execve() 함수의 시스템 콜 번호 * EIP : “int 0x80” 명령어가 저장된 주소 * CS : User Code(0x23) * SS : User Data / Stack(0x2b)
+“A"*66 이상 입력 시 return address 변조할 수 있다. sigreturn()함수를 이용해 레지스터에 필요한 값을 저장한다.*  ESP : sigreturn() 함수 호출 후 이동할 주소(“int 0x80" 명령어가 저장된 주소) * EBX : “/bin/sh" 문자열이 저장된 주소 * EAX : execve() 함수의 시스템 콜 번호 * EIP : “int 0x80" 명령어가 저장된 주소 * CS : User Code(0x23) * SS : User Data / Stack(0x2b)
 
 ### CS(Code segment) & SS(Stack Segment)
 

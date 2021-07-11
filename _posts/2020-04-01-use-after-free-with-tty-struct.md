@@ -15,7 +15,7 @@ tty_struct 변수는 특정 tty 포트의 현재 상태를 유지하기 위해 t
 
 1. user 프로그램에서 tty_operation 구조체 생성
 2. 권한상승에 사용할 필드에 권한상승 함수의 주소 저장(ret2usr)
-3. uaf 취약점을 이용해 *ops 필드에 유저 프로그램에 생성된 “가짜 tty_operation 구조체의 주소”를 저장
+3. uaf 취약점을 이용해 *ops 필드에 유저 프로그램에 생성된 “가짜 tty_operation 구조체의 주소"를 저장
 
 ```c
 // /include/linux/tty.h

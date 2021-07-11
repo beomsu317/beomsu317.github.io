@@ -12,7 +12,7 @@ malloc()에서 메모리 영역과 메모리 관리 부분을 arena라고 한다
 
 ### Main Arena
 
-malloc.c 에서 “struct malloc_state” 구조체를 사용하는 변수이다.
+malloc.c 에서 “struct malloc_state" 구조체를 사용하는 변수이다.
 
 ```c
 static struct malloc_state main_arena =
@@ -78,7 +78,7 @@ struct malloc_state
 3. top chunk
 4. last remainder chunk
 
-allocated, free chunk는 “malloc_chunk” 구조체를 이용해 필요한 정보를 저장한다.
+allocated, free chunk는 “malloc_chunk" 구조체를 이용해 필요한 정보를 저장한다.
 
 ```c
 /*
@@ -213,15 +213,15 @@ free로 해제된 chunk들을 관리하기 위한 연결리스트, 해제된 chu
 
 ### malloc_state
 
-- fastbinsY : “fast bin”을 관리
-- bins : “unsorted bin”, “small bin”, “large bin”을 관리(총 126개의 bin)
+- fastbinsY : “fast bin"을 관리
+- bins : “unsorted bin", “small bin", “large bin"을 관리(총 126개의 bin)
     1. index 1 : unsorted bin
     2. index 2 ~ 63 : small bin
     3. index 64 ~ 126 : large bin
 
 ### Fast Bin
 
-LIFO 방식이며 10개의 bin을 사용한다. 해제된 fast chunk를 보관하고 single-linked list로 관리된다. bin은 fast bin이 처리하는 메모리의 최대 크기 “global_max_fast”에 의해 결정된다. * 32bit : 최소 크기 16 byte 부터 24, 32, 40, 48, 56, 64 byte 까지 * 64bit : 최소 크기 32 byte 부터 48, 64, 80, 96, 112, 128 byte 까지
+LIFO 방식이며 10개의 bin을 사용한다. 해제된 fast chunk를 보관하고 single-linked list로 관리된다. bin은 fast bin이 처리하는 메모리의 최대 크기 “global_max_fast"에 의해 결정된다. * 32bit : 최소 크기 16 byte 부터 24, 32, 40, 48, 56, 64 byte 까지 * 64bit : 최소 크기 32 byte 부터 48, 64, 80, 96, 112, 128 byte 까지
 
 ```c
 #include <stdio.h>

@@ -92,7 +92,7 @@ do
 done
 ```
 
-./ect/passwd를 계속 비교하면서 변경된 경우 “Success”를 출력하는 스크립트를 생성한다.
+./ect/passwd를 계속 비교하면서 변경된 경우 “Success"를 출력하는 스크립트를 생성한다.
 
 ```bash
 #!/bin/bash

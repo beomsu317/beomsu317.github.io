@@ -29,7 +29,7 @@ page table은 가상주소와 물리주소 간 매핑을 저장하기 위해 컴
 
 ## Virtual memory map with 4 level page tables(x86-64)
 
-4 level page tables를 사용하여 virtual addresses를 physical addresses에 매핑할 때 사용되는 메모리 영역 정보이다. “ffff880000000000 - ffffc7ffffffffff” 영역은 user page와 physical memory 직접적으로 매핑된다. 해당 영역과 매핑된 virtual adress 영역을 physmap 영역이라고 한다. ret2dir의 핵심이다.
+4 level page tables를 사용하여 virtual addresses를 physical addresses에 매핑할 때 사용되는 메모리 영역 정보이다. “ffff880000000000 - ffffc7ffffffffff" 영역은 user page와 physical memory 직접적으로 매핑된다. 해당 영역과 매핑된 virtual adress 영역을 physmap 영역이라고 한다. ret2dir의 핵심이다.
 
 |Areas|Size|Description|
 |:---:|:---:|:---:|
@@ -45,7 +45,7 @@ page table은 가상주소와 물리주소 간 매핑을 저장하기 위해 컴
 
 ## physmap characteristics across different architectures(x86, x86-64, AArch32, AArch64)
 
-x86에서 physmap은 “RW”로 매핑되어 있었다. 그러나 x86-64에서 physmap의 사용 권한은 정상 상태가 아니였다고 한다. v3.8.13까지 커널은 전체 영역을 “읽기 가능, 쓰기 가능 및 실행 가능”(RWX)로 매핑하여 W^X 속성을 위반한다. AArch32, AArch64도 physmap의 권한이 RWX이다. 이를 통해 physical memory 영역에 shellcode를 저장하고 실행할 수 있다.
+x86에서 physmap은 “RW"로 매핑되어 있었다. 그러나 x86-64에서 physmap의 사용 권한은 정상 상태가 아니였다고 한다. v3.8.13까지 커널은 전체 영역을 “읽기 가능, 쓰기 가능 및 실행 가능"(RWX)로 매핑하여 W^X 속성을 위반한다. AArch32, AArch64도 physmap의 권한이 RWX이다. 이를 통해 physical memory 영역에 shellcode를 저장하고 실행할 수 있다.
 
 |Architecture|PHYS_OFFSET|Size|Prot|
 |:---:|:---:|:---:|:---:|
@@ -60,14 +60,14 @@ x86에서 physmap은 “RW”로 매핑되어 있었다. 그러나 x86-64에서 
 
 ## pagemap file
 
-일반 유저 프로그램에서 physmap 영역에 데이터를 쓰기 위해 physmap과 매핑된 virtual memory addresses가 필요하다. virtual page에 매핑된 physical addresses를 찾기 위해 “pagemap” 파일을 사용한다. 이 파일은 virtual page와 process의 physical addersses 사이 맵 정보를 포함한다. 이 파일을 사용하면 사용자 공간 프로세스가 각 Virtual page가 실제 매핑되는 프레임을 찾을 수 있다. 여기에 다음 데이터를 포함하는 각 가상 페이지에 대한 하나의 64bit 값이 들어 있다.
+일반 유저 프로그램에서 physmap 영역에 데이터를 쓰기 위해 physmap과 매핑된 virtual memory addresses가 필요하다. virtual page에 매핑된 physical addresses를 찾기 위해 “pagemap" 파일을 사용한다. 이 파일은 virtual page와 process의 physical addersses 사이 맵 정보를 포함한다. 이 파일을 사용하면 사용자 공간 프로세스가 각 Virtual page가 실제 매핑되는 프레임을 찾을 수 있다. 여기에 다음 데이터를 포함하는 각 가상 페이지에 대한 하나의 64bit 값이 들어 있다.
 
-ret2dir 공격에 필요한 필드 값은 2가지이다. “present” 또는 “present bit”으로 불리는 값과 PFN(Page Frame Number)이다. PFN을 이용하여 virtual page에 매핑된 물리적 주소를 찾을 수 있다.
+ret2dir 공격에 필요한 필드 값은 2가지이다. “present" 또는 “present bit"으로 불리는 값과 PFN(Page Frame Number)이다. PFN을 이용하여 virtual page에 매핑된 물리적 주소를 찾을 수 있다.
 
 ## present bit
 
-- 해당 값이 “0”일 경우 페이지는 메모리에 있지 않고 디스크에 존재
-- 해당 값이 “1”일 경우 페이지가 physical addresses에 존재
+- 해당 값이 “0"일 경우 페이지는 메모리에 있지 않고 디스크에 존재
+- 해당 값이 “1"일 경우 페이지가 physical addresses에 존재
 
 |Bits|Description|
 |:---:|:---:|
@@ -293,7 +293,7 @@ invoke_func(struct file *f, const char __user *buf, size_t count, loff_t *off)
 
 ## Proof of concept
 
-“pagemap” 파일에서 얻은 PFN정보를 이용하여 가상 페이지(virtual page)에 맵핑된 물리적 주소(physical addresses)를 찾을 수 있다.
+“pagemap" 파일에서 얻은 PFN정보를 이용하여 가상 페이지(virtual page)에 맵핑된 물리적 주소(physical addresses)를 찾을 수 있다.
 
 ```c
 #include <err.h>
