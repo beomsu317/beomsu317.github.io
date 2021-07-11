@@ -105,7 +105,6 @@ gdb-peda$ x/24x $ecx-0x4
 ## Exploit Code
 
 ```python
-```python
 # Exploit Code
 from pwn import *
 p=process(['./fpo','AA'])
