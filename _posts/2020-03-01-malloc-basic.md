@@ -142,7 +142,7 @@ gdb-peda$ x/24gx 0x00602000
 
 |Chunk|Size of Chunk|
 |:---:|:---:|
-|fast chunk|32 bit(16 ~ 64byte), 64 bit(32 ~)|
+|fast chunk|32 bit(16 ~ 64 byte), 64 bit(32 ~ 128 byte)|
 |small chunk|Size of User Data < 512 byte|
 |large chunk|Size of User Data >= 512 byte|
 

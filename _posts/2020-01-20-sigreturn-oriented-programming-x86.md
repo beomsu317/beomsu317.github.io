@@ -250,7 +250,7 @@ void main(){
 
 sigcontext 구조체 형태로 stack에 저장할 때 CS, SS 레지스터 설정을 해야한다. 공격 코드들은 user mode에서 실행되기 때문에 user code / user stack 값을 사용해야 한다.
 
-|Purpose|Segment(32bit)|Segment(64bit - 32bit|
+|Purpose|Segment(32bit)|Segment(64bit - 32bit)|
 |:---:|:---:|:---:|
 |Kernel Code|0x60|0x8|
 |Kernel Data / Stack|0x68|0x18|
