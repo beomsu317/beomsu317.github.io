@@ -7,6 +7,10 @@ math: true
 mermaid: true
 ---
 
+## Description
+
+x86 Frame Pointer Overwrite와 거의 비슷하다.
+
 ## Proof of concept
 
 ```c
