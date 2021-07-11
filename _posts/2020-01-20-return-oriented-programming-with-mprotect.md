@@ -42,7 +42,7 @@ gdb-peda$ x/24gx $rsp
 0x7fffffffe450: 0x4141414141414141  0x000000000040070a
 ```
 
-mprotect() 함수를 이용하여 shellcode가 저장된 메모리 영역의 권한을 rwx로 변경 -> address 값은 페이지 경계에 맞게 정렬되어 있어야 한다.
+mprotect() 함수를 이용하여 shellcode가 저장된 메모리 영역의 권한을 rwx로 변경 -\> address 값은 페이지 경계에 맞게 정렬되어 있어야 한다.
 
 mprotect(address of shellcode,0x2000,0x7)
 

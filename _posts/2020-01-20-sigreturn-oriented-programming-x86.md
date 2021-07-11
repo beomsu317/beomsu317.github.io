@@ -40,13 +40,13 @@ user mode에서 kernel mode로 진입시 user mode에서 사용중이던 context
 
 인터럽트 또는 예외가 발생하면 프로세스는 Kernel Mode로 전환한다. 커널은 User Mode로 돌아가기 전 do_signal() 함수를 실행한다.
 
-- do_signal() -> handle_signal()을 호출하여 signal 처리
-- handle_signal -> setup_frame() 호출하여 User Mode stack에 context 저장
+- `do_signal()` -\> `handle_signal()`을 호출하여 signal 처리
+- `handle_signal` -\> `setup_frame()` 호출하여 User Mode stack에 context 저장
 
-프로세스가 User Mode로 다시 전환되며 signal handler가 실행한다. signal handler가 종료되면 setup_frame() 함수에 의해 User Mode stack에 저장된 리턴 코드가 실행된다. 해당 코드에 의해 sigreturn() 시스템 함수 호출된다.
+프로세스가 User Mode로 다시 전환되며 signal handler가 실행한다. signal handler가 종료되면 `setup_frame()` 함수에 의해 User Mode stack에 저장된 리턴 코드가 실행된다. 해당 코드에 의해 `sigreturn()` 시스템 함수 호출된다.
 
-- sigreturn() 시스템 함수에 의해 Kernel Mode Stack에서 일반 프로그램의 hardware context를 user mode의 stack에 복사
-- sigreturn() 함수는 restore_sigcontext()을 호출하여 user mode 스택을 원래 상태로 복원
+- `sigreturn()` 시스템 함수에 의해 Kernel Mode Stack에서 일반 프로그램의 hardware context를 user mode의 stack에 복사
+- `sigreturn()` 함수는 `restore_sigcontext()`을 호출하여 user mode 스택을 원래 상태로 복원
 
 시스템 호출이 종료되면 일반 프로그램은 실행 재개할 수 있다.
 

@@ -331,7 +331,7 @@ int main(){
 
 1. heap spray를 이용해 heap 영역을 one gadget 주소로 채움
 2. UAF를 이용해 heap spray된 Heap 주소를 유추하여 저장
-3. uaf->target() 코드는 heap spray된 영역에 저장된 one gadget 주소를 target() 함수의 시작 주소로 판단하고 실행
+3. uaf-\>target() 코드는 heap spray된 영역에 저장된 one gadget 주소를 `target()` 함수의 시작 주소로 판단하고 실행
 
 ## Exploit code
 

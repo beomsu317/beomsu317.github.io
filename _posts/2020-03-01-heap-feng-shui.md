@@ -93,8 +93,8 @@ struct USER{
 
 - a1를 인자로 전달받아 al(size) 만큼 malloc 후 userInfo를 0x80만큼 malloc
 - desc를 userInfo의 desc에 저장
-- 이름을 입력받은 후 (char *)gUserList[(unsigned __int8)gCnt] + 4(userInfo->name)에 저장
-- UpdateAUserDescription에 gCnt를 전달
+- 이름을 입력받은 후 (char *)gUserList[(unsigned __int8)gCnt] + 4(userInfo-\>name)에 저장
+- `UpdateAUserDescription`에 `gCnt`를 전달
 
 ```
 _DWORD *__cdecl AddAUser(size_t a1)

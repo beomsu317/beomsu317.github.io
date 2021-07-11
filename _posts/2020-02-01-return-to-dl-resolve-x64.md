@@ -69,12 +69,12 @@ void main(){
 
 ## Exploit Method
 
-1. write() 함수를 이용하여 ".got.plt"영역에 저장된 link_map 구조체의 주소(".rela.plt" addr + 0x8)를 추출
-2. read() 함수를 이용하여 ".bss" 영역에 2번째 ROP코드를 저장
+1. `write()` 함수를 이용하여 ".got.plt"영역에 저장된 link_map 구조체의 주소(".rela.plt" addr + 0x8)를 추출
+2. `read()` 함수를 이용하여 ".bss" 영역에 2번째 ROP코드를 저장
 3. "leave; ret;" Gadget을 이용하여 "2번째 ROP코드"가 저장된 영역으로 이동
-4. read() 함수를 이용하여 "l-> l_info [VERSYMIDX (DT_VERSYM)" 영역에 0 을 저장
-5. _dl_runtime_resolve() 함수에 전달될 인자 값을 설정
-6. _dl_runtime_resolve() 함수를 호출
+4. `read()` 함수를 이용하여 "l-\> l_info [VERSYMIDX (DT_VERSYM)" 영역에 0 을 저장
+5. `_dl_runtime_resolve()` 함수에 전달될 인자 값을 설정
+6. `_dl_runtime_resolve()` 함수를 호출
 
 ```c
 // Stage1
