@@ -1,8 +1,8 @@
 ---
-title: User After Free
+title: Use After Free
 author: Beomsu Lee
 category: [Exploitation, Heap]
-tags: [exploitation, heap, user after free]
+tags: [exploitation, heap, use after free]
 math: true
 mermaid: true
 ---
