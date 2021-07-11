@@ -15,7 +15,7 @@ mermaid: true
 - 레지스터 RDI, RSI, RDX, RCX, R8, R9 정수 메모리 주소 인수 전달
 - 레지스터 XMM0, XMM1, XMM2, XMM3, XMM4, XMM5, XMM6, XMM7 부동 소수점 인수 전달
 - 레지스터 XMM0, XMM1, XMM2, XMM3, XMM4, XMM5, XMM6, XMM7 부동 소수점 인수 전달
-- Return Value Register -> RAX
+- Return Value Register -\> RAX
 
 ```c
 // Test Code
