@@ -13,7 +13,7 @@ mermaid: true
 
 ## Set environment
 
-chardev_ioctl() 함수의 switch 분기문에 IOCTL_WWW를 추가한다. chardev_ioctl() 함수의 세번째 인자값(arg)을 ioctl_www_arg 구조체로 형변환하여 para 변수에 값을 저장한다.
+`chardev_ioctl()` 함수의 switch 분기문에 IOCTL_WWW를 추가한다. `chardev_ioctl()` 함수의 세번째 인자값(arg)을 `ioctl_www_arg` 구조체로 형변환하여 `para` 변수에 값을 저장한다.
 
 ```c
 // chardev.c
@@ -235,7 +235,7 @@ int main(){
 }
 ```
 
-[rax](0x4141414141414141)에 rdx(0x4242424242424242)로 값을 저장하려고 하지만 0x4141414141414141은 사용할 수 없는 영역이라 general_protection 함수가 호출된다.
+\[rax\](0x4141414141414141)에 rdx(0x4242424242424242)로 값을 저장하려고 하지만 0x4141414141414141은 사용할 수 없는 영역이라 `general_protection` 함수가 호출된다.
 
 ```
 1: x/i $rip
@@ -270,7 +270,7 @@ bs@bs-virtual-machine:~/Desktop$ find /dev/ -type c -perm -6 2>/dev/null
 /dev/null
 ```
 
-해당 디바이스 파일들 중 struct file_operations를 사용한 변수가 있는지 확인이 필요하다. 리눅스에선 struct file_operations 사용할 경우 "디바이스명_fops" 같은 형태로 변수명을 작성한다. 중요한 것은 2번째 필드이며, 심볼의 유형에 대한 정보이다.
+해당 디바이스 파일들 중 `struct file_operations`를 사용한 변수가 있는지 확인이 필요하다. 리눅스에선 `struct file_operations` 사용할 경우 "디바이스명_fops" 같은 형태로 변수명을 작성한다. 중요한 것은 2번째 필드이며, 심볼의 유형에 대한 정보이다.
 
 - ‘R’, ‘r’: 읽기 전용 데이터 섹션 사용
 - ‘B’, ‘b’: 초기화되지 않은 데이터 섹션(BSS) 사용
