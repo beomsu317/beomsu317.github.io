@@ -18,7 +18,7 @@ mermaid: true
 #### Syntax of class declaration
 
 ```kotlin
-class className {      // class header
+class ClassName {      // class header
    // property
    // member function
 }
@@ -27,7 +27,7 @@ class className {      // class header
 클래스의 생성자는 `constructor` 키워드를 사용해 만들 수 있다.
 
 ```kotlin
-class className constructor(parameters) {    
+class ClassName constructor(parameters) {    
    // property
    // member function
 }
@@ -42,7 +42,7 @@ class className constructor(parameters) {
 - Identity : 객체에 고유한 이름을 부여하고 객체가 다른 객체와 상호작용 할 수 있도록 도와주는 역할이다.
 
 ```kotlin
-class employee {
+class Employee {
     // properties
     var name: String = ""
     var age: Int = 0
@@ -63,7 +63,7 @@ class employee {
 클래스를 참조함으로써 객체를 생성할 수 있다.
 
 ```kotlin
-var obj = className()
+var obj = ClassName()
 ```
 
 #### Accessing the property of the class
@@ -85,7 +85,7 @@ obj.funtionName(parameters)
 #### Kotlin program of creating multiple objects and accessing the property and member function of class 
 
 ```kotlin
-class employee {// Constructor Declaration of Class
+class Employee {// Constructor Declaration of Class
 
 	var name: String = ""
 	var age: Int = 0
@@ -109,9 +109,9 @@ class employee {// Constructor Declaration of Class
 }
 fun main(args: Array<String>) {
 	// creating multiple objects
-	var obj = employee()
+	var obj = Employee()
 	// object 2 of class employee
-	var obj2 = employee()
+	var obj2 = Employee()
 
 	//accessing the member function
 	obj.insertValues("Praveen", 50, 'M', 500000.00)
@@ -133,19 +133,19 @@ fun main(args: Array<String>) {
 
 ```kotlin
 // outer class declaration
-class outerClass {
+class OuterClass {
 	var str = "Outer class"
 	// nested class declaration
-	class nestedClass {
+	class NestedClass {
 		val firstName = "Praveen"
 		val lastName = "Ruhil"
 	}
 }
 fun main(args: Array<String>) {
 	// accessing member of Nested class
-	print(outerClass.nestedClass().firstName)
+	print(OuterClass.NestedClass().firstName)
 	print(" ")
-	println(outerClass.nestedClass().lastName)
+	println(OuterClass.NestedClass().lastName)
 }
 ```
 
@@ -159,10 +159,10 @@ Praveen Ruhil
 
 ```kotlin
 // outer class declaration
-class outerClass {
+class OuterClass {
 	var str = "Outer class"
 	// nested class declaration
-	class nestedClass {
+	class NestedClass {
 		var s1 = "Nested class"
 		// nested class member function
 		fun nestfunc(str2: String): String {
@@ -173,7 +173,7 @@ class outerClass {
 }
 fun main(args: Array<String>) {
 	// creating object of Nested class
-	val nested = outerClass.nestedClass()
+	val nested = OuterClass.NestedClass()
 	// invoking the nested member function by passing string
 	var result = nested.nestfunc(" member function call successful")
 	println(result)
@@ -197,10 +197,10 @@ Nested class member function call successful
 
 ```kotlin
 // outer class declaration
-class outerClass {
+class OuterClass {
 	var str = "Outer class"
 	// innerClass declaration without using inner keyword
-	class innerClass {
+	class InnerClass {
 		var s1 = "Inner class"
 		fun nestfunc(): String {
 			// can not access the outer class property str
@@ -212,7 +212,7 @@ class outerClass {
 // main function
 fun main(args: Array<String>) {
 	// creating object for inner class
-	val inner= outerClass().innerClass()
+	val inner= OuterClass().InnerClass()
 	// inner function call using object
 	println(inner.nestfunc())
 }
@@ -222,10 +222,10 @@ fun main(args: Array<String>) {
 
 ```kotlin
 // outer class declaration
-class outerClass {
+class OuterClass {
 	var str = "Outer class"
 	// innerClass declaration with using inner keyword
-	inner class innerClass {
+	inner class InnerClass {
 		var s1 = "Inner class"
 		fun nestfunc(): String {
 			// can access the outer class property str
@@ -237,7 +237,7 @@ class outerClass {
 // main function
 fun main(args: Array<String>) {
 	// creating object for inner class
-	val inner= outerClass().innerClass()
+	val inner= OuterClass().InnerClass()
 	// inner function call using object
 	println(inner.nestfunc()+" property accessed successfully from inner class ")
 }
@@ -440,9 +440,9 @@ class Add constructor(a: Int,b:Int)
 
 ```kotlin
 fun main(args: Array<String>) {
-	val emp = employee(18018, "Sagnik")
+	val emp = Employee(18018, "Sagnik")
 }
-class employee(emp_id : Int , emp_name: String) {
+class Employee(emp_id : Int , emp_name: String) {
 	val id: Int
 	var name: String
 
@@ -470,14 +470,14 @@ Employee name: Sagnik
 
 ```kotlin
 fun main(args: Array<String>) {
-	val emp = employee(18018, "Sagnik")
+	val emp = Employee(18018, "Sagnik")
 	// default value for emp_name will be used here
-	val emp2 = employee(11011)
+	val emp2 = Employee(11011)
 	// default values for both parameters because no arguments passed
-	val emp3 = employee()
+	val emp3 = Employee()
 
 }
-class employee(emp_id : Int = 100 , emp_name: String = "abc") {
+class Employee(emp_id : Int = 100 , emp_name: String = "abc") {
 	val id: Int
 	var name: String
 
@@ -513,10 +513,10 @@ Employee id is: 100, Employee name: abc
 
 ```kotlin
 fun main(args: Array<String>) {
-	employee(18018, "Sagnik")
-	employee(11011,"Praveen",600000.5)
+	Employee(18018, "Sagnik")
+	Employee(11011,"Praveen",600000.5)
 }
-class employee {
+class Employee {
 
 	constructor (emp_id : Int, emp_name: String ) {
 		var id: Int = emp_id
@@ -707,10 +707,10 @@ class A private constructor (name : String) {
 코틀린에서 모든 클래스는 기본적으로 `final`이다. 파생 클래스가 base 클래스에서 상속되도록 하기 위해 base 클래스에서 `open` 키워드를 사용해야 한다.
 
 ```kotlin
-open class baseClass (x:Int ) {
+open class BaseClass (x:Int ) {
       ..........
 }
-class derivedClass(x:Int) : baseClass(x) {
+class DerivedClass(x:Int) : BaseClass(x) {
      ...........
 }
 ```
@@ -721,21 +721,21 @@ class derivedClass(x:Int) : baseClass(x) {
 
 ```kotlin
 //base class
-open class baseClass{
+open class BaseClass{
 	val name = "GeeksforGeeks"
 	fun A(){
 		println("Base Class")
 	}
 }
 //derived class
-class derivedClass: baseClass() {
+class DerivedClass: BaseClass() {
 	fun B() {
 		println(name)		 //inherit name property
 		println("Derived class")
 	}
 }
 fun main(args: Array<String>) {
-	val derived = derivedClass()
+	val derived = DerivedClass()
 	derived.A()		 // inherting the base class function
 	derived.B()		 // calling derived class function
 }
@@ -761,21 +761,21 @@ open class Employee( name: String,age: Int,salary : Int) {
 	}
 }
 //derived class
-class webDeveloper( name: String,age: Int,salary : Int): Employee(name, age,salary) {
+class WebDeveloper( name: String,age: Int,salary : Int): Employee(name, age,salary) {
 	fun website() {
 		println("I am website developer")
 		println()
 	}
 }
 //derived class
-class androidDeveloper( name: String,age: Int,salary : Int): Employee(name, age,salary) {
+class AndroidDeveloper( name: String,age: Int,salary : Int): Employee(name, age,salary) {
 	fun android() {
 		println("I am android app developer")
 		println()
 	}
 }
 //derived class
-class iosDeveloper( name: String,age: Int,salary : Int): Employee(name, age,salary) {
+class IosDeveloper( name: String,age: Int,salary : Int): Employee(name, age,salary) {
 	fun iosapp() {
 		println("I am iOS app developer")
 		println()
@@ -783,11 +783,11 @@ class iosDeveloper( name: String,age: Int,salary : Int): Employee(name, age,sala
 }
 //main method
 fun main(args: Array<String>) {
-	val wd = webDeveloper("Gennady", 25, 10000)
+	val wd = WebDeveloper("Gennady", 25, 10000)
 	wd.website()
-	val ad = androidDeveloper("Gaurav", 24,12000)
+	val ad = AndroidDeveloper("Gaurav", 24,12000)
 	ad.android()
-	val iosd = iosDeveloper("Praveen", 26,15000)
+	val iosd = IosDeveloper("Praveen", 26,15000)
 	iosd.iosapp()
 }
 ```
