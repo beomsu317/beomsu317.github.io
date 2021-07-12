@@ -683,5 +683,5 @@ fun main(args: Array<String>) {
 ```
 
 ## References
-- [geeksforgeeks - kotlin](https://www.geeksforgeeks.org/kotlin-programming-language/)
+- [Functions](https://www.geeksforgeeks.org/kotlin-programming-language/)
 - [코틀린에서 reified는 왜 쓸까?](https://sungjk.github.io/2019/09/07/kotlin-reified.html)

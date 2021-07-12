@@ -124,4 +124,4 @@ s.subSequence(1, 4) // Output: - tri
 
 
 ## References
-- [geeksforgeeks - kotlin](https://www.geeksforgeeks.org/kotlin-programming-language/)
+- [Array & String](https://www.geeksforgeeks.org/kotlin-programming-language/)
