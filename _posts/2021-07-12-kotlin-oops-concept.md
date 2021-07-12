@@ -35,6 +35,10 @@ class className constructor(parameters) {
 
 #### Example of Koltin class 
 
+- State : 
+- Behavior : 
+- Identity : 
+
 ```kotlin
 class employee {
     // properties
@@ -54,4 +58,3 @@ class employee {
     }
 }
 ```
-
