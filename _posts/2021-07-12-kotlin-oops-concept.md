@@ -1127,5 +1127,981 @@ fun main()
 Multiple Interfaces implemented
 ```
 
+## Kotlin Data Classes
+
+보통 데이터를 저장하기 위해 클래스를 만든다. 코틀린에선 `data` 키워드를 통해 데이터 보관 목적으로 만든 클래스를 생성할 수 있다.
+
+```kotlin
+data class Student(val name: String, val roll_no: Int)
+```
+
+컴파일러는 자동으로 다음 함수를 구현한다.
+
+- `equals()`
+- `hashCode()`
+- `toString()`
+- `copy()`
+
+### Rules to create Data classes
+
+데이터 클래스를 사용하려면 다음의 요구사항을 충족시켜야 한다.
+
+- 적어도 하나의 파라미터를 가진 primary constructor가 필요
+- 모든 primary constructor 파라미터는 `val` 또는 `var`로 표시되어야  함
+- 데이터 클래스는 `abstract`, `open`, `sealed`, `inner`를 붙일 수 없음
+- 데이터 클래스는 상속받을 수 없음
+
+### toString()
+
+`toString()` 함수는 데이터 클래스에 정의된 모든 파라미터를 `String`을 형태로 반환한다. 컴파일러는 primary constructor에서 선언된 속성들만을 사용하기 때문에 클래스 바디에 선언된 속성들은 무시된다. 
+
+```kotlin
+fun main(args: Array<String>)
+{
+	//declaring a data class
+	data class man(val roll: Int,val name: String,val height:Int){
+		var age: Int = 0
+	}
+
+	//declaring a variable of the above data class
+	//and initializing values to all parameters
+
+	val man1=man(1,"man",50)
+	man1.age = 20
+	
+	//printing all the details of the data class
+	println(man1.toString());
+}
+```
+
+**Output**
+```
+man(roll=1, name=man, height=50)
+```
+
+### copy()
+
+가끔 객체를 복사해야하는 경우가 있으며, 객체의 속성 중 일부만 변경하고 싶을 때 `copy()` 함수를 사용한다.
+
+#### Properties of copy()
+
+- primary constructor에서 정의한 인자와 멤버들이 복사된다.
+- 2개의 객체의 primary 파라미터는 동일하지만 클래스의 바디가 다를 수 있다.
+
+```kotlin
+fun main(args: Array<String>)
+{
+	//declaring a data class
+	data class man(val name: String, val age: Int)
+	{
+		//property declared in class body
+		var height: Int = 0;
+	}
+	
+	val man1 = man("manish",18)
+
+	//copying details of man1 with change in name of man
+	val man2 = man1.copy(name="rahul")
+
+	//copying all details of man1 to man3
+	val man3 = man1.copy();
+
+	//declaring heights of individual men
+	man1.height=100
+	man2.height=90
+	man3.height=110
+
+	//man1 & man3 have different class body values,
+	//but same parameter values
+
+	//printing info all 3 men
+	println("${man1} has ${man1.height} cm height")
+	println("${man2} has ${man2.height} cm height")
+	println("${man3} has ${man3.height} cm height")
+
+}
+```
+
+**Output**
+
+```
+man(name=manish, age=18) has 100 cm height
+man(name=rahul, age=18) has 90 cm height
+man(name=manish, age=18) has 110 cm height
+```
+
+### hashCode() and equals()
+
+`hashCode()` 함수는 객체의 hash code 값을 반환한다.
+
+`equals()` 메서드는 두 개의 객체가 동일한지 여부를 반환하는데, `Float`와 `Double` 값에 대해서 다르게 작동한다.
+
+#### Declaration of hashCode()
+
+```kotlin
+open fun hashCode(): Int
+```
+
+#### Properties of hashCode()
+- 동일한 객체에 대해 두 번 선언된 해시 코드는 동일
+- `equals()` 메서드를 통해 두 객체가 동일하다면, 해시 코드도 동일
+
+```kotlin
+fun main(args: Array<String>)
+{
+	//declaring a data class
+	data class man(val name: String, val age: Int)
+	
+	val man1 = man("manish",18)
+	val man2 = man1.copy(name="rahul")
+	val man3 = man1.copy();
+
+	val hash1=man1.hashCode();
+	val hash2=man2.hashCode();
+	val hash3=man3.hashCode();
+
+	println(hash1)
+	println(hash2)
+	println(hash3)
+
+	//checking equality of these hash codes
+	println("hash1 == hash 2 ${hash1.equals(hash2)}")
+	println("hash2 == hash 3 ${hash2.equals(hash3)}")
+	println("hash1 == hash 3 ${hash1.equals(hash3)}")
+}
+```
+
+`man1`과 `man3`는 동일한 객체이기 때문에 `equals()`의 결과와 `hashCode()`에 대한 결과가 같다.
+
+```
+835510190
+-938448478
+835510190
+hash1 == hash 2 false
+hash2 == hash 3 false
+hash1 == hash 3 true
+```
+
+## Kotlin Sealed Classes
+
+코틀린은 sealed 클래스로 알려진 클래스를 제공한다. 자바에서 제공되지 않는 타입이며, sealed 클래스는 super 클래스를 상속받는 child 클래스의 종류를 제한하는 특성을 가지고 있다. sealed 클래스는 런타임이 아니라 컴파일 타임에 일치하는 유형을 제한하여 타입의 안전을 보장한다.
+
+### Declaration of sealed class
+
+sealed 클래스를 정의하기 위해 `sealed` 키워드로 클래스 modifier를 선언해주면 된다. sealed 클래스는 또 하나의 특별한 기능을 가지고 있는데, 이 클래스의 생성자들은 기본적으로 `private`이다.
+
+```kotlin
+sealed class Demo
+```
+
+sealed 클래스는 암시적으로 `abstract`이기 때문에 인스턴스화 될 수 없다.
+
+### Kotlin program of sealed class
+
+```kotlin
+sealed class Demo {
+	class A : Demo() {
+		fun display()
+		{
+			println("Subclass A of sealed class Demo")
+		}
+	}
+	class B : Demo() {
+		fun display()
+		{
+			println("Subclass B of sealed class Demo")
+		}
+	}
+}
+fun main()
+{
+	val obj = Demo.B()
+	obj.display()
+
+	val obj1 = Demo.A()
+	obj1.display()
+}
+```
+
+**Output**
+```
+Subclass B of sealed class Demo
+Subclass A of sealed class Demo
+```
+
+sealed 클래스의 모든 서브클래스는 동일한 코틀린 파일 내에 정의되어야 한다. 단, sealed 클래스 내에 정의할 필요는 없으며, sealed 클래스가 보이는 모든 범위에서 정의할 수 있다.
+
+```kotlin
+// A sealed class with a single subclass defined inside
+sealed class ABC {
+ class X: ABC(){...}
+}
+
+// Another subclass of the sealed class defined
+class Y: ABC() {
+  class Z: ABC()   // This will cause an error. Sealed class is not visible here
+}
+```
+
+### Sealed class with when
+
+sealed 클래스는 거의 `when`과 함께 사용된다. `when`은 모든 케이스에 대해 처리되어야 하며 `else` 구문이 필요하지만 sealed 클래스를 사용하면 컴파일 시점에 하위 클래스들이 정해져있어 `else` 없이 구현할 수 있다.
+
+#### Example to demonstrate sealed classes with a when clause
+
+```kotlin
+// A sealed class with a string property
+sealed class Fruit
+	(val x: String)
+{
+	// Two subclasses of sealed class defined within
+	class Apple : Fruit("Apple")
+	class Mango : Fruit("Mango")
+}
+
+// A subclass defined outside the sealed class
+class Pomegranate: Fruit("Pomegranate")
+
+// A function to take in an object of type Fruit
+// And to display an appropriate message depending on the type of Fruit
+fun display(fruit: Fruit){
+	when(fruit)
+	{
+		is Fruit.Apple -> println("${fruit.x} is good for iron")
+		is Fruit.Mango -> println("${fruit.x} is delicious")
+		is Pomegranate -> println("${fruit.x} is good for vitamin d")
+	}
+}
+fun main()
+{
+	// Objects of different subclasses created
+	val obj = Fruit.Apple()
+	val obj1 = Fruit.Mango()
+	val obj2 = Pomegranate()
+
+	// Function called with different objects
+	display(obj)
+	display(obj1)
+	display(obj2)
+}
+```
+**Output**
+
+```
+Apple is good for iron
+Mango is delicious
+Pomegranate is good for vitamin d
+```
+
+## Kotlin Abstract class
+
+코틀린에서 abstract 클래스는 `abstract` 키워드를 사용해 선언된다. abstract 클래스는 인스턴스화 될 수 없으며 이는 객체를 만들 수 없다는 의미이다. 
+
+### Abstract class declaration
+
+```kotlin
+abstract class className {
+    .........
+}
+```
+
+### Points to remember 
+
+1. abstract 클래스로 객체를 생성할 수 없다.
+1. abstract 클래스의 모든 변수(속성)와 멤버 함수는 기본적으로 non-abstract이다. 따라서 이것들을 child 클래스에서 override 하려면 `open` 키워드를 사용해야 한다.
+1. 멤버 함수를 `abstract`로 선언했다면, `open`이 기본값이기 때문에 `open` 키워드를 사용할 필요가 없다.
+1. abstract 멤버 함수가 바디를 가지고 있지 않으며, 파생 클래스에서 구현되어야 한다.
+
+```kotlin
+abstract class className(val x: String) {   // Non-Abstract Property
+         
+    abstract var y: Int      // Abstract Property
+
+    abstract fun method1()   // Abstract Methods
+
+    fun method2() {          // Non-Abstract Method
+        println("Non abstract function")
+    }
+}
+```
+
+#### Kotlin program of using both abstract and non-abstract members in an abstract class
+
+```kotlin
+//abstract class
+abstract class Employee(val name: String,val experience: Int) { // Non-Abstract
+																// Property
+	// Abstract Property (Must be overridden by Subclasses)
+	abstract var salary: Double
+	
+	// Abstract Methods (Must be implemented by Subclasses)
+	abstract fun dateOfBirth(date:String)
+
+	// Non-Abstract Method
+	fun employeeDetails() {
+		println("Name of the employee: $name")
+		println("Experience in years: $experience")
+		println("Annual Salary: $salary")
+	}
+}
+// derived class
+class Engineer(name: String,experience: Int) : Employee(name,experience) {
+	override var salary = 500000.00
+	override fun dateOfBirth(date:String){
+		println("Date of Birth is: $date")
+	}
+}
+fun main(args: Array<String>) {
+	val eng = Engineer("Praveen",2)
+	eng.employeeDetails()
+	eng.dateOfBirth("02 December 1994")
+}
+```
+
+**Output**
+
+```
+Name of the employee: Praveen
+Experience in years: 2
+Annual Salary: 500000.0
+Date of Birth is: 02 December 1994
+```
+
+### Overriding a non-abstract open member with an abstract one
+
+코틀린에선 `open` 클래스의 non-abstract `open` 멤버 함수를 `override` 키워드를 이용해 abstract 클래스에서 override 할 수 있다.
+
+```kotlin
+open class Livingthings {
+	open fun breathe() {
+		println("All living things breathe")
+	}
+}
+abstract class Animal : Livingthings() {
+	override abstract fun breathe()
+}
+class Dog: Animal(){
+	override fun breathe() {
+		println("Dog can also breathe")
+	}
+}
+fun main(args: Array<String>){
+	val lt = Livingthings()
+	lt.breathe()
+	val d = Dog()
+	d.breathe()
+}
+```
+
+**Output**
+```
+All living things breathe
+Dog can also breathe
+```
+
+### Multiple derived classes
+
+abstract 클래스의 abstract 멤버는 파생 클래스에서 override 될 수 있다. 
+
+```kotlin
+// abstract class
+abstract class Calculator {
+	abstract fun cal(x: Int, y: Int) : Int
+}
+// addition of two numbers
+class Add : Calculator() {
+	override fun cal(x: Int, y: Int): Int {
+		return x + y
+	}
+}
+// subtraction of two numbers
+class Sub : Calculator() {
+	override fun cal(x: Int, y: Int): Int {
+		return x - y
+	}
+}
+// multiplication of two numbers
+class Mul : Calculator() {
+	override fun cal(x: Int, y: Int): Int {
+		return x * y
+	}
+}
+fun main(args: Array<String>) {
+	var add: Calculator = Add()
+	var x1 = add.cal(4, 6)
+	println("Addition of two numbers $x1")
+	var sub: Calculator = Sub()
+	var x2 = sub.cal(10,6)
+	println("Subtraction of two numbers $x2")
+	var mul: Calculator = Mul()
+	var x3 = mul.cal(20,6)
+	println("Multiplication of two numbers $x3")
+}
+```
+
+**Output**
+```
+Addition of two numbers 10
+Subtraction of two numbers 4
+Multiplication of two numbers 120
+Division of two numbers 3
+```
+
+## Enum Classes in Kotlin
+
+프로그래밍할 때 특정한 값만 가지는 유형이 필요할 때가 있다. 이를 만족시키기 위해 등장한 것이 Enum 클래스이다. 
+
+다른 프로그래밍 언어들처럼, 코틀린에서도 `enum`은  고유의 타입을 가지고 있다.
+
+### Some important points about enum classes in kotlin
+
+- enum 상수는 단순한 상수 집합이 아니다. 상수에는 속성, 메서드 등이 있다.
+- 각 enum 상수는 클래스의 개별 인스턴스 역할을 하며 `,`로 구분된다.
+- enum은 상수에 미리 정의된 이름을 할당해 가독성을 높인다.
+- enum 클래스의 인스턴스는 생성자를 사용해 생성할 수 없다.
+
+enum은 `enum` 키워드를 이용해 선언할 수 있다.
+
+```kotlin
+enum class DAYS{
+  SUNDAY,
+  MONDAY,
+  TUESDAY,
+  WEDNESDAY,
+  THURSDAY,
+  FRIDAY,
+  SATURDAY
+}
+```
+
+### Initializing enums 
+
+코틀린에서 enum은 자바의 enum과 같이 생성자를 가질 수 있다. enum 상수는 enum 클래스의 인스턴스이므로 primary constructor에 값을 전달해 상수를 초기화 할 수 있다.
+
+```kotlin
+enum class Cards(val color: String) {
+    Diamond("black"),
+    Heart("red"),
+}
+```
+
+우리는 쉽게 `card`의 `color`에 접근할 수 있다.
+
+```kotlin
+val color = Cards.Diamond.color
+```
+
+### Enums properties and methods
+
+자바나 다른 프로그래밍 언어와 같이, 코틀린 enum 클래스는 사용할 수 있는 몇 가지의 내장된 속성과 함수를 가지고 있다.
+
+#### Properties
+
+- ordinal : 이 속성은 상수의 순서 값(일반적으로 0 기반 index)을 저장
+- name : 이 속성은 상수의 이름을 저장
+
+#### Methods 
+
+- values : 이 메서드는 enum 클래스에 정의된 모든 상수에 목록을 반환
+- valueOf : 이 메서드는 입력 문자열과 일치하는 enum 상수를 반환
+
+```kotlin
+enum class DAYS {
+	SUNDAY,
+	MONDAY,
+	TUESDAY,
+	WEDNESDAY,
+	THURSDAY,
+	FRIDAY,
+	SATURDAY
+}
+fun main()
+{
+	// A simple demonstration of properties and methods
+	for (day in DAYS.values()) {
+		println("${day.ordinal} = ${day.name}")
+	}
+	println("${DAYS.valueOf(" WEDNESDAY ")}")
+}
+```
+
+**Output**
+```
+0 = SUNDAY
+1 = MONDAY
+2 = TUESDAY
+3 = WEDNESDAY
+4 = THURSDAY
+5 = FRIDAY
+6 = SATURDAY
+WEDNESDAY
+```
+
+### Enum class properties and functions 
+
+코틀린에선 enum 클래스를 정의할 수 있다. 이 클래스의 타입은 자신만의 속성과 함수들을 가질 수 있다. 속성은 기본 값으로 지정할 수 있지만, 제공되지 않는 경우 각 상수는 속성에 대한 자체적인 값을 정의한다. 함수의 경우 특정 클래스의 인스턴스에 의존하지 않도록 보통 companion object 안에 정의된다. 하지만 companion object 없이도 정의될 수 있다.
+
+```kotlin
+// A property with default value provided
+enum class DAYS(val isWeekend: Boolean = false){
+	SUNDAY(true),
+	MONDAY,
+	TUESDAY,
+	WEDNESDAY,
+	THURSDAY,
+	FRIDAY,
+	// Default value overridden
+	SATURDAY(true);
+
+	companion object{
+		fun today(obj: DAYS): Boolean {
+			return obj.name.compareTo("SATURDAY") == 0 || obj.name.compareTo("SUNDAY") == 0
+		}
+	}
+}
+
+fun main(){
+	// A simple demonstration of properties and methods
+	for(day in DAYS.values()) {
+		println("${day.ordinal} = ${day.name} and is weekend ${day.isWeekend}")
+	}
+	val today = DAYS.MONDAY;
+	println("Is today a weekend ${DAYS.today(today)}")
+}
+```
+
+**Output**
+
+```
+0 = SUNDAY and is weekend true
+1 = MONDAY and is weekend false
+2 = TUESDAY and is weekend false
+3 = WEDNESDAY and is weekend false
+4 = THURSDAY and is weekend false
+5 = FRIDAY and is weekend false
+6 = SATURDAY and is weekend true
+Is today a weekend false
+```
+
+### Enums as Anonymous Classes
+
+enum 상수는 클래스의 abstract 함수를 재정의하는 것과 함께 자체 함수를 구현함으로써 익명 클래스처럼 동작한다. 중요한 점은 각 enum 상수는 재정의 되어야 한다는 것이다.
+
+```kotlin
+// defining enum class
+enum class Seasons(var weather: String) {
+	Summer("hot"){
+		// compile time error if not override the function foo()
+		override fun foo() {			
+			println("Hot days of a year")
+		}
+	},
+	Winter("cold"){
+		override fun foo() {
+			println("Cold days of a year")
+		}
+	},
+	Rainy("moderate"){
+		override fun foo() {
+			println("Rainy days of a year")
+		}
+	};
+	abstract fun foo()
+}
+// main function
+fun main(args: Array<String>) {
+	// calling foo() function override be Summer constant
+	Seasons.Summer.foo()
+}
+```
+
+**Output**
+
+```
+Hot days of a year
+```
+
+### Usage of when expression with enum class
+
+코틀린에서 enum을 사용함으로써 얻는 장점은 `when`과 함께 사용되었을 때이다. enum 클래스는 취할 수 있는 값을 제한하기 때문에 모든 상수에 대한 정의와 함께 사용될 경우 다른 `else`가 필요하지 않다. `else`를 사용하면 컴파일러가 경고를 발생시킬 수 있다.
+
+```kotlin
+enum class DAYS{
+	SUNDAY,
+	MONDAY,
+	TUESDAY,
+	WEDNESDAY,
+	THURSDAY,
+	FRIDAY,
+	SATURDAY;
+}
+
+fun main(){
+	when(DAYS.SUNDAY){
+		DAYS.SUNDAY -> println("Today is Sunday")
+		DAYS.MONDAY -> println("Today is Monday")
+		DAYS.TUESDAY -> println("Today is Tuesday")
+		DAYS.WEDNESDAY -> println("Today is Wednesday")
+		DAYS.THURSDAY -> println("Today is Thursday")
+		DAYS.FRIDAY -> println("Today is Friday")
+		DAYS.SATURDAY -> println("Today is Saturday")
+		// Adding an else clause will generate a warning
+	}
+}
+```
+
+**Output**
+
+```
+Today is Sunday
+```
+
+## Kotlin extension function
+
+코틀린은 프로그래머에게 기존 클래스를 상속하지 않고도 더 많은 기능을 추가할 수 있는 기능을 제공한다. 이 기능은 extension으로 알려진 기능을 통해 구현된다. 기존 클래스에 함수가 추가될 때 이를 Extension Funcion이라 한다.
+
+클래스에 extension 함수를 추가하려면, 다음과 같이 클래스 이름을 통해 추가할 새로운 함수를 정의한다.
+
+```kotlin
+// A sample class to demonstrate extension functions
+class Circle (val radius: Double){
+
+	// member function of class
+	fun area(): Double{
+		return Math.PI * radius * radius;
+	}
+}
+fun main(){
+	// Extension function created for a class Circle
+	fun Circle.perimeter(): Double{
+		return 2*Math.PI*radius;
+	}
+
+	// create object for class Circle
+	val newCircle = Circle(2.5);
+
+	// invoke member function
+	println("Area of the circle is ${newCircle.area()}")
+
+	//invoke extension function
+	println("Perimeter of the circle is ${newCircle.perimeter()}")
+}
+```
+
+**Output**
+```
+Area of the circle is 19.634954084936208
+Perimeter of the circle is 15.707963267948966
+```
+
+### Extended library class using extension function 
+
+코틀린은 유저가 정의한 클래스 말고도 라이브러리 클래스들도 확장할 수 있다. 위에서 extension 함수를 정의한 것과 같이 라이브러리도 유사하게 함수를 추가할 수 있다.
+
+```kotlin
+fun main(){
+
+	// Extension function defined for Int type
+	fun Int.abs() : Int{
+		return if(this < 0) -this else this
+	}
+
+	println((-4).abs())
+	println(4.abs())
+}
+```
+
+### Extensions are resolved statically
+
+한가지 중요한 점은 extenstion 함수는 정적으로 바인딩 된다는 것이다. 정적 바인딩은 컴파일 시간에 이루어지기 때문에 컴파일 이후로 값이 변경되지 않는다는 것이다.
+
+클래스 `B`가 클래스 `A`를 상속받고 `display()` 함수에 전달되는 인자는 `B` 클래스이다. 동적 메서드였을 경우 25가 출력되어야 하지만 extension 함수는 정적 메서드이기 때문에 `A` 타입의 함수가 호출된다. 그래서 10이 출력되게 된다.
+
+```kotlin
+// Open class created to be inherited
+open class A(val a:Int, val b:Int){
+}
+
+// Class B inherits A
+class B():A(5, 5){}
+
+fun main(){
+	
+	// Extension function operate defined for A
+	fun A.operate():Int{
+		return a+b
+	}
+
+	// Extension function operate defined for B
+	fun B.operate():Int{
+		return a*b;
+	}
+
+	// Function to display static dispatch
+	fun display(a: A){
+		print(a.operate())
+	}
+
+	// Calling display function
+	display(B())
+}
+```
+
+**Output**
+
+```
+10
+```
+
+### Nullable Reciever 
+
+extension 함수는 클래스 타입이 nullable로도 정의될 수 있다. 이 경우 extension 함수 내부에서 null 검사를 추가하고 적절한 값을 반환한다.
+
+```kotlin
+// A sample class to display name 
+class AB(val name: String){
+	override fun toString(): String {
+		return "Name is $name"
+	}
+}
+
+fun main(){
+	// An extension function as a nullable receiver
+	fun AB?.output(){
+		if(this == null){
+			println("Null")
+		}else{
+			println(this.toString())
+		}
+	}
+
+	val x = AB("Charchit")
+	
+	// Extension function called using an instance
+	x.output()
+	// Extension function called on null
+	null.output()
+}
+```
+**Output**
+
+```
+Name is Charchit
+Null
+```
+
+### Companion Object Extensions
+
+클래스가 companion object를 포함한다면, companion object에 대한 extension 함수와 속성을 정의할 수 있다.
+
+```kotlin
+class MyClass {
+	companion object {
+		// member function of companion object
+		fun display(str :String) : String{
+			return str
+		}
+	}
+}
+	// extension function of companion object
+fun MyClass.Companion.abc(){
+	println("Extension function of companion object")
+}
+fun main(args: Array<String>) {
+	val ob = MyClass.display("Function declared in companion object")
+	println(ob)
+	// invoking the extension function
+	val ob2 = MyClass.abc()
+}
+```
+
+**Output**
+
+```
+Function declared in companion object
+Extension function of companion object
+```
+
+## Kotlin generics
+
+Generics는 다양한 데이터 타입을 사용해 접근할 수 있는 클래스, 메서드, 속성을 정의하는 동시에 컴파일 타임에 안전성을 유지하는 강력한 기능이다.
+
+### Creating parameterized classes
+
+제네릭 타입은 타입에 따라 파라미터로 구분되는 클래스나 메서드이다. 항상 `()`을 이용해 파라미터를 지정한다.
+
+```kotlin
+class MyClass<T>(text: T) {
+    var name = text
+}
+```
+
+`MyClass` 클래스의 인스턴스를 생성하기 위해 인자를 전달해야 한다. 
+
+```kotlin
+val my : MyClass<String> = Myclass<String>("GeeksforGeeks")
+```
+
+파라미터를 생성자의 인자로부터 추론할 수 있는 경우 인자의 타입을 생략할 수 있다. 인자로 `String` 타입을 전달해 컴파일러가 MyClass\<String\> 타입인 것을 알 수 있다.
+
+```kotlin
+val my = MyClass("GeeksforGeeks") 
+```
+
+### Advantages of generic
+
+1. 타입 캐스팅을 피할 수 있다.
+	- 객체의 타입 캐스트가 필요하지 않다.
+1. 타입 안정성을 보장한다.
+	- 제네릭은 한 번에 하나의 객체 타입만 허용한다.
+1. 컴파일 타임 안정성을 보장한다.
+	- 제네릭 코드는 컴파일 타임에 검사되므로 런타임 에러를 방지한다.
+
+
+### Generic use in our program
+
+제네릭 타입의 파라미터를 전달하면 어떤 타입이 전달되는 처리할 수 있게 된다.
+
+#### Kotlin program using generic class
+
+```kotlin
+class Company<T> (text : T){
+	var x = text
+	init{
+		println(x)
+	}
+}
+fun main(args: Array<String>){
+	var name: Company<String> = Company<String>("GeeksforGeeks")
+	var rank: Company<Int> = Company<Int>(12)
+}
+```
+
+**Output**
+
+```
+GeeksforGeeks
+1234
+```
+
+### Variance 
+
+Variance이란 파라미터 타입이 클래스 계층에 영향을 주는 것을 말한다. 만약 A 타입의 값이 필요한 모든 클래스에 B 타입을 넣어도 문제가 없을 경우 B는 A의 하위 타입이 된다. 
+
+#### Invariance
+
+`Double`은 `Number`를 상속하고, `Double`의 supertype은 `Number`이다. 하지만 `A\<Double\>`의 supertype은 `A\<Number\>`가 아니다. 두 타입이 서로 상속 관계이지만 제네릭 클래스의 상속 관계가 아니라는 것을 Invariance라 한다.
+
+#### Covariance 
+
+Covariance는 Invariance의 반대이다. `Number`가 `Double`의 supertype일 때 `A\<Number\>`가 `A\<Double\>`의 supertype이면 이를 Covariance라 한다.
+
+코틀린에서 Generic의 모든 타입은 Invariance이다. 이것을 `out`과 `in` 키워드로 Covariance로 변경해 처리할 수 있다. 
+
+1. 선언한 곳의 variance 
+1. 사용되는 곳의 variance : Type projection
+
+#### The out Keywords 
+
+코틀린에선 제네릭 타입에 `out` 키워드를 사용할 수 있다. 즉, 이 참조를 모든 supertype에 할당할 수 있다. `out` 값은 지정된 클래스에 의해서만 생성될 수 있으며 소비될 수 없다. 
+
+타입 `T`의 값을 생성할 수 있는 `OutClass` 클래스를 정의했다. 
+
+```kotlin
+class OutClass<out T>(val value: T) {
+    fun get(): T {
+        return value
+    }
+}
+```
+
+그런 다음 `OutClass` 클래스의 supertype인 reference에 인스턴스를 할당할 수 있다.
+
+```kotlin
+val out = OutClass("string")
+val ref: OutClass<Any> = out   
+```
+
+### Contracovariance 
+
+Contracovariance는 반대의 방향으로 공변성 조건을 만족하는 것을 말한다. 즉, `Number`가 `Double`의 supertype 일 때 `A\<Double\>`이 `A\<Number\>`의 supertype이라면 Contracovariance라 한다.
+
+#### The in Keyword
+
+subtype의 참조에 할당하려는 경우 제네릭 타입에 `in` 키워드를 사용할 수 있다. `in` 키워드는 소비되는 파라미터 타입에만 사용할 수 있으며, 생성되지 않는다.
+
+선언된 `toString()` 메서드를 가지고 있으며 `T` 타입의 값만 소비하고 있다. 
+
+```kotlin
+class InClass<in T> {
+    fun toString(value: T): String {
+        return value.toString()
+    }
+}
+```
+
+그럼 해당 Number 타입의 reference를 subtype의 reference에 할당할 수 있다.
+
+```kotlin
+val inClassObject: InClass<Number> = InClass()
+val ref<Int> = inClassObject
+```
+
+### Type projections
+
+어떤 타입 배열의 모든 요소를 Any 타입으로 복사하려면 가능할 수 있지만, 컴파일러가 코드를 컴파일할 수 있도록 하려면 입력 파라미터에 `out` 키워드를 선언해주어야 한다. 이것은 컴파일러가 입력 파라미터가 Any 타입의 subtype이라고 추론할 수 있게 해준다.
+
+#### Kotlin program of copying elements of one array into another
+
+```kotlin
+fun copy(from: Array<out Any>, to: Array<Any>) {
+	assert(from.size == to.size)
+	// copying (from) array to (to) array
+	for (i in from.indices)
+		to[i] = from[i]
+	// printing elements of array in which copied
+	for (i in to.indices) {
+	println(to[i])
+	}
+}
+fun main(args :Array<String>) {
+	val ints: Array<Int> = arrayOf(1, 2, 3)
+	val any :Array<Any> = Array<Any>(3) { "" }
+	copy(ints, any)
+
+}
+```
+
+**Output**
+
+```
+1
+2
+3
+```
+
+### Star projections
+
+값의 특정 타입을 알지 못하고 배열의 모든 요소를 print 하는 경우 `*` projection을 사용한다.
+
+```kotlin
+// star projection in array
+fun printArray(array: Array<*>) {
+	array.forEach { print(it) }
+}
+fun main(args :Array<String>) {
+	val name = arrayOf("Geeks","for","Geeks")
+	printArray(name)
+}
+```
+
+**Output**
+
+```
+GeeksforGeeks
+```
+
 ## References
 - [OOPs Concept](https://www.geeksforgeeks.org/kotlin-programming-language/?ref=ghm)
+- [Kotlin - Sealed class 구현 방법 및 예제](https://codechacha.com/ko/kotlin-sealed-classes/)
+- [Kotlin - Generics 클래스, 함수를 정의하는 방법](https://codechacha.com/ko/generics-class-function-in-kotlin/)
