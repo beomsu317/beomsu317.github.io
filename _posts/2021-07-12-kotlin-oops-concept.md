@@ -2082,7 +2082,7 @@ fun main(args :Array<String>) {
 
 ### Star projections
 
-값의 특정 타입을 알지 못하고 배열의 모든 요소를 print 하는 경우 `*` projection을 사용한다.
+값의 특정 타입을 알지 못하고 배열의 모든 요소를 `print` 하는 경우 `*` projection을 사용한다.
 
 ```kotlin
 // star projection in array
