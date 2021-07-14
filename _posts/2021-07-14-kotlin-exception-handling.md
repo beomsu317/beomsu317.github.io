@@ -1,5 +1,5 @@
 ---
-title: Exception Handling 
+title: Kotlin Exception Handling 
 author: Beomsu Lee
 category: [Android,Kotlin]
 tags: [kotlin]
