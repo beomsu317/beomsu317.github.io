@@ -1,0 +1,209 @@
+<!DOCTYPE html><html lang="en-US" ><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><meta name="generator" content="Jekyll v4.2.0" /><meta property="og:title" content="Kotlin Exception Handling" /><meta name="author" content="Beomsu Lee" /><meta property="og:locale" content="en_US" /><meta name="description" content="Kotlin Exception Handling" /><meta property="og:description" content="Kotlin Exception Handling" /><link rel="canonical" href="https://beomsu317.github.io/posts/kotlin-exception-handling/" /><meta property="og:url" content="https://beomsu317.github.io/posts/kotlin-exception-handling/" /><meta property="og:site_name" content="BS Blog" /><meta property="og:type" content="article" /><meta property="article:published_time" content="2021-07-14T00:00:00+09:00" /><meta name="twitter:card" content="summary" /><meta property="twitter:title" content="Kotlin Exception Handling" /><meta name="twitter:site" content="@" /><meta name="twitter:creator" content="@Beomsu Lee" /><meta name="google-site-verification" content="google_meta_tag_verification" /> <script type="application/ld+json"> {"description":"Kotlin Exception Handling","url":"https://beomsu317.github.io/posts/kotlin-exception-handling/","@type":"BlogPosting","headline":"Kotlin Exception Handling","dateModified":"2021-07-14T00:00:00+09:00","datePublished":"2021-07-14T00:00:00+09:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://beomsu317.github.io/posts/kotlin-exception-handling/"},"author":{"@type":"Person","name":"Beomsu Lee"},"@context":"https://schema.org"}</script><title>Kotlin Exception Handling | BS Blog</title><link rel="apple-touch-icon" sizes="180x180" href="/assets/img/favicons/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicons/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/img/favicons/favicon-16x16.png"><link rel="manifest" href="/assets/img/favicons/site.webmanifest"><link rel="shortcut icon" href="/assets/img/favicons/favicon.ico"><meta name="apple-mobile-web-app-title" content="BS Blog"><meta name="application-name" content="BS Blog"><meta name="msapplication-TileColor" content="#da532c"><meta name="msapplication-config" content="/assets/img/favicons/browserconfig.xml"><meta name="theme-color" content="#ffffff"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous"><link rel="dns-prefetch" href="https://fonts.gstatic.com"><link rel="preconnect" href="https://www.google-analytics.com" crossorigin="use-credentials"><link rel="dns-prefetch" href="https://www.google-analytics.com"><link rel="preconnect" href="https://www.googletagmanager.com" crossorigin="anonymous"><link rel="dns-prefetch" href="https://www.googletagmanager.com"><link rel="preconnect" href="https://cdn.jsdelivr.net"><link rel="dns-prefetch" href="https://cdn.jsdelivr.net"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.11.2/css/all.min.css"><link rel="stylesheet" href="/assets/css/style.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@1.0.1/dist/bootstrap-toc.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/magnific-popup@1.1.0/dist/magnific-popup.min.css"> <script src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script><body data-spy="scroll" data-target="#toc"><div id="sidebar" class="d-flex flex-column align-items-end"><div class="profile-wrapper text-center"><div id="avatar"> <a href="/" alt="avatar" class="mx-auto"> <img src="/assets/img/me.png" alt="avatar" onerror="this.style.display='none'"> </a></div><div class="site-title mt-3"> <a href="/">BS Blog</a></div><div class="site-subtitle font-italic">research & development</div></div><ul class="w-100"><li class="nav-item"> <a href="/" class="nav-link"> <i class="fa-fw fas fa-home ml-xl-3 mr-xl-3 unloaded"></i> <span>HOME</span> </a><li class="nav-item"> <a href="/categories/" class="nav-link"> <i class="fa-fw fas fa-stream ml-xl-3 mr-xl-3 unloaded"></i> <span>CATEGORIES</span> </a><li class="nav-item"> <a href="/tags/" class="nav-link"> <i class="fa-fw fas fa-tags ml-xl-3 mr-xl-3 unloaded"></i> <span>TAGS</span> </a><li class="nav-item"> <a href="/archives/" class="nav-link"> <i class="fa-fw fas fa-archive ml-xl-3 mr-xl-3 unloaded"></i> <span>ARCHIVES</span> </a><li class="nav-item"> <a href="/about/" class="nav-link"> <i class="fa-fw fas fa-info ml-xl-3 mr-xl-3 unloaded"></i> <span>ABOUT</span> </a></ul><div class="sidebar-bottom mt-auto d-flex flex-wrap justify-content-center"> <a href="https://github.com/beomsu317" aria-label="github" class="order-3" target="_blank" rel="noopener"> <i class="fab fa-github-alt"></i> </a> <a href="https://twitter.com/" aria-label="twitter" class="order-4" target="_blank" rel="noopener"> <i class="fab fa-twitter"></i> </a> <a href=" javascript:location.href = 'mailto:' + ['beomsu317','gmail.com'].join('@')" aria-label="email" class="order-5" > <i class="fas fa-envelope"></i> </a> <a href="/feed.xml" aria-label="rss" class="order-6" > <i class="fas fa-rss"></i> </a> <span class="icon-border order-2"></span> <span id="mode-toggle-wrapper" class="order-1"> <i class="mode-toggle fas fa-adjust"></i> <script type="text/javascript"> class ModeToggle { static get MODE_KEY() { return "mode"; } static get DARK_MODE() { return "dark"; } static get LIGHT_MODE() { return "light"; } constructor() { if (this.hasMode) { if (this.isDarkMode) { if (!this.isSysDarkPrefer) { this.setDark(); } } else { if (this.isSysDarkPrefer) { this.setLight(); } } } var self = this; /* always follow the system prefers */ this.sysDarkPrefers.addListener(function() { if (self.hasMode) { if (self.isDarkMode) { if (!self.isSysDarkPrefer) { self.setDark(); } } else { if (self.isSysDarkPrefer) { self.setLight(); } } self.clearMode(); } self.updateMermaid(); }); } /* constructor() */ setDark() { $('html').attr(ModeToggle.MODE_KEY, ModeToggle.DARK_MODE); sessionStorage.setItem(ModeToggle.MODE_KEY, ModeToggle.DARK_MODE); } setLight() { $('html').attr(ModeToggle.MODE_KEY, ModeToggle.LIGHT_MODE); sessionStorage.setItem(ModeToggle.MODE_KEY, ModeToggle.LIGHT_MODE); } clearMode() { $('html').removeAttr(ModeToggle.MODE_KEY); sessionStorage.removeItem(ModeToggle.MODE_KEY); } get sysDarkPrefers() { return window.matchMedia("(prefers-color-scheme: dark)"); } get isSysDarkPrefer() { return this.sysDarkPrefers.matches; } get isDarkMode() { return this.mode == ModeToggle.DARK_MODE; } get isLightMode() { return this.mode == ModeToggle.LIGHT_MODE; } get hasMode() { return this.mode != null; } get mode() { return sessionStorage.getItem(ModeToggle.MODE_KEY); } /* get the current mode on screen */ get modeStatus() { if (this.isDarkMode || (!this.hasMode && this.isSysDarkPrefer) ) { return ModeToggle.DARK_MODE; } else { return ModeToggle.LIGHT_MODE; } } updateMermaid() { if (typeof mermaid !== "undefined") { let expectedTheme = (this.modeStatus === ModeToggle.DARK_MODE? "dark" : "default"); let config = { theme: expectedTheme }; /* re-render the SVG › <https://github.com/mermaid-js/mermaid/issues/311#issuecomment-332557344> */ $(".mermaid").each(function() { let svgCode = $(this).prev().children().html(); $(this).removeAttr("data-processed"); $(this).html(svgCode); }); mermaid.initialize(config); mermaid.init(undefined, ".mermaid"); } } flipMode() { if (this.hasMode) { if (this.isSysDarkPrefer) { if (this.isLightMode) { this.clearMode(); } else { this.setLight(); } } else { if (this.isDarkMode) { this.clearMode(); } else { this.setDark(); } } } else { if (this.isSysDarkPrefer) { this.setLight(); } else { this.setDark(); } } this.updateMermaid(); } /* flipMode() */ } /* ModeToggle */ let toggle = new ModeToggle(); $(".mode-toggle").click(function() { toggle.flipMode(); }); </script> </span></div></div><div id="topbar-wrapper" class="row justify-content-center topbar-down"><div id="topbar" class="col-11 d-flex h-100 align-items-center justify-content-between"> <span id="breadcrumb"> <span> <a href="/"> Posts </a> </span> <span>Kotlin Exception Handling</span> </span> <i id="sidebar-trigger" class="fas fa-bars fa-fw"></i><div id="topbar-title"> Post</div><i id="search-trigger" class="fas fa-search fa-fw"></i> <span id="search-wrapper" class="align-items-center"> <i class="fas fa-search fa-fw"></i> <input class="form-control" id="search-input" type="search" aria-label="search" autocomplete="off" placeholder="Search..."> <i class="fa fa-times-circle fa-fw" id="search-cleaner"></i> </span> <span id="search-cancel" >Cancel</span></div></div><div id="main-wrapper"><div id="main"><div class="row"><div id="post-wrapper" class="col-12 col-lg-11 col-xl-8"><div class="post pl-1 pr-1 pl-sm-2 pr-sm-2 pl-md-4 pr-md-4"><h1 data-toc-skip>Kotlin Exception Handling</h1><div class="post-meta text-muted d-flex flex-column"><div> <span class="semi-bold"> Beomsu Lee </span> <span class="timeago " data-toggle="tooltip" data-placement="bottom" title="Wed, Jul 14, 2021, 12:00 AM +0900" prep="on" > Jul 14 <i class="unloaded">2021-07-14T00:00:00+09:00</i> </span></div><div> <span class="readtime" data-toggle="tooltip" data-placement="bottom" title="1348 words">7 min</span></div></div><div class="post-content"><h2 id="kotlin-exception-handling">Kotlin Exception Handling</h2><p>예외(Exception)는 예상하지 못하거나 원하지 않는 이벤트가 발생하는 것으로, 프로그램이 실행 중에 발생하며, 프로그램의 정상적인 흐름을 방해한다. 예외처리(Exception handling)은 런타임에 프로그램의 크래시를 방지하는 기술이다.</p><p>2가지 유형의 예외가 있다.</p><ol><li>Checked Exception - IOException, FileNotFoundException 등과 같은 예외는 전형적으로 메서드에 설정되고 컴파일 타임에 확인된다.<li>UnChecked Exception - 일반적으로 로직 오류로 인해 NullPointerException, ArrayIndexOutOfBoundException 등 런타임에 확인되는 예외이다.</ol><h3 id="kotlin-exceptions">Kotlin Exceptions</h3><p>코틀린에서 unchecked exception은 런타임에서만 발견된다. 모든 예외 클래스들은 <code class="language-plaintext highlighter-rouge">Throwable</code>의 자손이다.</p><p>일반적으로 <code class="language-plaintext highlighter-rouge">throw</code> 표현을 사용해 exception 객체를 넘긴다.</p><div lang="kotlin" class="language-kotlin highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre><span class="k">throw</span> <span class="nc">Exception</span><span class="p">(</span><span class="s">"Throw me"</span><span class="p">)</span>
+</pre></table></code></div></div><p>다음은 흔히 발생되는 예외이다.</p><ul><li>NullPointerException: 속성이나 메서드가 null 객체일 때 발생<li>Arithmetic Exception: 0으로 나누는 등의 잘못된 산술연산 시 발생<li>SecurityException: 보안을 위반할 때 발생<li>ArrayIndexOutOfBoundException: 배열의 크기를 넘어갔을 때 발생</ul><p>이러한 예외들을 처리하기 위해 <code class="language-plaintext highlighter-rouge">try-catch</code> 블록을 사용한다.</p><h3 id="kotlin-try-catch-block">Kotlin try-catch block</h3><p><code class="language-plaintext highlighter-rouge">try-catch</code> 블록을 사용해 프로그램의 예외를 처리할 수 있다. <code class="language-plaintext highlighter-rouge">try</code> 블록은 예외를 throw 하는 것에 대응하고, <code class="language-plaintext highlighter-rouge">catch</code> 블록은 발생된 예외를 처리한다. <code class="language-plaintext highlighter-rouge">try</code> 블록 뒤에는 <code class="language-plaintext highlighter-rouge">catch</code>나 <code class="language-plaintext highlighter-rouge">finally</code> 블록 중 하나 또는 둘 다 선언되어야 한다.</p><h4 id="syntax-for-try-catch-block">Syntax for try-catch block</h4><div lang="kotlin" class="language-kotlin highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre><td class="rouge-code"><pre><span class="k">try</span> <span class="p">{</span>
+   <span class="c1">// code that can throw exception</span>
+<span class="p">}</span> <span class="k">catch</span><span class="p">(</span><span class="n">e</span><span class="p">:</span> <span class="nc">ExceptionName</span><span class="p">)</span> <span class="p">{</span>
+   <span class="c1">// catch the exception and handle it</span>
+<span class="p">}</span>
+</pre></table></code></div></div><h4 id="kotlin-program-of-arithmetic-exception-handling-using-try-catch-block">Kotlin program of arithmetic exception handling using try-catch block</h4><div lang="kotlin" class="language-kotlin highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+</pre><td class="rouge-code"><pre><span class="k">import</span> <span class="nn">kotlin.ArithmeticException</span>
+
+<span class="k">fun</span> <span class="nf">main</span><span class="p">(</span><span class="n">args</span> <span class="p">:</span> <span class="nc">Array</span><span class="p">&lt;</span><span class="nc">String</span><span class="p">&gt;){</span>
+	<span class="k">try</span><span class="p">{</span>
+		<span class="kd">var</span> <span class="py">num</span> <span class="p">=</span> <span class="mi">10</span> <span class="p">/</span> <span class="mi">0</span>
+	<span class="p">}</span>
+	<span class="k">catch</span><span class="p">(</span><span class="n">e</span><span class="p">:</span> <span class="nc">ArithmeticException</span><span class="p">){</span>
+		<span class="c1">// caught and handles it</span>
+		<span class="nf">println</span><span class="p">(</span><span class="s">"Divide by zero not allowed"</span><span class="p">)</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+</pre></table></code></div></div><p><strong>Output</strong></p><div lang="plaintext" class="language-plaintext highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre>Divide by zero not allowed
+</pre></table></code></div></div><h4 id="kotlin-try-catch-block-as-an-expression">Kotlin try-catch block as an expression</h4><p>이미 알고 있듯이 expression은 항상 값을 반환한다. 코틀린에선 <code class="language-plaintext highlighter-rouge">try-catch</code> 블록을 expression으로 사용한다. expression에 의해 반환되는 값은 <code class="language-plaintext highlighter-rouge">try</code> 블록의 마지막 expression 또는 <code class="language-plaintext highlighter-rouge">catch</code> 블록의 마지막 expression이 된다. 예외가 발생하면 <code class="language-plaintext highlighter-rouge">catch</code> 블록이 값을 반환한다.</p><h4 id="kotlin-program-of-using-try-catch-as-an-expression">Kotlin program of using try-catch as an expression</h4><div lang="kotlin" class="language-kotlin highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+</pre><td class="rouge-code"><pre><span class="k">fun</span> <span class="nf">test</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="nc">Int</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="nc">Int</span><span class="p">)</span> <span class="p">:</span> <span class="nc">Any</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="k">try</span> <span class="p">{</span>
+		<span class="n">a</span><span class="p">/</span><span class="n">b</span>
+		<span class="c1">//println("The Result is: "+ a / b)</span>
+	<span class="p">}</span>
+	<span class="k">catch</span><span class="p">(</span><span class="n">e</span><span class="p">:</span><span class="nc">Exception</span><span class="p">){</span>
+		<span class="nf">println</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+		<span class="s">"Divide by zero not allowed"</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+<span class="c1">// main function</span>
+<span class="k">fun</span> <span class="nf">main</span><span class="p">(</span><span class="n">args</span><span class="p">:</span> <span class="nc">Array</span><span class="p">&lt;</span><span class="nc">String</span><span class="p">&gt;)</span> <span class="p">{</span>
+	<span class="c1">// invoke test function</span>
+	<span class="kd">var</span> <span class="py">result1</span> <span class="p">=</span> <span class="nf">test</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">2</span> <span class="p">)</span> <span class="c1">// execute try block</span>
+	<span class="nf">println</span><span class="p">(</span><span class="n">result1</span><span class="p">)</span>
+	<span class="kd">var</span> <span class="py">result</span> <span class="p">=</span> <span class="nf">test</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">0</span> <span class="p">)</span> <span class="c1">// execute catch block</span>
+	<span class="nf">println</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></table></code></div></div><p><strong>Output</strong></p><div lang="plaintext" class="language-plaintext highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+</pre><td class="rouge-code"><pre>5
+java.lang.ArithmeticException: / by zero
+Divide by zero not allowed
+</pre></table></code></div></div><h3 id="kotlin-finally-block">Kotlin finally block</h3><p><code class="language-plaintext highlighter-rouge">finally</code> 블록은 예외처리 여부와 상관없이 항상 실행된다. 따라서 중요한 코드 문을 실행하는데 사용된다. 예를 들어, 파일을 open하면 예외의 발생 여부에 상관없으 close해주어야 하기 때문에 <code class="language-plaintext highlighter-rouge">finally</code> 블록에서 처리하는 경우가 있다.</p><p>또한 <code class="language-plaintext highlighter-rouge">try</code> 블록과 <code class="language-plaintext highlighter-rouge">finally</code> 블록 사이에 <code class="language-plaintext highlighter-rouge">catch</code> 블록을 스킵할 수 있다.</p><div lang="kotlin" class="language-kotlin highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre><td class="rouge-code"><pre><span class="k">try</span> <span class="p">{</span>
+   <span class="c1">// code that can throw exception</span>
+<span class="p">}</span> <span class="k">finally</span> <span class="p">{</span>
+   <span class="c1">// finally block code</span>
+<span class="p">}</span>
+</pre></table></code></div></div><h4 id="syntax-of-finally-block-with-try-catch-block">Syntax of finally block with try-catch block</h4><div lang="kotlin" class="language-kotlin highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+</pre><td class="rouge-code"><pre><span class="k">fun</span> <span class="nf">main</span> <span class="p">(</span><span class="n">args</span><span class="p">:</span> <span class="nc">Array</span><span class="p">&lt;</span><span class="nc">String</span><span class="p">&gt;){</span>
+	<span class="k">try</span> <span class="p">{</span>
+		<span class="kd">var</span> <span class="py">int</span> <span class="p">=</span> <span class="mi">10</span> <span class="p">/</span> <span class="mi">0</span>
+		<span class="nf">println</span><span class="p">(</span><span class="n">int</span><span class="p">)</span>
+	<span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="n">e</span><span class="p">:</span> <span class="nc">ArithmeticException</span><span class="p">)</span> <span class="p">{</span>
+		<span class="nf">println</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+	<span class="p">}</span> <span class="k">finally</span> <span class="p">{</span>
+		<span class="nf">println</span><span class="p">(</span><span class="s">"This block always executes"</span><span class="p">)</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+</pre></table></code></div></div><p><strong>Output</strong></p><div lang="plaintext" class="language-plaintext highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre><td class="rouge-code"><pre>java.lang.ArithmeticException: / by zero
+This block always executes
+</pre></table></code></div></div><h3 id="kotlin-throw-keyword">Kotlin throw keyword</h3><p><code class="language-plaintext highlighter-rouge">throw</code> 키워드를 사용해 예외를 명시적으로 발생시킬 수 있다. 또한 이 키워드를 통해 커스텀 예외를 throw 할 수 있다.</p><div lang="kotlin" class="language-kotlin highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+</pre><td class="rouge-code"><pre><span class="k">fun</span> <span class="nf">main</span><span class="p">(</span><span class="n">args</span><span class="p">:</span> <span class="nc">Array</span><span class="p">&lt;</span><span class="nc">String</span><span class="p">&gt;)</span> <span class="p">{</span>
+	<span class="nf">test</span><span class="p">(</span><span class="s">"abcd"</span><span class="p">)</span>
+	<span class="nf">println</span><span class="p">(</span><span class="s">"executes after the validation"</span><span class="p">)</span>
+<span class="p">}</span>
+<span class="k">fun</span> <span class="nf">test</span><span class="p">(</span><span class="n">password</span><span class="p">:</span> <span class="nc">String</span><span class="p">)</span> <span class="p">{</span>
+	<span class="c1">// calculate length of the entered password and compare</span>
+	<span class="k">if</span> <span class="p">(</span><span class="n">password</span><span class="p">.</span><span class="n">length</span> <span class="p">&lt;</span> <span class="mi">6</span><span class="p">)</span>
+		<span class="k">throw</span> <span class="nc">ArithmeticException</span><span class="p">(</span><span class="s">"Password is too short"</span><span class="p">)</span>
+	<span class="k">else</span>
+		<span class="nf">println</span><span class="p">(</span><span class="s">"Strong password"</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></table></code></div></div><p><strong>Output</strong></p><div lang="plaintext" class="language-plaintext highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre>Exception in thread "main" java.lang.ArithmeticException: Password is too short
+</pre></table></code></div></div><h2 id="kotlin-nested-try-block-and-multiple-catch-block">Kotlin Nested try block and multiple catch block</h2><h3 id="nested-try-block">Nested try block</h3><p>중첩된 <code class="language-plaintext highlighter-rouge">try</code> 블록이란 하나의 <code class="language-plaintext highlighter-rouge">try-catch</code> 블록 안에 다른 <code class="language-plaintext highlighter-rouge">try-catch</code> 블록이 있는 것이다. 내부에 예외가 발생했을 때 내부의 <code class="language-plaintext highlighter-rouge">catch</code>에 의해 처리되지 않는다면 외부의 <code class="language-plaintext highlighter-rouge">try-catch</code> 블록이 해당 예외를 처리한다.</p><h4 id="kotlin-program-of-nested-try-block">Kotlin program of nested try block</h4><div lang="kotlin" class="language-kotlin highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+</pre><td class="rouge-code"><pre><span class="k">fun</span> <span class="nf">main</span><span class="p">(</span><span class="n">args</span><span class="p">:</span> <span class="nc">Array</span><span class="p">&lt;</span><span class="nc">String</span><span class="p">&gt;)</span> <span class="p">{</span>
+	<span class="kd">val</span> <span class="py">numbers</span> <span class="p">=</span> <span class="nf">arrayOf</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span>
+
+	<span class="k">try</span> <span class="p">{</span>
+		<span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="k">in</span> <span class="n">numbers</span><span class="p">.</span><span class="n">indices</span><span class="p">)</span> <span class="p">{</span>
+			<span class="k">try</span> <span class="p">{</span>
+				<span class="kd">var</span> <span class="py">n</span> <span class="p">=</span> <span class="p">(</span><span class="mi">0</span><span class="o">..</span><span class="mi">4</span><span class="p">).</span><span class="nf">random</span><span class="p">()</span>
+				<span class="nf">println</span><span class="p">(</span><span class="n">numbers</span><span class="p">[</span><span class="n">i</span><span class="p">+</span><span class="mi">1</span><span class="p">]/</span><span class="n">n</span><span class="p">)</span>
+
+			<span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="n">e</span><span class="p">:</span> <span class="nc">ArithmeticException</span><span class="p">)</span> <span class="p">{</span>
+				<span class="nf">println</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+			<span class="p">}</span>
+		<span class="p">}</span>
+	<span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="n">e</span><span class="p">:</span> <span class="nc">ArrayIndexOutOfBoundsException</span><span class="p">)</span> <span class="p">{</span>
+		<span class="nf">println</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+</pre></table></code></div></div><p><strong>Output</strong></p><div lang="plaintext" class="language-plaintext highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+</pre><td class="rouge-code"><pre>2
+3
+java.lang.ArithmeticException: / by zero
+java.lang.ArrayIndexOutOfBoundsException: Index 4 out of bounds for length 4
+</pre></table></code></div></div><h3 id="multiple-catch-block">Multiple catch block</h3><p><code class="language-plaintext highlighter-rouge">try</code> 블록은 하나 이상의 <code class="language-plaintext highlighter-rouge">catch</code> 블록을 가질 수 있다. <code class="language-plaintext highlighter-rouge">try</code> 블록 안에서 어떤 예외가 발생할지 모르는 경우 여러개의 <code class="language-plaintext highlighter-rouge">catch</code> 블록을 배치할 수 있으며, 마지막 <code class="language-plaintext highlighter-rouge">catch</code> 블록에서는 <code class="language-plaintext highlighter-rouge">Exception</code> 클래스를 사용해 나머지 모든 예외를 처리할 수 있다.</p><h3 id="use-of-when-in-catch-block">Use of when in catch block</h3><p>코틀린에선 <code class="language-plaintext highlighter-rouge">when</code>을 사용해 다수의 <code class="language-plaintext highlighter-rouge">catch</code> 블록을 대체할 수 있다.</p><div lang="kotlin" class="language-kotlin highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+</pre><td class="rouge-code"><pre><span class="k">fun</span> <span class="nf">main</span><span class="p">(</span><span class="n">args</span><span class="p">:</span> <span class="nc">Array</span><span class="p">&lt;</span><span class="nc">String</span><span class="p">&gt;)</span> <span class="p">{</span>
+	<span class="kd">val</span> <span class="py">sc</span> <span class="p">=</span> <span class="s">"GeeksforGeeks"</span>
+	<span class="k">try</span> <span class="p">{</span>
+		<span class="kd">val</span> <span class="py">n</span> <span class="p">=</span> <span class="nc">Integer</span><span class="p">.</span><span class="nf">parseInt</span><span class="p">(</span><span class="n">sc</span><span class="p">.</span><span class="nf">nextLine</span><span class="p">())</span>
+		<span class="k">if</span> <span class="p">(</span><span class="mi">512</span> <span class="p">%</span> <span class="n">n</span> <span class="p">==</span> <span class="mi">0</span><span class="p">)</span>
+			<span class="nf">println</span><span class="p">(</span><span class="s">"$n is a factor of 512"</span><span class="p">)</span>
+	<span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="n">e</span><span class="p">:</span> <span class="nc">Exception</span> <span class="p">)</span> <span class="p">{</span>
+	<span class="k">when</span><span class="p">(</span><span class="n">e</span><span class="p">){</span>
+		<span class="k">is</span> <span class="nc">ArithmeticException</span> <span class="p">-&gt;</span> <span class="p">{</span> <span class="nf">println</span><span class="p">(</span><span class="s">"Arithmetic Exception: Divide by zero"</span><span class="p">)</span> <span class="p">}</span>
+		<span class="k">is</span> <span class="nc">NumberFormatException</span> <span class="p">-&gt;</span> <span class="p">{</span> <span class="nf">println</span><span class="p">(</span><span class="s">"Number Format Exception "</span><span class="p">)</span> <span class="p">}</span>
+	<span class="p">}</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+</pre></table></code></div></div><p><strong>Input</strong></p><div lang="plaintext" class="language-plaintext highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre>GeeksforGeeks
+</pre></table></code></div></div><p><strong>Output</strong></p><div lang="plaintext" class="language-plaintext highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre>Number Format Exception 
+</pre></table></code></div></div><h2 id="references">References</h2><ul><li><a href="https://www.geeksforgeeks.org/kotlin-programming-language/?ref=ghm">Exception Handling</a></ul></div><div class="post-tail-wrapper text-muted"><div class="post-meta mb-3"> <i class="far fa-folder-open fa-fw mr-1"></i> <a href='/categories/android/'>Android</a>, <a href='/categories/kotlin/'>Kotlin</a></div><div class="post-tags"> <i class="fa fa-tags fa-fw mr-1"></i> <a href="/tags/kotlin/" class="post-tag no-text-decoration" >kotlin</a></div><div class="post-tail-bottom d-flex justify-content-between align-items-center mt-3 pt-5 pb-2"><div class="license-wrapper"> This post is licensed under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a> by the author.</div><div class="share-wrapper"> <span class="share-label text-muted mr-1">Share</span> <span class="share-icons"> <a href="https://twitter.com/intent/tweet?text=Kotlin Exception Handling - BS Blog&url=https://beomsu317.github.io/posts/kotlin-exception-handling/" data-toggle="tooltip" data-placement="top" title="Twitter" target="_blank" rel="noopener" aria-label="Twitter"> <i class="fa-fw fab fa-twitter"></i> </a> <a href="https://www.facebook.com/sharer/sharer.php?title=Kotlin Exception Handling - BS Blog&u=https://beomsu317.github.io/posts/kotlin-exception-handling/" data-toggle="tooltip" data-placement="top" title="Facebook" target="_blank" rel="noopener" aria-label="Facebook"> <i class="fa-fw fab fa-facebook-square"></i> </a> <a href="https://telegram.me/share?text=Kotlin Exception Handling - BS Blog&url=https://beomsu317.github.io/posts/kotlin-exception-handling/" data-toggle="tooltip" data-placement="top" title="Telegram" target="_blank" rel="noopener" aria-label="Telegram"> <i class="fa-fw fab fa-telegram"></i> </a> <i class="fa-fw fas fa-link small" onclick="copyLink()" data-toggle="tooltip" data-placement="top" title="Copy link"></i> </span></div></div></div></div></div><div id="panel-wrapper" class="col-xl-3 pl-2 text-muted topbar-down"><div class="access"><div id="access-tags"> <span>Trending Tags</span><div class="d-flex flex-wrap mt-3 mb-1 mr-3"> <a class="post-tag" href="/tags/android/">android</a> <a class="post-tag" href="/tags/exploitation/">exploitation</a> <a class="post-tag" href="/tags/algorithm/">algorithm</a> <a class="post-tag" href="/tags/dynamic-programming/">dynamic programming</a> <a class="post-tag" href="/tags/heap/">heap</a> <a class="post-tag" href="/tags/stack/">stack</a> <a class="post-tag" href="/tags/kernel/">kernel</a> <a class="post-tag" href="/tags/dagger/">dagger</a> <a class="post-tag" href="/tags/house-of-series/">house of series</a> <a class="post-tag" href="/tags/return-oriented-programming/">return-oriented programming</a></div></div></div><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@1.0.1/dist/bootstrap-toc.min.js"></script><div id="toc-wrapper" class="pl-0 pr-4 mb-5"> <span class="pl-3 pt-2 mb-2">Contents</span><nav id="toc" data-toggle="toc"></nav></div></div></div><div class="row"><div class="col-12 col-lg-11 col-xl-8"><div id="post-extend-wrapper" class="pl-1 pr-1 pl-sm-2 pr-sm-2 pl-md-4 pr-md-4"><div id="related-posts" class="mt-5 mb-2 mb-sm-4"><h3 class="pt-2 mt-1 mb-4 ml-1" data-toc-skip>Further Reading</h3><div class="card-deck mb-4"><div class="card"> <a href="/posts/kotlin-basic/"><div class="card-body"> <span class="timeago small" > Jul 9 <i class="unloaded">2021-07-09T00:00:00+09:00</i> </span><h3 class="pt-0 mt-1 mb-3" data-toc-skip>Kotlin Basic</h3><div class="text-muted small"><p> Kotlin Data Types 코틀린의 다양한 데이터 타입의 종류이다. Integer Data type Floating-point Data Type Boolean Data Type Character Data Type Integer Data Type Data Type Bits M...</p></div></div></a></div><div class="card"> <a href="/posts/kotlin-array-string/"><div class="card-body"> <span class="timeago small" > Jul 10 <i class="unloaded">2021-07-10T00:00:00+09:00</i> </span><h3 class="pt-0 mt-1 mb-3" data-toc-skip>Kotlin Array & String</h3><div class="text-muted small"><p> Kotlin Array Create Array arrayOf() 함수를 사용해 배열을 생성할 수 있다. val num = arrayOf(1, 2, 3, 4) //implicit type declaration val num = arrayOf&lt;Int&gt;(1, 2, 3) //explicit type declaration Array co...</p></div></div></a></div><div class="card"> <a href="/posts/kotlin-function/"><div class="card-body"> <span class="timeago small" > Jul 10 <i class="unloaded">2021-07-10T00:00:00+09:00</i> </span><h3 class="pt-0 mt-1 mb-3" data-toc-skip>Kotlin Function</h3><div class="text-muted small"><p> Kotlin Functions 코틀린은 2가지 타입의 함수가 존재한다. Standard library function User defined function Kotlin standard library function 코틀린에서는 사용가능하도록 미리 정의된 빌트인 다양한 함수들이 존재한다. 다음의 경우 빌트인 함수는 arrayOf()...</p></div></div></a></div></div></div><div class="post-navigation d-flex justify-content-between"> <a href="/posts/kotlin-oops-concept/" class="btn btn-outline-primary" prompt="Older"><p>Kotlin OOPs Concept</p></a> <span class="btn btn-outline-primary disabled" prompt="Newer"><p>-</p></span></div></div></div></div><footer class="d-flex w-100 justify-content-center"><div class="d-flex justify-content-between align-items-center"><div class="footer-left"><p class="mb-0"> © 2021 <a href="https://github.com/beomsu317">Beomsu Lee</a>. <span data-toggle="tooltip" data-placement="top" title="Except where otherwise noted, the blog posts on this site are licensed under the Creative Commons Attribution 4.0 International (CC BY 4.0) License by the author.">Some rights reserved.</span></p></div><div class="footer-right"><p class="mb-0"> Powered by <a href="https://jekyllrb.com" target="_blank" rel="noopener">Jekyll</a> with <a href="https://github.com/cotes2020/jekyll-theme-chirpy" target="_blank" rel="noopener">Chirpy</a> theme.</p></div></div></footer></div><div id="search-result-wrapper" class="d-flex justify-content-center unloaded"><div class="col-12 col-sm-11 post-content"><div id="search-hints"><h4 class="text-muted mb-4">Trending Tags</h4><a class="post-tag" href="/tags/android/">android</a> <a class="post-tag" href="/tags/exploitation/">exploitation</a> <a class="post-tag" href="/tags/algorithm/">algorithm</a> <a class="post-tag" href="/tags/dynamic-programming/">dynamic programming</a> <a class="post-tag" href="/tags/heap/">heap</a> <a class="post-tag" href="/tags/stack/">stack</a> <a class="post-tag" href="/tags/kernel/">kernel</a> <a class="post-tag" href="/tags/dagger/">dagger</a> <a class="post-tag" href="/tags/house-of-series/">house of series</a> <a class="post-tag" href="/tags/return-oriented-programming/">return oriented programming</a></div><div id="search-results" class="d-flex flex-wrap justify-content-center text-muted mt-3"></div></div></div></div><script src="https://cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js"></script> <script> $(function() { let initTheme = "default"; if ($("html[mode=dark]").length > 0 || ($("html[mode]").length == 0 && window.matchMedia("(prefers-color-scheme: dark)").matches ) ) { initTheme = "dark"; } let mermaidConf = { theme: initTheme /* <default|dark|forest|neutral> */ }; /* Markdown converts to HTML */ $("pre").has("code.language-mermaid").each(function() { let svgCode = $(this).children().html(); $(this).addClass("unloaded"); $(this).after(`<div class=\"mermaid\">${svgCode}</div>`); }); mermaid.initialize(mermaidConf); }); </script><div id="mask"></div><a id="back-to-top" href="#" aria-label="back-to-top" class="btn btn-lg btn-box-shadow" role="button"> <i class="fas fa-angle-up"></i> </a> <script src="https://cdn.jsdelivr.net/npm/simple-jekyll-search@1.7.3/dest/simple-jekyll-search.min.js"></script> <script> SimpleJekyllSearch({ searchInput: document.getElementById('search-input'), resultsContainer: document.getElementById('search-results'), json: '/assets/js/data/search.json', searchResultTemplate: '<div class="pl-1 pr-1 pl-sm-2 pr-sm-2 pl-lg-4 pr-lg-4 pl-xl-0 pr-xl-0"> <a href="https://beomsu317.github.io{url}">{title}</a><div class="post-meta d-flex flex-column flex-sm-row text-muted mt-1 mb-1"> {categories} {tags}</div><p>{snippet}</p></div>', noResultsText: '<p class="mt-5">Oops! No result founds.</p>', templateMiddleware: function(prop, value, template) { if (prop === 'categories') { if (value === '') { return `${value}`; } else { return `<div class="mr-sm-4"><i class="far fa-folder fa-fw"></i>${value}</div>`; } } if (prop === 'tags') { if (value === '') { return `${value}`; } else { return `<div><i class="fa fa-tag fa-fw"></i>${value}</div>`; } } } }); </script> <script async src="https://cdn.jsdelivr.net/combine/npm/popper.js@1.15.0,npm/bootstrap@4/dist/js/bootstrap.min.js"></script> <script defer src="/app.js"></script> <script src="https://cdn.jsdelivr.net/combine/npm/lozad/dist/lozad.min.js,npm/magnific-popup@1/dist/jquery.magnific-popup.min.js"></script> <script defer src="/assets/js/dist/post.min.js"></script> <script> /* see: <https://docs.mathjax.org/en/latest/options/input/tex.html#tex-options> */ MathJax = { tex: { inlineMath: [ /* start/end delimiter pairs for in-line math */ ['$','$'], ['\\(','\\)'] ], displayMath: [ /* start/end delimiter pairs for display math */ ['$$', '$$'], ['\\[', '\\]'] ] } }; </script> <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script> <script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"> </script>

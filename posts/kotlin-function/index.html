@@ -1,0 +1,675 @@
+<!DOCTYPE html><html lang="en-US" ><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><meta name="generator" content="Jekyll v4.2.0" /><meta property="og:title" content="Kotlin Function" /><meta name="author" content="Beomsu Lee" /><meta property="og:locale" content="en_US" /><meta name="description" content="Kotlin Functions" /><meta property="og:description" content="Kotlin Functions" /><link rel="canonical" href="https://beomsu317.github.io/posts/kotlin-function/" /><meta property="og:url" content="https://beomsu317.github.io/posts/kotlin-function/" /><meta property="og:site_name" content="BS Blog" /><meta property="og:type" content="article" /><meta property="article:published_time" content="2021-07-10T00:00:00+09:00" /><meta name="twitter:card" content="summary" /><meta property="twitter:title" content="Kotlin Function" /><meta name="twitter:site" content="@" /><meta name="twitter:creator" content="@Beomsu Lee" /><meta name="google-site-verification" content="google_meta_tag_verification" /> <script type="application/ld+json"> {"description":"Kotlin Functions","url":"https://beomsu317.github.io/posts/kotlin-function/","@type":"BlogPosting","headline":"Kotlin Function","dateModified":"2021-07-10T00:00:00+09:00","datePublished":"2021-07-10T00:00:00+09:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://beomsu317.github.io/posts/kotlin-function/"},"author":{"@type":"Person","name":"Beomsu Lee"},"@context":"https://schema.org"}</script><title>Kotlin Function | BS Blog</title><link rel="apple-touch-icon" sizes="180x180" href="/assets/img/favicons/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicons/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/img/favicons/favicon-16x16.png"><link rel="manifest" href="/assets/img/favicons/site.webmanifest"><link rel="shortcut icon" href="/assets/img/favicons/favicon.ico"><meta name="apple-mobile-web-app-title" content="BS Blog"><meta name="application-name" content="BS Blog"><meta name="msapplication-TileColor" content="#da532c"><meta name="msapplication-config" content="/assets/img/favicons/browserconfig.xml"><meta name="theme-color" content="#ffffff"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous"><link rel="dns-prefetch" href="https://fonts.gstatic.com"><link rel="preconnect" href="https://www.google-analytics.com" crossorigin="use-credentials"><link rel="dns-prefetch" href="https://www.google-analytics.com"><link rel="preconnect" href="https://www.googletagmanager.com" crossorigin="anonymous"><link rel="dns-prefetch" href="https://www.googletagmanager.com"><link rel="preconnect" href="https://cdn.jsdelivr.net"><link rel="dns-prefetch" href="https://cdn.jsdelivr.net"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.11.2/css/all.min.css"><link rel="stylesheet" href="/assets/css/style.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@1.0.1/dist/bootstrap-toc.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/magnific-popup@1.1.0/dist/magnific-popup.min.css"> <script src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script><body data-spy="scroll" data-target="#toc"><div id="sidebar" class="d-flex flex-column align-items-end"><div class="profile-wrapper text-center"><div id="avatar"> <a href="/" alt="avatar" class="mx-auto"> <img src="/assets/img/me.png" alt="avatar" onerror="this.style.display='none'"> </a></div><div class="site-title mt-3"> <a href="/">BS Blog</a></div><div class="site-subtitle font-italic">research & development</div></div><ul class="w-100"><li class="nav-item"> <a href="/" class="nav-link"> <i class="fa-fw fas fa-home ml-xl-3 mr-xl-3 unloaded"></i> <span>HOME</span> </a><li class="nav-item"> <a href="/categories/" class="nav-link"> <i class="fa-fw fas fa-stream ml-xl-3 mr-xl-3 unloaded"></i> <span>CATEGORIES</span> </a><li class="nav-item"> <a href="/tags/" class="nav-link"> <i class="fa-fw fas fa-tags ml-xl-3 mr-xl-3 unloaded"></i> <span>TAGS</span> </a><li class="nav-item"> <a href="/archives/" class="nav-link"> <i class="fa-fw fas fa-archive ml-xl-3 mr-xl-3 unloaded"></i> <span>ARCHIVES</span> </a><li class="nav-item"> <a href="/about/" class="nav-link"> <i class="fa-fw fas fa-info ml-xl-3 mr-xl-3 unloaded"></i> <span>ABOUT</span> </a></ul><div class="sidebar-bottom mt-auto d-flex flex-wrap justify-content-center"> <a href="https://github.com/beomsu317" aria-label="github" class="order-3" target="_blank" rel="noopener"> <i class="fab fa-github-alt"></i> </a> <a href="https://twitter.com/" aria-label="twitter" class="order-4" target="_blank" rel="noopener"> <i class="fab fa-twitter"></i> </a> <a href=" javascript:location.href = 'mailto:' + ['beomsu317','gmail.com'].join('@')" aria-label="email" class="order-5" > <i class="fas fa-envelope"></i> </a> <a href="/feed.xml" aria-label="rss" class="order-6" > <i class="fas fa-rss"></i> </a> <span class="icon-border order-2"></span> <span id="mode-toggle-wrapper" class="order-1"> <i class="mode-toggle fas fa-adjust"></i> <script type="text/javascript"> class ModeToggle { static get MODE_KEY() { return "mode"; } static get DARK_MODE() { return "dark"; } static get LIGHT_MODE() { return "light"; } constructor() { if (this.hasMode) { if (this.isDarkMode) { if (!this.isSysDarkPrefer) { this.setDark(); } } else { if (this.isSysDarkPrefer) { this.setLight(); } } } var self = this; /* always follow the system prefers */ this.sysDarkPrefers.addListener(function() { if (self.hasMode) { if (self.isDarkMode) { if (!self.isSysDarkPrefer) { self.setDark(); } } else { if (self.isSysDarkPrefer) { self.setLight(); } } self.clearMode(); } self.updateMermaid(); }); } /* constructor() */ setDark() { $('html').attr(ModeToggle.MODE_KEY, ModeToggle.DARK_MODE); sessionStorage.setItem(ModeToggle.MODE_KEY, ModeToggle.DARK_MODE); } setLight() { $('html').attr(ModeToggle.MODE_KEY, ModeToggle.LIGHT_MODE); sessionStorage.setItem(ModeToggle.MODE_KEY, ModeToggle.LIGHT_MODE); } clearMode() { $('html').removeAttr(ModeToggle.MODE_KEY); sessionStorage.removeItem(ModeToggle.MODE_KEY); } get sysDarkPrefers() { return window.matchMedia("(prefers-color-scheme: dark)"); } get isSysDarkPrefer() { return this.sysDarkPrefers.matches; } get isDarkMode() { return this.mode == ModeToggle.DARK_MODE; } get isLightMode() { return this.mode == ModeToggle.LIGHT_MODE; } get hasMode() { return this.mode != null; } get mode() { return sessionStorage.getItem(ModeToggle.MODE_KEY); } /* get the current mode on screen */ get modeStatus() { if (this.isDarkMode || (!this.hasMode && this.isSysDarkPrefer) ) { return ModeToggle.DARK_MODE; } else { return ModeToggle.LIGHT_MODE; } } updateMermaid() { if (typeof mermaid !== "undefined") { let expectedTheme = (this.modeStatus === ModeToggle.DARK_MODE? "dark" : "default"); let config = { theme: expectedTheme }; /* re-render the SVG › <https://github.com/mermaid-js/mermaid/issues/311#issuecomment-332557344> */ $(".mermaid").each(function() { let svgCode = $(this).prev().children().html(); $(this).removeAttr("data-processed"); $(this).html(svgCode); }); mermaid.initialize(config); mermaid.init(undefined, ".mermaid"); } } flipMode() { if (this.hasMode) { if (this.isSysDarkPrefer) { if (this.isLightMode) { this.clearMode(); } else { this.setLight(); } } else { if (this.isDarkMode) { this.clearMode(); } else { this.setDark(); } } } else { if (this.isSysDarkPrefer) { this.setLight(); } else { this.setDark(); } } this.updateMermaid(); } /* flipMode() */ } /* ModeToggle */ let toggle = new ModeToggle(); $(".mode-toggle").click(function() { toggle.flipMode(); }); </script> </span></div></div><div id="topbar-wrapper" class="row justify-content-center topbar-down"><div id="topbar" class="col-11 d-flex h-100 align-items-center justify-content-between"> <span id="breadcrumb"> <span> <a href="/"> Posts </a> </span> <span>Kotlin Function</span> </span> <i id="sidebar-trigger" class="fas fa-bars fa-fw"></i><div id="topbar-title"> Post</div><i id="search-trigger" class="fas fa-search fa-fw"></i> <span id="search-wrapper" class="align-items-center"> <i class="fas fa-search fa-fw"></i> <input class="form-control" id="search-input" type="search" aria-label="search" autocomplete="off" placeholder="Search..."> <i class="fa fa-times-circle fa-fw" id="search-cleaner"></i> </span> <span id="search-cancel" >Cancel</span></div></div><div id="main-wrapper"><div id="main"><div class="row"><div id="post-wrapper" class="col-12 col-lg-11 col-xl-8"><div class="post pl-1 pr-1 pl-sm-2 pr-sm-2 pl-md-4 pr-md-4"><h1 data-toc-skip>Kotlin Function</h1><div class="post-meta text-muted d-flex flex-column"><div> <span class="semi-bold"> Beomsu Lee </span> <span class="timeago " data-toggle="tooltip" data-placement="bottom" title="Sat, Jul 10, 2021, 12:00 AM +0900" prep="on" > Jul 10 <i class="unloaded">2021-07-10T00:00:00+09:00</i> </span></div><div> <span class="readtime" data-toggle="tooltip" data-placement="bottom" title="4485 words">24 min</span></div></div><div class="post-content"><h2 id="kotlin-functions">Kotlin Functions</h2><p>코틀린은 2가지 타입의 함수가 존재한다.</p><ul><li>Standard library function<li>User defined function</ul><h3 id="kotlin-standard-library-function">Kotlin standard library function</h3><p>코틀린에서는 사용가능하도록 미리 정의된 빌트인 다양한 함수들이 존재한다.</p><p>다음의 경우 빌트인 함수는 <code class="language-plaintext highlighter-rouge">arrayOf()</code>, <code class="language-plaintext highlighter-rouge">sum()</code>, <code class="language-plaintext highlighter-rouge">println()</code>를 사용한다.</p><div lang="kotlin" class="language-kotlin highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+</pre><td class="rouge-code"><pre><span class="k">fun</span> <span class="nf">main</span><span class="p">(</span><span class="n">args</span><span class="p">:</span> <span class="nc">Array</span><span class="p">&lt;</span><span class="nc">String</span><span class="p">&gt;)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="py">sum</span> <span class="p">=</span> <span class="nf">arrayOf</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">9</span><span class="p">,</span><span class="mi">10</span><span class="p">).</span><span class="nf">sum</span><span class="p">()</span>
+    <span class="nf">println</span><span class="p">(</span><span class="s">"The sum of all the elements of an array is: $sum"</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></table></code></div></div><p>다음은 <code class="language-plaintext highlighter-rouge">rem()</code> 함수를 사용해 나머지를 구하는 프로그램이다.</p><div lang="kotlin" class="language-kotlin highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+</pre><td class="rouge-code"><pre><span class="k">fun</span> <span class="nf">main</span><span class="p">(</span><span class="n">args</span><span class="p">:</span> <span class="nc">Array</span><span class="p">&lt;</span><span class="nc">String</span><span class="p">&gt;)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="py">num1</span> <span class="p">=</span> <span class="mi">26</span>
+    <span class="kd">var</span> <span class="py">num2</span> <span class="p">=</span> <span class="mi">3</span>
+  
+    <span class="kd">var</span> <span class="py">result</span> <span class="p">=</span> <span class="n">num1</span><span class="p">.</span><span class="nf">rem</span><span class="p">(</span><span class="n">num2</span><span class="p">)</span>
+    <span class="nf">println</span><span class="p">(</span><span class="s">"The remainder when $num1 is divided by $num2 is: $result"</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></table></code></div></div><p>이외에도 다양한 빌트인 함수들이 존재한다.</p><ul><li>sqrt() : 제곱근<li>print() : 메시지 표준 출력<li>rem() : 나눠진 후 나머지<li>toInt() : integer 값으로 변환<li>readline() : 표준 입력<li>compareTo() : 두 숫자 비교 후 boolean으로 반환</ul><h3 id="kotlin-user-defined-function">Kotlin user-defined function</h3><p>코틀린은 함수는 맨 위에 선언될 수 있고, 함수를 가지고 있는 클래스를 만들 필요가 없다.</p><p>일반적으로 함수는 다음과 같이 정의된다.</p><div lang="kotlin" class="language-kotlin highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+</pre><td class="rouge-code"><pre><span class="k">fun</span> <span class="nf">fun_name</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="n">data_type</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">data_type</span><span class="p">,</span> <span class="o">......</span><span class="p">):</span> <span class="nf">return_type</span>  <span class="p">{</span>
+    <span class="c1">// other codes</span>
+    <span class="k">return</span>
+<span class="p">}</span>
+</pre></table></code></div></div><ul><li>fun : 함수를 정의하기 위한 키워드<li>fun_name : 함수의 이름<li>a: data_type : a는 인자이며, data_type은 인자의 데이터 타입<li>return_type : 함수의 반환 값의 데이터 타입<li>{….} : 함수의 블록</ul><div lang="kotlin" class="language-kotlin highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+</pre><td class="rouge-code"><pre><span class="k">fun</span> <span class="nf">mul</span><span class="p">(</span><span class="n">num1</span><span class="p">:</span> <span class="nc">Int</span><span class="p">,</span> <span class="n">num2</span><span class="p">:</span> <span class="nc">Int</span><span class="p">):</span> <span class="nc">Int</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="py">number</span> <span class="p">=</span> <span class="n">num1</span><span class="p">.</span><span class="nf">times</span><span class="p">(</span><span class="n">num2</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">number</span>
+<span class="p">}</span>
+</pre></table></code></div></div><h2 id="default-and-named-argument">Default and Named argument</h2><p>대부분 언어에선 모든 인자를 명시할 필요가 있지만, 코틀린에서는 모든 인자를</p><p>코틀린의 함수에선 다음과 같이 <code class="language-plaintext highlighter-rouge">,</code>를 이용해 파라미터를 구분한다.</p><div lang="kotlin" class="language-kotlin highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre><span class="k">fun</span> <span class="nf">fun_name</span><span class="p">(</span><span class="n">name1</span><span class="p">:</span> <span class="n">data_type</span><span class="p">,</span> <span class="n">name2</span><span class="p">:</span> <span class="n">data_type</span> <span class="p">)</span>
+</pre></table></code></div></div><p>코틀린에는 두 가지 유형의 인자가 있다.</p><ul><li>Default arguments<li>Named arguments</ul><h3 id="default-arguments">Default arguments</h3><p>아무런 인자가 전달되지 않을 경우 Default 인자가 함수의 파라미터로 전달된다. 이 값들은 함수를 선언할 때 초기화되어야 한다. 이렇게 정의된 경우 부분적으로 인자를 전달할 수 있고, 모든 인자를 전달할 수도 있다.</p><div lang="kotlin" class="language-kotlin highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+</pre><td class="rouge-code"><pre><span class="c1">// default arguments in function definition name, standard and roll_no</span>
+<span class="k">fun</span> <span class="nf">student</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nc">String</span><span class="p">=</span><span class="s">"Praveen"</span><span class="p">,</span> <span class="n">standard</span><span class="p">:</span> <span class="nc">String</span><span class="p">=</span><span class="s">"IX"</span> <span class="p">,</span> <span class="n">roll_no</span><span class="p">:</span> <span class="nc">Int</span><span class="p">=</span><span class="mi">11</span><span class="p">)</span> <span class="p">{</span>        
+    <span class="nf">println</span><span class="p">(</span><span class="s">"Name of the student is: $name"</span><span class="p">)</span>
+    <span class="nf">println</span><span class="p">(</span><span class="s">"Standard of the student is: $standard"</span><span class="p">)</span>
+    <span class="nf">println</span><span class="p">(</span><span class="s">"Roll no of the student is: $roll_no"</span><span class="p">)</span>
+<span class="p">}</span>
+<span class="k">fun</span> <span class="nf">main</span><span class="p">(</span><span class="n">args</span><span class="p">:</span> <span class="nc">Array</span><span class="p">&lt;</span><span class="nc">String</span><span class="p">&gt;)</span> <span class="p">{</span>
+    <span class="kd">val</span> <span class="py">name_of_student</span> <span class="p">=</span> <span class="s">"Gaurav"</span>
+    <span class="kd">val</span> <span class="py">standard_of_student</span> <span class="p">=</span> <span class="s">"VIII"</span>
+    <span class="kd">val</span> <span class="py">roll_no_of_student</span> <span class="p">=</span> <span class="mi">25</span>
+    <span class="nf">student</span><span class="p">()</span>         <span class="c1">// passing no arguments while calling student</span>
+<span class="p">}</span>
+</pre></table></code></div></div><h3 id="named-arguments">Named arguments</h3><p>만약 인자를 전달할 때 순서 없이 전달하거나, 필요한 인자만 전달할 경우 컴파일 에러가 발생할 수 있다. 따라서 인자의 이름을 지정해줌으로써 이러한 에러들을 피할 수 있다.</p><div lang="kotlin" class="language-kotlin highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+</pre><td class="rouge-code"><pre><span class="c1">// default arguments in function definition</span>
+<span class="c1">// name,standard and roll_no</span>
+<span class="k">fun</span> <span class="nf">student</span><span class="p">(</span> <span class="n">name</span><span class="p">:</span> <span class="nc">String</span><span class="p">=</span><span class="s">"Praveen"</span><span class="p">,</span> <span class="n">standard</span><span class="p">:</span> <span class="nc">String</span><span class="p">=</span><span class="s">"IX"</span> <span class="p">,</span> <span class="n">roll_no</span><span class="p">:</span> <span class="nc">Int</span><span class="p">=</span><span class="mi">11</span> <span class="p">)</span> <span class="p">{</span>
+    <span class="nf">println</span><span class="p">(</span><span class="s">"Name of the student is: $name"</span><span class="p">)</span>
+    <span class="nf">println</span><span class="p">(</span><span class="s">"Standard of the student is: $standard"</span><span class="p">)</span>
+    <span class="nf">println</span><span class="p">(</span><span class="s">"Roll no of the student is: $roll_no"</span><span class="p">)</span>
+<span class="p">}</span>
+  
+<span class="k">fun</span> <span class="nf">main</span><span class="p">(</span><span class="n">args</span><span class="p">:</span> <span class="nc">Array</span><span class="p">&lt;</span><span class="nc">String</span><span class="p">&gt;)</span> <span class="p">{</span>
+    <span class="kd">val</span> <span class="py">name_of_student</span> <span class="p">=</span> <span class="s">"Gaurav"</span>
+    <span class="kd">val</span> <span class="py">standard_of_student</span> <span class="p">=</span> <span class="s">"VIII"</span>
+    <span class="kd">val</span> <span class="py">roll_no_of_student</span> <span class="p">=</span> <span class="mi">25</span>
+  
+    <span class="c1">// passing the arguments with name as defined in function</span>
+    <span class="nf">student</span><span class="p">(</span><span class="n">name</span><span class="p">=</span><span class="n">name_of_student</span><span class="p">,</span><span class="n">roll_no</span><span class="p">=</span><span class="n">roll_no_of_student</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></table></code></div></div><h2 id="lambdas-expressions-and-anonymous-functions">Lambdas Expressions and Anonymous Functions</h2><p>람다식 표현과 익명 함수는 따로 함수를 구현하지 않고 즉시 실행될 수 있도록 하는 기능이다. 이름 없는 함수를 익명 함수라 하며, 람다식 표현은 익명 함수라 할 수 있다.</p><h3 id="lambda-expression">Lambda Expression</h3><p>코틀린 람다식은 자바의 람다식과 거의 비슷하다.</p><div lang="kotlin" class="language-kotlin highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+</pre><td class="rouge-code"><pre><span class="k">fun</span> <span class="nf">main</span><span class="p">(</span><span class="n">args</span><span class="p">:</span> <span class="nc">Array</span><span class="p">&lt;</span><span class="nc">String</span><span class="p">&gt;)</span> <span class="p">{</span>
+    <span class="kd">val</span> <span class="py">company</span> <span class="p">=</span> <span class="p">{</span> <span class="nf">println</span><span class="p">(</span><span class="s">"GeeksforGeeks"</span><span class="p">)}</span>
+ 
+    <span class="c1">// invoking function method1</span>
+    <span class="nf">company</span><span class="p">()</span> 
+ 
+    <span class="c1">// invoking function method2</span>
+    <span class="n">company</span><span class="p">.</span><span class="nf">invoke</span><span class="p">()</span>
+<span class="p">}</span>
+</pre></table></code></div></div><h3 id="syntax-of-lambda-expression">Syntax of Lambda expression</h3><p>람다식 표현은 항상 중괄호(<code class="language-plaintext highlighter-rouge">{}</code>)로 둘러싸여 있으며, 인자는 중괄호 안에 선언된다. <code class="language-plaintext highlighter-rouge">code_body</code>는 <code class="language-plaintext highlighter-rouge">-&gt;</code> 뒤에 온다. 반환 값이 <code class="language-plaintext highlighter-rouge">Unit</code>이 아니면, 람다식의 마지막 줄의 값이 반환 값으로 처리된다.</p><div lang="kotlin" class="language-kotlin highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre><span class="kd">val</span> <span class="py">lambda_name</span> <span class="p">:</span> <span class="nc">Data_type</span> <span class="p">=</span> <span class="p">{</span> <span class="n">argument_List</span> <span class="p">-&gt;</span> <span class="n">code_body</span> <span class="p">}</span>
+</pre></table></code></div></div><p>다음은 람다식의 예제이다.</p><div lang="kotlin" class="language-kotlin highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre><span class="kd">val</span> <span class="py">sum</span> <span class="p">=</span> <span class="p">{</span><span class="n">a</span><span class="p">:</span> <span class="nc">Int</span> <span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="nc">Int</span> <span class="p">-&gt;</span> <span class="n">a</span> <span class="p">+</span> <span class="n">b</span><span class="p">}</span>
+</pre></table></code></div></div><p>다음은 선택적인 부분을 제거한 후의 람다식이다.</p><div lang="kotlin" class="language-kotlin highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre><span class="kd">val</span> <span class="py">sum</span><span class="p">:(</span><span class="nc">Int</span><span class="p">,</span><span class="nc">Int</span><span class="p">)</span> <span class="p">-&gt;</span> <span class="nc">Int</span> <span class="p">=</span> <span class="p">{</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="p">-&gt;</span> <span class="n">a</span> <span class="p">+</span> <span class="n">b</span><span class="p">}</span>
+</pre></table></code></div></div><h3 id="type-inference-in-lambdas">Type inference in lambdas</h3><p>코틀린의 타입 추론은 컴파일러가 람다식의 타입을 알아내는데 도움을 준다. 다음은 2개의 숫자를 더하는 람다식이다.</p><div lang="kotlin" class="language-kotlin highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre><span class="kd">val</span> <span class="py">sum</span> <span class="p">=</span> <span class="p">{</span><span class="n">a</span><span class="p">:</span> <span class="nc">Int</span> <span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="nc">Int</span> <span class="p">-&gt;</span> <span class="n">a</span> <span class="p">+</span> <span class="n">b</span><span class="p">}</span>
+</pre></table></code></div></div><p>코틀린 컴파일러는 이것을 <code class="language-plaintext highlighter-rouge">Int</code> 유형의 2개의 파라미터를 취하고, <code class="language-plaintext highlighter-rouge">Int</code> 값을 반환하는 함수라고 인지한다.</p><div lang="kotlin" class="language-kotlin highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre><span class="p">(</span><span class="nc">Int</span><span class="p">,</span><span class="nc">Int</span><span class="p">)</span> <span class="p">-&gt;</span> <span class="nc">Int</span>
+</pre></table></code></div></div><p>스트링을 반환하고 싶다면 <code class="language-plaintext highlighter-rouge">toString()</code> 메서드를 사용해 반환할 수 있다. 이 경우 컴파일러는 반환 값의 유형이 스트링이라고 인지하게 된다.</p><div lang="kotlin" class="language-kotlin highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+</pre><td class="rouge-code"><pre><span class="kd">val</span> <span class="py">sum1</span> <span class="p">=</span> <span class="p">{</span> <span class="n">a</span><span class="p">:</span> <span class="nc">Int</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="nc">Int</span> <span class="p">-&gt;</span>
+    <span class="kd">val</span> <span class="py">num</span> <span class="p">=</span> <span class="n">a</span> <span class="p">+</span> <span class="n">b</span>
+    <span class="n">num</span><span class="p">.</span><span class="nf">toString</span><span class="p">()</span>     <span class="c1">//convert Integer to String</span>
+<span class="p">}</span>
+<span class="k">fun</span> <span class="nf">main</span><span class="p">(</span><span class="n">args</span><span class="p">:</span> <span class="nc">Array</span><span class="p">&lt;</span><span class="nc">String</span><span class="p">&gt;)</span> <span class="p">{</span>
+    <span class="kd">val</span> <span class="py">result1</span> <span class="p">=</span> <span class="nf">sum1</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+    <span class="nf">println</span><span class="p">(</span><span class="s">"The sum of two numbers is: $result1"</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></table></code></div></div><h3 id="type-declaration-in-lambdas">Type declaration in lambdas</h3><p>우리는 명시적으로 람다식의 유형을 선언해야 한다. 람다가 값을 반환하지 않는다면 <code class="language-plaintext highlighter-rouge">Unit</code>을 사용해야 한다.</p><div lang="kotlin" class="language-kotlin highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+</pre><td class="rouge-code"><pre><span class="kd">val</span> <span class="py">lambda1</span><span class="p">:</span> <span class="p">(</span><span class="nc">Int</span><span class="p">)</span> <span class="p">-&gt;</span> <span class="nc">Int</span> <span class="p">=</span> <span class="p">({</span><span class="n">a</span> <span class="p">-&gt;</span> <span class="n">a</span> <span class="p">*</span> <span class="n">a</span><span class="p">})</span>
+<span class="kd">val</span> <span class="py">lambda2</span><span class="p">:</span> <span class="p">(</span><span class="nc">String</span><span class="p">,</span><span class="nc">String</span><span class="p">)</span> <span class="p">-&gt;</span> <span class="nc">String</span> <span class="p">=</span> <span class="p">{</span> <span class="n">a</span> <span class="p">,</span> <span class="n">b</span> <span class="p">-&gt;</span> <span class="n">a</span> <span class="p">+</span> <span class="n">b</span> <span class="p">}</span>
+<span class="kd">val</span> <span class="py">lambda3</span><span class="p">:</span> <span class="p">(</span><span class="nc">Int</span><span class="p">)-&gt;</span> <span class="nc">Unit</span> <span class="p">=</span> <span class="p">{</span><span class="nf">print</span><span class="p">(</span><span class="nc">Int</span><span class="p">)}</span>
+</pre></table></code></div></div><h4 id="lambdas-can-be-used-as-class-extension">Lambdas can be used as class extension</h4><p>다음은 클래스의 확장으로써 람다식 표현을 사용하였다. <code class="language-plaintext highlighter-rouge">this</code> 키워드는 <code class="language-plaintext highlighter-rouge">String</code>에 사용되었고, <code class="language-plaintext highlighter-rouge">it</code> 키워드는 람다식에 인자로 전달되는 <code class="language-plaintext highlighter-rouge">Int</code> 파라미터로 사용되었다. <code class="language-plaintext highlighter-rouge">code_body</code>는 두 개의 값을 합친 후 반환한다.</p><div lang="kotlin" class="language-kotlin highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+</pre><td class="rouge-code"><pre><span class="kd">val</span> <span class="py">lambda4</span><span class="p">:</span> <span class="nc">String</span><span class="p">.(</span><span class="nc">Int</span><span class="p">)</span> <span class="p">-&gt;</span> <span class="nc">String</span> <span class="p">=</span> <span class="p">{</span><span class="k">this</span> <span class="p">+</span> <span class="n">it</span><span class="p">}</span>
+<span class="kd">val</span> <span class="py">result</span> <span class="p">=</span> <span class="s">"Geeks"</span><span class="p">.</span><span class="nf">lambda4</span><span class="p">(</span><span class="mi">50</span><span class="p">)</span>
+<span class="nf">println</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+</pre></table></code></div></div><p><strong>Output</strong></p><div lang="plaintext" class="language-plaintext highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre>System.out: Geeks50
+</pre></table></code></div></div><p>람다식은 인자가 1개인 경우 인자 이름을 생략할 수 있으며, 인자에 접근하려면 <code class="language-plaintext highlighter-rouge">it</code> 키워드로 접근할 수 있다.</p><h3 id="kotlin-program-using-shorthand-form-of-lambda-function">Kotlin program using shorthand form of lambda function</h3><div lang="kotlin" class="language-kotlin highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre><td class="rouge-code"><pre><span class="kd">val</span> <span class="py">numbers</span> <span class="p">=</span> <span class="nf">arrayOf</span><span class="p">(</span><span class="mi">1</span><span class="p">,-</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,-</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">)</span>
+ 
+<span class="k">fun</span> <span class="nf">main</span><span class="p">(</span><span class="n">args</span><span class="p">:</span> <span class="nc">Array</span><span class="p">&lt;</span><span class="nc">String</span><span class="p">&gt;)</span> <span class="p">{</span>
+      <span class="nf">println</span><span class="p">(</span><span class="n">numbers</span><span class="p">.</span><span class="nf">filter</span> <span class="p">{</span>  <span class="n">it</span> <span class="p">&gt;</span> <span class="mi">0</span> <span class="p">})</span>
+<span class="p">}</span>
+</pre></table></code></div></div><h3 id="kotlin-program-using-longhand-form-of-lambda-function">Kotlin program using longhand form of lambda function</h3><div lang="kotlin" class="language-kotlin highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre><td class="rouge-code"><pre><span class="kd">val</span> <span class="py">numbers</span> <span class="p">=</span> <span class="nf">arrayOf</span><span class="p">(</span><span class="mi">1</span><span class="p">,-</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,-</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">)</span>
+ 
+<span class="k">fun</span> <span class="nf">main</span><span class="p">(</span><span class="n">args</span><span class="p">:</span> <span class="nc">Array</span><span class="p">&lt;</span><span class="nc">String</span><span class="p">&gt;)</span> <span class="p">{</span>
+     <span class="nf">println</span><span class="p">(</span><span class="n">numbers</span><span class="p">.</span><span class="nf">filter</span> <span class="p">{</span><span class="n">item</span> <span class="p">-&gt;</span> <span class="n">item</span> <span class="p">&gt;</span> <span class="mi">0</span> <span class="p">})</span>
+<span class="p">}</span>
+</pre></table></code></div></div><h3 id="returning-a-value-from-lambda-expression">Returning a value from lambda expression</h3><p>람다식이 실행된 이후 람다식 마지막의 값이 반환된다. Integer, String, Boolean 등의 유형이 반환될 수 있다.</p><div lang="kotlin" class="language-kotlin highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+</pre><td class="rouge-code"><pre><span class="kd">val</span> <span class="py">find</span> <span class="p">=</span><span class="k">fun</span><span class="p">(</span><span class="n">num</span><span class="p">:</span> <span class="nc">Int</span><span class="p">):</span> <span class="nc">String</span><span class="p">{</span>
+<span class="k">if</span><span class="p">(</span><span class="n">num</span> <span class="p">%</span> <span class="mi">2</span><span class="p">==</span><span class="mi">0</span> <span class="p">&amp;&amp;</span> <span class="n">num</span> <span class="p">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="s">"Number is even and negative"</span>
+   <span class="p">}</span>
+    <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">num</span> <span class="p">%</span><span class="mi">2</span> <span class="p">==</span><span class="mi">0</span> <span class="p">&amp;&amp;</span> <span class="n">num</span> <span class="p">&gt;</span><span class="mi">0</span><span class="p">){</span>
+    <span class="k">return</span> <span class="s">"Number is even and positive"</span>
+    <span class="p">}</span>
+    <span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="n">num</span> <span class="p">%</span><span class="mi">2</span> <span class="p">!=</span><span class="mi">0</span> <span class="p">&amp;&amp;</span> <span class="n">num</span> <span class="p">&lt;</span> <span class="mi">0</span><span class="p">){</span>
+    <span class="k">return</span> <span class="s">"Number is odd and negative"</span>
+    <span class="p">}</span>
+    <span class="k">else</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="s">"Number is odd and positive"</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="k">fun</span> <span class="nf">main</span><span class="p">(</span><span class="n">args</span><span class="p">:</span> <span class="nc">Array</span><span class="p">&lt;</span><span class="nc">String</span><span class="p">&gt;)</span> <span class="p">{</span>
+    <span class="kd">val</span> <span class="py">result</span> <span class="p">=</span> <span class="nf">find</span><span class="p">(</span><span class="mi">112</span><span class="p">)</span>
+    <span class="nf">println</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></table></code></div></div><p><strong>Output</strong></p><div lang="plaintext" class="language-plaintext highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre>Number is even and positive
+</pre></table></code></div></div><h3 id="anonymous-function">Anonymous Function</h3><p>익명 함수는 선언에서 생략된 함수 이름을 제외하고 정규 함수와 거의 비슷하다. 익명 함수의 구현부는 표현(expression)이나 블록(block)이 될 수 있다.</p><div lang="kotlin" class="language-kotlin highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre><td class="rouge-code"><pre><span class="c1">// expression</span>
+<span class="k">fun</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="nc">Int</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="nc">Int</span><span class="p">)</span> <span class="p">:</span> <span class="nc">Int</span> <span class="p">=</span> <span class="n">a</span> <span class="p">*</span> <span class="n">b</span>
+</pre></table></code></div></div><div lang="kotlin" class="language-kotlin highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre><td class="rouge-code"><pre><span class="c1">// block</span>
+<span class="k">fun</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="nc">Int</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="nc">Int</span><span class="p">):</span> <span class="nc">Int</span> <span class="p">{</span>
+    <span class="kd">val</span> <span class="py">mul</span> <span class="p">=</span> <span class="n">a</span> <span class="p">*</span> <span class="n">b</span>
+    <span class="k">return</span> <span class="n">mul</span>
+<span class="p">}</span>
+</pre></table></code></div></div><h3 id="return-type-and-parameters">Return type and parameters</h3><ol><li>반환 타입과 파라미터는 정규 함수와 동일하지만, 문맥상 추론할 수 있는 경우 파라미터를 생략할 수 있다.<li>함수의 반환 타입은 표현(expression)인 경우 자동적으로 추론할 수 있으며, 블록(block)인 경우 익명 함수에 대해 명시적으로 지정해주어야 한다.</ol><h3 id="kotlin-program-to-call-the-anonymous-function">Kotlin program to call the anonymous function</h3><div lang="kotlin" class="language-kotlin highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+</pre><td class="rouge-code"><pre><span class="c1">// anonymous function with body as an expression</span>
+<span class="kd">val</span> <span class="py">anonymous1</span> <span class="p">=</span> <span class="k">fun</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="nc">Int</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="nc">Int</span><span class="p">):</span> <span class="nc">Int</span> <span class="p">=</span> <span class="n">x</span> <span class="p">+</span> <span class="n">y</span>
+ 
+<span class="c1">// anonymous function with body as a block</span>
+<span class="kd">val</span> <span class="py">anonymous2</span> <span class="p">=</span> <span class="k">fun</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="nc">Int</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="nc">Int</span><span class="p">):</span> <span class="nc">Int</span> <span class="p">{</span>
+            <span class="kd">val</span> <span class="py">mul</span> <span class="p">=</span> <span class="n">a</span> <span class="p">*</span> <span class="n">b</span>
+            <span class="k">return</span> <span class="n">mul</span>
+            <span class="p">}</span>
+<span class="k">fun</span> <span class="nf">main</span><span class="p">(</span><span class="n">args</span><span class="p">:</span> <span class="nc">Array</span><span class="p">&lt;</span><span class="nc">String</span><span class="p">&gt;)</span> <span class="p">{</span>
+    <span class="c1">//invoking functions</span>
+    <span class="kd">val</span> <span class="py">sum</span> <span class="p">=</span> <span class="nf">anonymous1</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">5</span><span class="p">)</span>
+    <span class="kd">val</span> <span class="py">mul</span> <span class="p">=</span> <span class="nf">anonymous2</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">5</span><span class="p">)</span>
+    <span class="nf">println</span><span class="p">(</span><span class="s">"The sum of two numbers is: $sum"</span><span class="p">)</span>
+    <span class="nf">println</span><span class="p">(</span><span class="s">"The multiply of two numbers is: $mul"</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></table></code></div></div><h2 id="kotlin-inline-functions">Kotlin Inline Functions</h2><p>코틀린에서는 고차 함수 또는 람다식이 함수와, 클래스모두 객체로 저장되어 가상 호출 시 런타임 오버헤드가 발생할 수 있다. 이를 해결하기 위해 람다식을 인라인으로 처리하여 메모리 오버헤드를 줄일 수 있다. 고차 함수나 람다식의 메모리 오버헤드를 줄이기 위해 인라인 키워드를 사용해 컴파일러에게 메모리를 할당하지 말고 간단하게 호출 지점의 인라인 코드를 복사하도록 요청한다.</p><div lang="kotlin" class="language-kotlin highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+</pre><td class="rouge-code"><pre><span class="k">fun</span> <span class="nf">higherfunc</span><span class="p">(</span> <span class="n">str</span> <span class="p">:</span> <span class="nc">String</span><span class="p">,</span> <span class="n">mycall</span> <span class="p">:(</span><span class="nc">String</span><span class="p">)-&gt;</span> <span class="nc">Unit</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// inovkes the print() by passing the string str</span>
+    <span class="nf">mycall</span><span class="p">(</span><span class="n">str</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="k">fun</span> <span class="nf">main</span><span class="p">(){</span>
+    <span class="nf">println</span><span class="p">(</span><span class="s">"GeeskforGeeks: "</span><span class="p">)</span>
+    <span class="nf">higherfunc</span><span class="p">(</span><span class="s">"A Computer Science portal for Geeks"</span><span class="p">,</span><span class="o">::</span><span class="n">println</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></table></code></div></div><p>디컴파일을 하기 위해 <strong>Tools -&gt; Kotlin -&gt; Show Kotlin Bytecode</strong>의 Decompile을 클릭한다.</p><div lang="java" class="language-java highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+</pre><td class="rouge-code"><pre><span class="kd">public</span> <span class="kd">final</span> <span class="kt">void</span> <span class="nf">higherfunc</span><span class="o">(</span><span class="nd">@NotNull</span> <span class="nc">String</span> <span class="n">str</span><span class="o">,</span> <span class="nd">@NotNull</span> <span class="nc">Function1</span> <span class="n">mycall</span><span class="o">)</span> <span class="o">{</span>
+   <span class="nc">Intrinsics</span><span class="o">.</span><span class="na">checkNotNullParameter</span><span class="o">(</span><span class="n">str</span><span class="o">,</span> <span class="s">"str"</span><span class="o">);</span>
+   <span class="nc">Intrinsics</span><span class="o">.</span><span class="na">checkNotNullParameter</span><span class="o">(</span><span class="n">mycall</span><span class="o">,</span> <span class="s">"mycall"</span><span class="o">);</span>
+   <span class="n">mycall</span><span class="o">.</span><span class="na">invoke</span><span class="o">(</span><span class="n">str</span><span class="o">);</span>
+<span class="o">}</span>
+
+<span class="kd">public</span> <span class="kd">final</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">()</span> <span class="o">{</span>
+   <span class="nc">String</span> <span class="n">var1</span> <span class="o">=</span> <span class="s">"GeeskforGeeks: "</span><span class="o">;</span>
+   <span class="kt">boolean</span> <span class="n">var2</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
+   <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">var1</span><span class="o">);</span>
+   <span class="k">this</span><span class="o">.</span><span class="na">higherfunc</span><span class="o">(</span><span class="s">"A Computer Science portal for Geeks"</span><span class="o">,</span> <span class="o">(</span><span class="nc">Function1</span><span class="o">)</span><span class="kc">null</span><span class="o">.</span><span class="na">INSTANCE</span><span class="o">);</span>
+<span class="o">}</span>
+</pre></table></code></div></div><p><code class="language-plaintext highlighter-rouge">mycall</code>은 <code class="language-plaintext highlighter-rouge">String</code>을 파라미터로 전달해 <code class="language-plaintext highlighter-rouge">println()</code> 함수를 호출한다. <code class="language-plaintext highlighter-rouge">println()</code> 함수가 호출되는 동안 추가적인 Call이 메모리 오버헤드를 증가시킨다.</p><div lang="kotlin" class="language-kotlin highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+</pre><td class="rouge-code"><pre><span class="nf">mycall</span><span class="p">(</span><span class="n">new</span> <span class="nc">Function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nd">@Override</span>
+        <span class="k">public</span> <span class="n">void</span> <span class="nf">invoke</span><span class="p">()</span> <span class="p">{</span>
+         <span class="c1">//println statement is called here.</span>
+        <span class="p">}</span>
+    <span class="p">});</span>
+</pre></table></code></div></div><p>만약 파라미터로 많은 함수를 호출하면 각 함수가 메서드 카운트에 추가된다. 그러면 메모리 성능에 큰 영향을 미치게 된다. 인라인 키워드를 사용하면 어떻게 될까?</p><div lang="kotlin" class="language-kotlin highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+</pre><td class="rouge-code"><pre><span class="k">inline</span> <span class="k">fun</span> <span class="nf">higherfunc</span><span class="p">(</span> <span class="n">str</span> <span class="p">:</span> <span class="nc">String</span><span class="p">,</span> <span class="n">mycall</span> <span class="p">:(</span><span class="nc">String</span><span class="p">)-&gt;</span> <span class="nc">Unit</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// inovkes the print() by passing the string str</span>
+    <span class="nf">mycall</span><span class="p">(</span><span class="n">str</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="k">fun</span> <span class="nf">main</span><span class="p">(){</span>
+    <span class="nf">println</span><span class="p">(</span><span class="s">"GeeskforGeeks: "</span><span class="p">)</span>
+    <span class="nf">higherfunc</span><span class="p">(</span><span class="s">"A Computer Science portal for Geeks"</span><span class="p">,</span><span class="o">::</span><span class="n">println</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></table></code></div></div><p><code class="language-plaintext highlighter-rouge">inline</code> 키워드를 사용하면, <code class="language-plaintext highlighter-rouge">println()</code> 람다 표현식이 <code class="language-plaintext highlighter-rouge">main()</code> 함수에 <code class="language-plaintext highlighter-rouge">System.out.println</code> 형식으로 복사되며 더 이상 호출이 이루어지지 않는다.</p><div lang="java" class="language-java highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+</pre><td class="rouge-code"><pre><span class="kd">public</span> <span class="kd">final</span> <span class="kt">void</span> <span class="nf">higherfunc</span><span class="o">(</span><span class="nd">@NotNull</span> <span class="nc">String</span> <span class="n">str</span><span class="o">,</span> <span class="nd">@NotNull</span> <span class="nc">Function1</span> <span class="n">mycall</span><span class="o">)</span> <span class="o">{</span>
+   <span class="kt">int</span> <span class="n">$i$f$higherfunc</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+   <span class="nc">Intrinsics</span><span class="o">.</span><span class="na">checkNotNullParameter</span><span class="o">(</span><span class="n">str</span><span class="o">,</span> <span class="s">"str"</span><span class="o">);</span>
+   <span class="nc">Intrinsics</span><span class="o">.</span><span class="na">checkNotNullParameter</span><span class="o">(</span><span class="n">mycall</span><span class="o">,</span> <span class="s">"mycall"</span><span class="o">);</span>
+   <span class="n">mycall</span><span class="o">.</span><span class="na">invoke</span><span class="o">(</span><span class="n">str</span><span class="o">);</span>
+
+<span class="o">}</span>
+<span class="kd">public</span> <span class="kd">final</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">()</span> <span class="o">{</span>
+   <span class="nc">String</span> <span class="n">var1</span> <span class="o">=</span> <span class="s">"GeeskforGeeks: "</span><span class="o">;</span>
+   <span class="kt">boolean</span> <span class="n">var2</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
+   <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">var1</span><span class="o">);</span>
+   <span class="nc">String</span> <span class="n">str$iv</span> <span class="o">=</span> <span class="s">"A Computer Science portal for Geeks"</span><span class="o">;</span>
+   <span class="kt">int</span> <span class="n">$i$f$higherfunc</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
+   <span class="kt">int</span> <span class="n">var5</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
+   <span class="kt">boolean</span> <span class="n">var6</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
+   <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">str$iv</span><span class="o">);</span>
+<span class="o">}</span>
+</pre></table></code></div></div><h3 id="kotlin-program-of-using-return-in-lambda-while-passing-as-an-argument-to-inlined-function">Kotlin Program of Using Return in Lambda While Passing as an Argument to Inlined Function</h3><p>코틀린은 람다식에서 <code class="language-plaintext highlighter-rouge">return</code> 키워드를 통해 값을 반환할 수 없다. 하지만 인라인 키워드를 이용하면, 람다식에서 <code class="language-plaintext highlighter-rouge">return</code>을 사용할 수 있다.</p><p>2개의 람다식을 인자로 <code class="language-plaintext highlighter-rouge">inlinedFunc()</code> 함수에 전달했다. 인라인 함수인 <code class="language-plaintext highlighter-rouge">lmbd1()</code>에서 1번째 표현을 실행하고 강제로 반환하여 <code class="language-plaintext highlighter-rouge">main()</code> 함수를 강제로 종료시킨다.</p><div lang="kotlin" class="language-kotlin highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+</pre><td class="rouge-code"><pre><span class="k">fun</span> <span class="nf">main</span><span class="p">(</span><span class="n">args</span><span class="p">:</span> <span class="nc">Array</span><span class="p">&lt;</span><span class="nc">String</span><span class="p">&gt;){</span>
+    <span class="nf">println</span><span class="p">(</span><span class="s">"Main function starts"</span><span class="p">)</span>
+    <span class="nf">inlinedFunc</span><span class="p">({</span> <span class="nf">println</span><span class="p">(</span><span class="s">"Lambda expression 1"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">},</span>      <span class="c1">// inlined function allow return</span>
+                   <span class="c1">// statement in lambda expression</span>
+                   <span class="c1">// so, does not give compile time error</span>
+ 
+    <span class="p">{</span> <span class="nf">println</span><span class="p">(</span><span class="s">"Lambda expression 2"</span><span class="p">)}</span> <span class="p">)</span>
+ 
+    <span class="nf">println</span><span class="p">(</span><span class="s">"Main function ends"</span><span class="p">)</span>
+<span class="p">}</span>
+<span class="c1">// inlined function</span>
+<span class="k">inline</span> <span class="k">fun</span> <span class="nf">inlinedFunc</span><span class="p">(</span> <span class="n">lmbd1</span><span class="p">:</span> <span class="p">()</span> <span class="p">-&gt;</span> <span class="nc">Unit</span><span class="p">,</span> <span class="n">lmbd2</span><span class="p">:</span> <span class="p">()</span> <span class="p">-&gt;</span> <span class="nc">Unit</span>  <span class="p">)</span> <span class="p">{</span> 
+    <span class="nf">lmbd1</span><span class="p">()</span>
+    <span class="nf">lmbd2</span><span class="p">()</span>
+<span class="p">}</span>
+</pre></table></code></div></div><p><strong>Output</strong></p><div lang="plaintext" class="language-plaintext highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre><td class="rouge-code"><pre>Main function starts
+Lambda expression 1
+</pre></table></code></div></div><h4 id="crossline-keyword">crossline keyword</h4><p>위의 프로그램의 1번째 람다식에서 반환을 중지하려면 <code class="language-plaintext highlighter-rouge">crossline</code> 키워드를 사용해 표시할 수 있다. 해당 키워드를 추가하면 람다식에 <code class="language-plaintext highlighter-rouge">return</code> 구문이 있을 경우 컴파일러 에러를 발생시킨다.</p><div lang="kotlin" class="language-kotlin highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+</pre><td class="rouge-code"><pre><span class="k">fun</span> <span class="nf">main</span><span class="p">(</span><span class="n">args</span><span class="p">:</span> <span class="nc">Array</span><span class="p">&lt;</span><span class="nc">String</span><span class="p">&gt;){</span>
+    <span class="nf">println</span><span class="p">(</span><span class="s">"Main function starts"</span><span class="p">)</span>
+     <span class="nf">inlinedfunc</span><span class="p">({</span> <span class="nf">println</span><span class="p">(</span><span class="s">"Lambda expression 1"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">},</span>     <span class="c1">// It gives compiler error</span>
+         <span class="p">{</span> <span class="nf">println</span><span class="p">(</span><span class="s">"Lambda expression 2"</span><span class="p">)}</span> <span class="p">)</span>
+ 
+    <span class="nf">println</span><span class="p">(</span><span class="s">"Main function ends"</span><span class="p">)</span>
+<span class="p">}</span>
+ 
+<span class="k">inline</span> <span class="k">fun</span> <span class="nf">inlinedfunc</span><span class="p">(</span> <span class="k">crossinline</span> <span class="n">lmbd1</span><span class="p">:</span> <span class="p">()</span> <span class="p">-&gt;</span> <span class="nc">Unit</span><span class="p">,</span> <span class="n">lmbd2</span><span class="p">:</span> <span class="p">()</span> <span class="p">-&gt;</span> <span class="nc">Unit</span>  <span class="p">)</span> <span class="p">{</span>
+    <span class="nf">lmbd1</span><span class="p">()</span>
+    <span class="nf">lmbd2</span><span class="p">()</span>
+<span class="p">}</span>
+</pre></table></code></div></div><h4 id="noinline-keyword">noinline keyword</h4><p>인라인 함수로 전달되는 람다식 중 일부만 전달하려면 <code class="language-plaintext highlighter-rouge">noinline</code> 키워드를 사용하면 된다.</p><div lang="kotlin" class="language-kotlin highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+</pre><td class="rouge-code"><pre>
+<span class="k">fun</span> <span class="nf">main</span><span class="p">(</span><span class="n">args</span><span class="p">:</span> <span class="nc">Array</span><span class="p">&lt;</span><span class="nc">String</span><span class="p">&gt;){</span>
+    <span class="nf">println</span><span class="p">(</span><span class="s">"Main function starts"</span><span class="p">)</span>
+    <span class="nf">inlinedFunc</span><span class="p">({</span> <span class="nf">println</span><span class="p">(</span><span class="s">"Lambda expression 1"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">},</span>    
+        <span class="p">{</span> <span class="nf">println</span><span class="p">(</span><span class="s">"Lambda expression 2"</span><span class="p">)</span>
+            <span class="k">return</span> <span class="p">}</span> <span class="p">)</span>    <span class="c1">// It gives compiler error</span>
+ 
+    <span class="nf">println</span><span class="p">(</span><span class="s">"Main function ends"</span><span class="p">)</span>
+<span class="p">}</span>
+ 
+<span class="k">inline</span> <span class="k">fun</span> <span class="nf">inlinedFunc</span><span class="p">(</span> <span class="n">lmbd1</span><span class="p">:</span> <span class="p">()</span> <span class="p">-&gt;</span> <span class="nc">Unit</span><span class="p">,</span> <span class="k">noinline</span> <span class="n">lmbd2</span><span class="p">:</span> <span class="p">()</span> <span class="p">-&gt;</span> <span class="nc">Unit</span>  <span class="p">)</span> <span class="p">{</span>
+    <span class="nf">lmbd1</span><span class="p">()</span>
+    <span class="nf">lmbd2</span><span class="p">()</span>
+<span class="p">}</span>
+</pre></table></code></div></div><h3 id="reified-type-parameters">Reified Type Parameters</h3><p>제네릭 함수 <code class="language-plaintext highlighter-rouge">genericFunc()</code>의 타입 <code class="language-plaintext highlighter-rouge">T</code>는 컴파일 타임에는 존재하지만 런타임에 <code class="language-plaintext highlighter-rouge">Type erasure</code> 때문에 접근할 수 없다. 따라서 일반적인 클래스에 작성된 함수 body에 제네릭 타입에 접근하고 싶다면 명시적으로 타입을 파라미터로 전달해야 한다.</p><div lang="kotlin" class="language-kotlin highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre><span class="k">fun</span> <span class="p">&lt;</span><span class="nc">T</span><span class="p">&gt;</span> <span class="nf">genericFunc</span><span class="p">(</span><span class="n">c</span><span class="p">:</span> <span class="nc">Class</span><span class="p">&lt;</span><span class="nc">T</span><span class="p">&gt;)</span>
+</pre></table></code></div></div><p>하지만 <code class="language-plaintext highlighter-rouge">reified type parameter</code>와 <code class="language-plaintext highlighter-rouge">inline</code> 함수를 만들면 추가적으로 <code class="language-plaintext highlighter-rouge">Class&lt;T&gt;</code> 파라미터를 넘겨줄 필요 없이 런타임에 타입 <code class="language-plaintext highlighter-rouge">T</code>에 접근할 수 있다.</p><div lang="kotlin" class="language-kotlin highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+</pre><td class="rouge-code"><pre><span class="k">fun</span> <span class="nf">main</span><span class="p">(</span><span class="n">args</span><span class="p">:</span> <span class="nc">Array</span><span class="p">&lt;</span><span class="nc">String</span><span class="p">&gt;)</span> <span class="p">{</span>
+    <span class="n">genericFunc</span><span class="p">&lt;</span><span class="nc">String</span><span class="p">&gt;()</span>
+<span class="p">}</span>
+ 
+<span class="k">inline</span> <span class="k">fun</span> <span class="p">&lt;</span><span class="k">reified</span> <span class="nc">T</span><span class="p">&gt;</span> <span class="nf">genericFunc</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nf">print</span><span class="p">(</span><span class="nc">T</span><span class="o">::</span><span class="k">class</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></table></code></div></div><h2 id="kotlin-infix-function-notation">Kotlin infix function notation</h2><p>코틀린은 infix 키워드로 표시된 함수는 점이나 괄호를 사용하지 않고 호출할 수 있다. 2가지 유형의 infix 함수 표기법이 있다.</p><ol><li>Standard library infix 함수 표기<li>User defined infix 함수 표기</ol><h3 id="standard-library-infix-function-notation">Standard library infix function notation</h3><p><code class="language-plaintext highlighter-rouge">like</code>, <code class="language-plaintext highlighter-rouge">or</code>, <code class="language-plaintext highlighter-rouge">shr</code>, <code class="language-plaintext highlighter-rouge">shl</code> 등을 호출할 때 컴파일러는 함수를 찾고 원하는 함수를 호출한다.</p><h4 id="koltin-program-using-bitwise-and-operator">Koltin program using bitwise and operator</h4><p><code class="language-plaintext highlighter-rouge">a.and(b)</code> 함수를 infix <code class="language-plaintext highlighter-rouge">(a and b)</code>로 사용해 호출하였다. 둘 다 동일하게 출려된 것을 확인할 수 있다.</p><div lang="kotlin" class="language-kotlin highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+</pre><td class="rouge-code"><pre><span class="k">fun</span> <span class="nf">main</span><span class="p">(</span><span class="n">args</span><span class="p">:</span> <span class="nc">Array</span><span class="p">&lt;</span><span class="nc">String</span><span class="p">&gt;)</span> <span class="p">{</span>
+	<span class="kd">var</span> <span class="py">a</span> <span class="p">=</span> <span class="mi">15</span>
+	<span class="kd">var</span> <span class="py">b</span> <span class="p">=</span> <span class="mi">12</span>
+	<span class="kd">var</span> <span class="py">c</span> <span class="p">=</span> <span class="mi">11</span>
+	<span class="c1">// call using dot and parenthesis</span>
+	<span class="kd">var</span> <span class="py">result1</span> <span class="p">=(</span><span class="n">a</span> <span class="p">&gt;</span> <span class="n">b</span><span class="p">).</span><span class="nf">and</span><span class="p">(</span><span class="n">a</span> <span class="p">&gt;</span> <span class="n">c</span><span class="p">)</span>		
+	<span class="nf">println</span><span class="p">(</span><span class="s">"Boolean result1 = $result1"</span><span class="p">)</span>
+	<span class="c1">// call using infix notation</span>
+	<span class="kd">var</span> <span class="py">result2</span> <span class="p">=(</span><span class="n">a</span> <span class="p">&gt;</span> <span class="n">b</span><span class="p">)</span> <span class="nf">and</span> <span class="p">(</span><span class="n">a</span> <span class="p">&gt;</span> <span class="n">c</span><span class="p">)</span>		
+	<span class="nf">println</span><span class="p">(</span><span class="s">"Boolean result1 = $result2"</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></table></code></div></div><p><strong>Output</strong></p><div lang="kotlin" class="language-kotlin highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre><td class="rouge-code"><pre><span class="nc">Boolean</span> <span class="n">result1</span> <span class="p">=</span> <span class="k">true</span>
+<span class="nc">Boolean</span> <span class="n">result1</span> <span class="p">=</span> <span class="k">true</span>
+</pre></table></code></div></div><h4 id="kotlin-program-of-using-signed-shift-rightshr-operator">Kotlin program of using signed shift right(shr) operator</h4><div lang="kotlin" class="language-kotlin highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+</pre><td class="rouge-code"><pre><span class="k">fun</span> <span class="nf">main</span><span class="p">(</span><span class="n">args</span><span class="p">:</span> <span class="nc">Array</span><span class="p">&lt;</span><span class="nc">String</span><span class="p">&gt;)</span> <span class="p">{</span>
+	<span class="kd">var</span> <span class="py">a</span> <span class="p">=</span> <span class="mi">8</span>
+
+	<span class="c1">// call using infix notation</span>
+	<span class="kd">var</span> <span class="py">result1</span> <span class="p">=</span> <span class="n">a</span> <span class="n">shr</span> <span class="mi">2</span>
+	<span class="nf">println</span><span class="p">(</span><span class="s">"Signed shift right by 2 bit: $result1"</span><span class="p">)</span>
+	<span class="c1">// call using dot and parenthesis</span>
+	<span class="kd">var</span> <span class="py">result2</span> <span class="p">=</span> <span class="n">a</span><span class="p">.</span><span class="nf">shr</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+	<span class="nf">println</span><span class="p">(</span><span class="s">"Signed shift right by 1 bit: $result2"</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></table></code></div></div><h4 id="kotlin-program-of-using-increment-and-decrement-operators">Kotlin program of using increment and decrement operators</h4><div lang="kotlin" class="language-kotlin highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+</pre><td class="rouge-code"><pre><span class="k">fun</span> <span class="nf">main</span><span class="p">(</span><span class="n">args</span><span class="p">:</span> <span class="nc">Array</span><span class="p">&lt;</span><span class="nc">String</span><span class="p">&gt;)</span> <span class="p">{</span>
+	<span class="kd">var</span> <span class="py">a</span> <span class="p">=</span> <span class="mi">8</span>
+	<span class="kd">var</span> <span class="py">b</span> <span class="p">=</span> <span class="mi">4</span>
+	
+	<span class="nf">println</span><span class="p">(++</span><span class="n">a</span><span class="p">)</span>	 <span class="c1">// call using infix notation</span>
+	<span class="nf">println</span><span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="nf">inc</span><span class="p">())</span> <span class="c1">// call using dot and parenthesis</span>
+	<span class="nf">println</span><span class="p">(--</span><span class="n">b</span><span class="p">)</span>	 <span class="c1">// call using infix notation</span>
+	<span class="nf">println</span><span class="p">(</span><span class="n">b</span><span class="p">.</span><span class="nf">dec</span><span class="p">())</span> <span class="c1">// call using dot and parenthesis</span>
+<span class="p">}</span>
+</pre></table></code></div></div><h3 id="user-defined-infix-function-notation">User defined infix function notation</h3><p>함수가 다음을 충족할 경우 infix 표기법을 사용할 수 있다.</p><ul><li>member function 이거나 extension function이여야 한다.<li>하나의 파라미터만 받아야 한다.<li>파라미터는 변수 개수의 인자를 허용하지 않아야 하며 기본 값은 없어야 한다.<li>infix 키워드로 표시되어야 한다.</ul><div lang="kotlin" class="language-kotlin highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+</pre><td class="rouge-code"><pre><span class="c1">// 멤버 함수이여야 하므로 math 클래스의 함수로 등록</span>
+<span class="kd">class</span> <span class="nc">Math</span> <span class="p">{</span>
+    <span class="c1">// infix 키워드 사용, 하나의 파라미터만 받고, 기본 값은 없으며 반환 값은 Integer이다.</span>
+    <span class="k">infix</span> <span class="k">fun</span> <span class="nf">square</span><span class="p">(</span><span class="n">n</span> <span class="p">:</span> <span class="nc">Int</span><span class="p">):</span> <span class="nc">Int</span> <span class="p">{</span>
+        <span class="kd">val</span> <span class="py">num</span> <span class="p">=</span> <span class="n">n</span> <span class="p">*</span> <span class="n">n</span>
+        <span class="k">return</span> <span class="n">num</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">fun</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">val</span> <span class="py">m</span> <span class="p">=</span> <span class="nc">Math</span><span class="p">()</span>
+    <span class="c1">// call using infix notation</span>
+    <span class="kd">val</span> <span class="py">result</span> <span class="p">=</span> <span class="n">m</span> <span class="n">square</span> <span class="mi">3</span>
+    <span class="nf">println</span><span class="p">(</span><span class="s">"The square of a number is: "</span><span class="p">+</span><span class="n">result</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></table></code></div></div><h2 id="kotlin-higher-order-functions">Kotlin Higher-Order Functions</h2><p>코틀린 함수들은 변수와 데이터 구조에 저장될 수 있으며, 인자로 전달되어 다른 고차 함수에서 반환된다.</p><h3 id="higher-order-function">Higher-Order Function</h3><p>코틀린에선 함수를 파라미터로 받아들이거나 함수를 반환할 수 있는 함수를 고차 함수라 한다. Integer, String, Array 대신 익명 함수 또는 람다식을 전달한다.</p><h3 id="passing-lambda-expression-as-a-parameter-to-higher-order-function">Passing lambda expression as a parameter to Higher-Order Function</h3><p>고차 함수에 람다식을 파라미터로 전달할 수 있으며, 전달할 수 있는 2가지 유형의 람다식이 있다.</p><ul><li>반환 값이 <code class="language-plaintext highlighter-rouge">Unit</code>인 람다식<li>반환 값이 Integer, String 등인 람다식</ul><h4 id="kotlin-program-of-lambda-expression-which-returns-unit">Kotlin program of lambda expression which returns Unit</h4><div lang="kotlin" class="language-kotlin highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+</pre><td class="rouge-code"><pre><span class="c1">// 람다식을 정의</span>
+<span class="kd">var</span> <span class="py">lambda</span> <span class="p">=</span> <span class="p">{</span><span class="nf">println</span><span class="p">(</span><span class="s">"GeeksforGeeks: A Computer Science portal for Geeks"</span><span class="p">)</span> <span class="p">}</span>
+<span class="c1">// 하나의 파라미터를 포함하는 고차 함수를 정의</span>
+<span class="c1">// lmbd는 local 변수 이름, ()는 아무 인자도 받지 않는 함수임을 의미, Unit은 반환 값이 없음을 의미</span>
+<span class="k">fun</span> <span class="nf">higherfunc</span><span class="p">(</span> <span class="n">lmbd</span><span class="p">:</span> <span class="p">()</span> <span class="p">-&gt;</span> <span class="nc">Unit</span> <span class="p">)</span> <span class="p">{</span>	 <span class="c1">// accepting lambda as parameter</span>
+	<span class="nf">lmbd</span><span class="p">()</span>							 <span class="c1">//invokes lambda expression</span>
+<span class="p">}</span>
+<span class="k">fun</span> <span class="nf">main</span><span class="p">(</span><span class="n">args</span><span class="p">:</span> <span class="nc">Array</span><span class="p">&lt;</span><span class="nc">String</span><span class="p">&gt;)</span> <span class="p">{</span>
+	<span class="c1">// invoke higher-order function</span>
+	<span class="nf">higherfunc</span><span class="p">(</span><span class="n">lambda</span><span class="p">)</span>				 <span class="c1">// passing lambda as parameter</span>
+<span class="p">}</span>
+</pre></table></code></div></div><p><strong>Output</strong></p><div lang="plaintext" class="language-plaintext highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre>GeeksforGeeks: A Computer Science portal for Geeks
+</pre></table></code></div></div><h4 id="kotlin-program-of-lambda-expression-which-returns-integer-value">Kotlin program of lambda expression which returns Integer value</h4><div lang="kotlin" class="language-kotlin highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+</pre><td class="rouge-code"><pre><span class="c1">// 람다식을 정의</span>
+<span class="kd">var</span> <span class="py">lambda</span> <span class="p">=</span> <span class="p">{</span><span class="n">a</span><span class="p">:</span> <span class="nc">Int</span> <span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="nc">Int</span> <span class="p">-&gt;</span> <span class="n">a</span> <span class="p">+</span> <span class="n">b</span> <span class="p">}</span>
+<span class="c1">// higher order function</span>
+<span class="c1">// lmbd는 lcoal 변수 이름, (Int, Int)는 두 개의 Integer 타입의 파라미터, -&gt; Int 는 반환 값이 Integer</span>
+<span class="k">fun</span> <span class="nf">higherfunc</span><span class="p">(</span> <span class="n">lmbd</span><span class="p">:</span> <span class="p">(</span><span class="nc">Int</span><span class="p">,</span> <span class="nc">Int</span><span class="p">)</span> <span class="p">-&gt;</span> <span class="nc">Int</span><span class="p">)</span> <span class="p">{</span>	 <span class="c1">// accepting lambda as parameter</span>
+		
+	<span class="kd">var</span> <span class="py">result</span> <span class="p">=</span> <span class="nf">lmbd</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span> <span class="c1">// invokes the lambda expression by passing parameters				</span>
+	<span class="nf">println</span><span class="p">(</span><span class="s">"The sum of two numbers is: $result"</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="k">fun</span> <span class="nf">main</span><span class="p">(</span><span class="n">args</span><span class="p">:</span> <span class="nc">Array</span><span class="p">&lt;</span><span class="nc">String</span><span class="p">&gt;)</span> <span class="p">{</span>
+	<span class="nf">higherfunc</span><span class="p">(</span><span class="n">lambda</span><span class="p">)</span>		 <span class="c1">//passing lambda as parameter</span>
+<span class="p">}</span>
+</pre></table></code></div></div><h3 id="passing-function-as-a-parameter-to-higher-order-function">Passing function as a parameter to Higher-Order function</h3><p>함수를 고차 함수에 인자로 전달할 수 있다. 전달할 수 있는 2가지 타입의 함수가 있다.</p><ul><li>반환 값이 <code class="language-plaintext highlighter-rouge">Unit</code>인 함수<li>반환 값이 Integer, String 등인 함수</ul><h4 id="kotlin-program-of-passing-function-which-returns-unit">Kotlin program of passing function which returns Unit</h4><div lang="kotlin" class="language-kotlin highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+</pre><td class="rouge-code"><pre><span class="c1">// String을 인자로 받아 출력하는 함수</span>
+<span class="k">fun</span> <span class="nf">printMe</span><span class="p">(</span><span class="n">s</span><span class="p">:</span><span class="nc">String</span><span class="p">):</span> <span class="nc">Unit</span><span class="p">{</span>
+	<span class="nf">println</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+<span class="p">}</span>
+<span class="c1">// higher-order function definition</span>
+<span class="c1">// (str : String) 은 String 파라미터, myfunc: (String) -&gt; Unit 은 반환 값이 Unit인 함수를 의미</span>
+<span class="k">fun</span> <span class="nf">higherfunc</span><span class="p">(</span> <span class="n">str</span> <span class="p">:</span> <span class="nc">String</span><span class="p">,</span> <span class="n">myfunc</span><span class="p">:</span> <span class="p">(</span><span class="nc">String</span><span class="p">)</span> <span class="p">-&gt;</span> <span class="nc">Unit</span><span class="p">){</span>
+<span class="c1">// invoke regular function using local name</span>
+	<span class="nf">myfunc</span><span class="p">(</span><span class="n">str</span><span class="p">)</span>
+<span class="p">}</span>
+<span class="k">fun</span> <span class="nf">main</span><span class="p">(</span><span class="n">args</span><span class="p">:</span> <span class="nc">Array</span><span class="p">&lt;</span><span class="nc">String</span><span class="p">&gt;)</span> <span class="p">{</span>
+	<span class="c1">// invoke higher-order function</span>
+	<span class="nf">higherfunc</span><span class="p">(</span><span class="s">"GeeksforGeeks: A Computer Science portal for Geeks"</span><span class="p">,</span><span class="o">::</span><span class="n">printMe</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></table></code></div></div><h4 id="kotlin-program-of-passing-function-which-returns-integer-value">Kotlin program of passing function which returns integer value</h4><div lang="kotlin" class="language-kotlin highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+</pre><td class="rouge-code"><pre><span class="c1">// 두 개의 숫자를 받아 더해주는 함수</span>
+<span class="k">fun</span> <span class="nf">add</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="nc">Int</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="nc">Int</span><span class="p">):</span> <span class="nc">Int</span><span class="p">{</span>
+	<span class="kd">var</span> <span class="py">sum</span> <span class="p">=</span> <span class="n">a</span> <span class="p">+</span> <span class="n">b</span>
+	<span class="k">return</span> <span class="n">sum</span>
+<span class="p">}</span>
+<span class="c1">// higher-order function definition</span>
+<span class="c1">// 2개의 Integer 유형의 파라미터를 입력 받아 Integer 타입으로 반환</span>
+<span class="k">fun</span> <span class="nf">higherfunc</span><span class="p">(</span><span class="n">addfunc</span><span class="p">:(</span><span class="nc">Int</span><span class="p">,</span><span class="nc">Int</span><span class="p">)-&gt;</span> <span class="nc">Int</span><span class="p">){</span>
+	<span class="c1">// invoke regular function using local name</span>
+	<span class="kd">var</span> <span class="py">result</span> <span class="p">=</span> <span class="nf">addfunc</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">6</span><span class="p">)</span>
+	<span class="nf">print</span><span class="p">(</span><span class="s">"The sum of two numbers is: $result"</span><span class="p">)</span>
+<span class="p">}</span>
+<span class="k">fun</span> <span class="nf">main</span><span class="p">(</span><span class="n">args</span><span class="p">:</span> <span class="nc">Array</span><span class="p">&lt;</span><span class="nc">String</span><span class="p">&gt;)</span> <span class="p">{</span>
+	<span class="c1">// invoke higher-order function</span>
+	<span class="nf">higherfunc</span><span class="p">(</span><span class="o">::</span><span class="n">add</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></table></code></div></div><h2 id="references">References</h2><ul><li><a href="https://www.geeksforgeeks.org/kotlin-programming-language/">Functions</a><li><a href="https://sungjk.github.io/2019/09/07/kotlin-reified.html">코틀린에서 reified는 왜 쓸까?</a></ul></div><div class="post-tail-wrapper text-muted"><div class="post-meta mb-3"> <i class="far fa-folder-open fa-fw mr-1"></i> <a href='/categories/android/'>Android</a>, <a href='/categories/kotlin/'>Kotlin</a></div><div class="post-tags"> <i class="fa fa-tags fa-fw mr-1"></i> <a href="/tags/kotlin/" class="post-tag no-text-decoration" >kotlin</a></div><div class="post-tail-bottom d-flex justify-content-between align-items-center mt-3 pt-5 pb-2"><div class="license-wrapper"> This post is licensed under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a> by the author.</div><div class="share-wrapper"> <span class="share-label text-muted mr-1">Share</span> <span class="share-icons"> <a href="https://twitter.com/intent/tweet?text=Kotlin Function - BS Blog&url=https://beomsu317.github.io/posts/kotlin-function/" data-toggle="tooltip" data-placement="top" title="Twitter" target="_blank" rel="noopener" aria-label="Twitter"> <i class="fa-fw fab fa-twitter"></i> </a> <a href="https://www.facebook.com/sharer/sharer.php?title=Kotlin Function - BS Blog&u=https://beomsu317.github.io/posts/kotlin-function/" data-toggle="tooltip" data-placement="top" title="Facebook" target="_blank" rel="noopener" aria-label="Facebook"> <i class="fa-fw fab fa-facebook-square"></i> </a> <a href="https://telegram.me/share?text=Kotlin Function - BS Blog&url=https://beomsu317.github.io/posts/kotlin-function/" data-toggle="tooltip" data-placement="top" title="Telegram" target="_blank" rel="noopener" aria-label="Telegram"> <i class="fa-fw fab fa-telegram"></i> </a> <i class="fa-fw fas fa-link small" onclick="copyLink()" data-toggle="tooltip" data-placement="top" title="Copy link"></i> </span></div></div></div></div></div><div id="panel-wrapper" class="col-xl-3 pl-2 text-muted topbar-down"><div class="access"><div id="access-tags"> <span>Trending Tags</span><div class="d-flex flex-wrap mt-3 mb-1 mr-3"> <a class="post-tag" href="/tags/android/">android</a> <a class="post-tag" href="/tags/exploitation/">exploitation</a> <a class="post-tag" href="/tags/algorithm/">algorithm</a> <a class="post-tag" href="/tags/dynamic-programming/">dynamic programming</a> <a class="post-tag" href="/tags/heap/">heap</a> <a class="post-tag" href="/tags/stack/">stack</a> <a class="post-tag" href="/tags/kernel/">kernel</a> <a class="post-tag" href="/tags/dagger/">dagger</a> <a class="post-tag" href="/tags/house-of-series/">house of series</a> <a class="post-tag" href="/tags/return-oriented-programming/">return-oriented programming</a></div></div></div><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@1.0.1/dist/bootstrap-toc.min.js"></script><div id="toc-wrapper" class="pl-0 pr-4 mb-5"> <span class="pl-3 pt-2 mb-2">Contents</span><nav id="toc" data-toggle="toc"></nav></div></div></div><div class="row"><div class="col-12 col-lg-11 col-xl-8"><div id="post-extend-wrapper" class="pl-1 pr-1 pl-sm-2 pr-sm-2 pl-md-4 pr-md-4"><div id="related-posts" class="mt-5 mb-2 mb-sm-4"><h3 class="pt-2 mt-1 mb-4 ml-1" data-toc-skip>Further Reading</h3><div class="card-deck mb-4"><div class="card"> <a href="/posts/kotlin-basic/"><div class="card-body"> <span class="timeago small" > Jul 9 <i class="unloaded">2021-07-09T00:00:00+09:00</i> </span><h3 class="pt-0 mt-1 mb-3" data-toc-skip>Kotlin Basic</h3><div class="text-muted small"><p> Kotlin Data Types 코틀린의 다양한 데이터 타입의 종류이다. Integer Data type Floating-point Data Type Boolean Data Type Character Data Type Integer Data Type Data Type Bits M...</p></div></div></a></div><div class="card"> <a href="/posts/kotlin-array-string/"><div class="card-body"> <span class="timeago small" > Jul 10 <i class="unloaded">2021-07-10T00:00:00+09:00</i> </span><h3 class="pt-0 mt-1 mb-3" data-toc-skip>Kotlin Array & String</h3><div class="text-muted small"><p> Kotlin Array Create Array arrayOf() 함수를 사용해 배열을 생성할 수 있다. val num = arrayOf(1, 2, 3, 4) //implicit type declaration val num = arrayOf&lt;Int&gt;(1, 2, 3) //explicit type declaration Array co...</p></div></div></a></div><div class="card"> <a href="/posts/kotlin-oops-concept/"><div class="card-body"> <span class="timeago small" > Jul 12 <i class="unloaded">2021-07-12T00:00:00+09:00</i> </span><h3 class="pt-0 mt-1 mb-3" data-toc-skip>Kotlin OOPs Concept</h3><div class="text-muted small"><p> Kotlin Class and Objects 코틀린은 함수 및 OOP를 모두 지원한다. 클래스와 객체는 OOP의 기본 개념이며, 이는 상속, 추상화 등을 지원한다. Class 자바와 마찬가지로 Class는 유사한 속성을 가진 객체의 blueprint 이다. 객체를 사용하기 전 클래스를 정의해야 하며 class 키워드를 사용해 클래스를 정의한다. ...</p></div></div></a></div></div></div><div class="post-navigation d-flex justify-content-between"> <a href="/posts/kotlin-array-string/" class="btn btn-outline-primary" prompt="Older"><p>Kotlin Array & String</p></a> <a href="/posts/kotlin-oops-concept/" class="btn btn-outline-primary" prompt="Newer"><p>Kotlin OOPs Concept</p></a></div></div></div></div><footer class="d-flex w-100 justify-content-center"><div class="d-flex justify-content-between align-items-center"><div class="footer-left"><p class="mb-0"> © 2021 <a href="https://github.com/beomsu317">Beomsu Lee</a>. <span data-toggle="tooltip" data-placement="top" title="Except where otherwise noted, the blog posts on this site are licensed under the Creative Commons Attribution 4.0 International (CC BY 4.0) License by the author.">Some rights reserved.</span></p></div><div class="footer-right"><p class="mb-0"> Powered by <a href="https://jekyllrb.com" target="_blank" rel="noopener">Jekyll</a> with <a href="https://github.com/cotes2020/jekyll-theme-chirpy" target="_blank" rel="noopener">Chirpy</a> theme.</p></div></div></footer></div><div id="search-result-wrapper" class="d-flex justify-content-center unloaded"><div class="col-12 col-sm-11 post-content"><div id="search-hints"><h4 class="text-muted mb-4">Trending Tags</h4><a class="post-tag" href="/tags/android/">android</a> <a class="post-tag" href="/tags/exploitation/">exploitation</a> <a class="post-tag" href="/tags/algorithm/">algorithm</a> <a class="post-tag" href="/tags/dynamic-programming/">dynamic programming</a> <a class="post-tag" href="/tags/heap/">heap</a> <a class="post-tag" href="/tags/stack/">stack</a> <a class="post-tag" href="/tags/kernel/">kernel</a> <a class="post-tag" href="/tags/dagger/">dagger</a> <a class="post-tag" href="/tags/house-of-series/">house of series</a> <a class="post-tag" href="/tags/return-oriented-programming/">return oriented programming</a></div><div id="search-results" class="d-flex flex-wrap justify-content-center text-muted mt-3"></div></div></div></div><script src="https://cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js"></script> <script> $(function() { let initTheme = "default"; if ($("html[mode=dark]").length > 0 || ($("html[mode]").length == 0 && window.matchMedia("(prefers-color-scheme: dark)").matches ) ) { initTheme = "dark"; } let mermaidConf = { theme: initTheme /* <default|dark|forest|neutral> */ }; /* Markdown converts to HTML */ $("pre").has("code.language-mermaid").each(function() { let svgCode = $(this).children().html(); $(this).addClass("unloaded"); $(this).after(`<div class=\"mermaid\">${svgCode}</div>`); }); mermaid.initialize(mermaidConf); }); </script><div id="mask"></div><a id="back-to-top" href="#" aria-label="back-to-top" class="btn btn-lg btn-box-shadow" role="button"> <i class="fas fa-angle-up"></i> </a> <script src="https://cdn.jsdelivr.net/npm/simple-jekyll-search@1.7.3/dest/simple-jekyll-search.min.js"></script> <script> SimpleJekyllSearch({ searchInput: document.getElementById('search-input'), resultsContainer: document.getElementById('search-results'), json: '/assets/js/data/search.json', searchResultTemplate: '<div class="pl-1 pr-1 pl-sm-2 pr-sm-2 pl-lg-4 pr-lg-4 pl-xl-0 pr-xl-0"> <a href="https://beomsu317.github.io{url}">{title}</a><div class="post-meta d-flex flex-column flex-sm-row text-muted mt-1 mb-1"> {categories} {tags}</div><p>{snippet}</p></div>', noResultsText: '<p class="mt-5">Oops! No result founds.</p>', templateMiddleware: function(prop, value, template) { if (prop === 'categories') { if (value === '') { return `${value}`; } else { return `<div class="mr-sm-4"><i class="far fa-folder fa-fw"></i>${value}</div>`; } } if (prop === 'tags') { if (value === '') { return `${value}`; } else { return `<div><i class="fa fa-tag fa-fw"></i>${value}</div>`; } } } }); </script> <script async src="https://cdn.jsdelivr.net/combine/npm/popper.js@1.15.0,npm/bootstrap@4/dist/js/bootstrap.min.js"></script> <script defer src="/app.js"></script> <script src="https://cdn.jsdelivr.net/combine/npm/lozad/dist/lozad.min.js,npm/magnific-popup@1/dist/jquery.magnific-popup.min.js"></script> <script defer src="/assets/js/dist/post.min.js"></script> <script> /* see: <https://docs.mathjax.org/en/latest/options/input/tex.html#tex-options> */ MathJax = { tex: { inlineMath: [ /* start/end delimiter pairs for in-line math */ ['$','$'], ['\\(','\\)'] ], displayMath: [ /* start/end delimiter pairs for display math */ ['$$', '$$'], ['\\[', '\\]'] ] } }; </script> <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script> <script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"> </script>

