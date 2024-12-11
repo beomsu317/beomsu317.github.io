@@ -19,6 +19,8 @@ cover:
 
 ## Getting Started 🚀
 
+$ 1 + 1 = 2 $
+
 1. Follow **[Hugo Docs's - Quick Start](https://gohugo.io/getting-started/quick-start/)** guide to install {{< inTextImg url="https://raw.githubusercontent.com/gohugoio/hugoDocs/master/static/img/hugo-logo.png" height="14" >}}.
    <br>(Make sure you install **Hugo >= v0.112.4**)
 
