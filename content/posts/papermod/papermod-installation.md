@@ -7,6 +7,7 @@ weight: 1
 aliases: ["/papermod-installation"]
 tags: ["PaperMod", "Docs"]
 author: ["Aditya Telange"]
+math: true
 cover:
   image: images/papermod-cover.png
   hiddenInList: true
