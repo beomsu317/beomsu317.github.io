@@ -84,3 +84,53 @@ std::size_t CTextBlock::length() const {
 
 ### Item 4: Make sure that objects are initialized before they’re used
 
+C++의 기본제공 타입의 객체는 초기화가 될 때도 있고 안될 때도 있으므로 **항상** 초기화한다.
+
+C++ 규칙에 의하면 어떤 객체든 그 객체의 데이터 멤버는 생성자의 본문이 실행되기 전에 초기화되어야 한다고 명시되어 있다.
+
+```cpp
+class PhoneNumber { ... };
+
+class ABEntry {                 // ABEntry = “Address Book Entry”
+public:
+    ABEntry(const std::string& name, const std::string& address,
+            const std::list<PhoneNumber>& phones);
+private:
+    std::string theName;
+    std::string theAddress;
+    std::list<PhoneNumber> thePhones;
+    int numTimesConsulted;
+};
+
+ABEntry::ABEntry(const std::string& name, const std::string& address,
+                 const std::list<PhoneNumber>& phones)
+: theName(name),
+theAddress(address),            // these are now all initializations
+thePhones(phones),
+numTimesConsulted(0)
+{}                              // the ctor body is now empty
+```
+
+initializer list를 통해 초기화하면 생성자가 호출되기 전에 초기화가 가능하다. 생성자에서 대입을 사용한 경우 `theName`, `theAddress`, `thePhones`에 대해 기본 생성자를 먼저 호출해 초기화를 미리 해놓고 생성자에서 새로운 값을 대입하게 된다.
+
+정적(static) 객체는 자신이 생성된 시점부터 프로그램이 끝날 때까지 살아있는 객체다. 
+
+- 비지역 정적 객체
+    - 전역 객체
+    - 네임스페이스 유효범위에서 정의된 객체
+
+- 지역 정적 객체
+    - 클래스 안에서 `static`으로 선언된 객체
+    - 함수 안에서 `static`으로 선언된 객체
+    - 파일 유효범위에서 `static`으로 정의된 객체
+
+서로 다른 번역 단위에 정의된 비지역 정적 객체들 사이 상대적인 초기화 순서는 정해져 있지 않다. 즉, A에서 정의된 객체가 B에서 사용될 경우 초기화되지 않아 문제가 발생할 수 있다.
+
+이는 지역 정적 객체로 변경하여 해결할 수 있다. 지역 정적 객체는 함수 호출 중 그 객체의 정의에 도달하면 초기화되도록 만들어져 있다.
+
+```cpp
+FileSystem& tfs() {                 // this replaces the tfs object; it could be static in the FileSystem class
+    static FileSystem fs;           // define and initialize a local static object
+    return fs;                      // return a reference to it
+}
+```
