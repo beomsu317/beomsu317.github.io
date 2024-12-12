@@ -51,3 +51,36 @@ inline void callWithMax(const T& a, const T& b) // know what T is, we
 
 ### Item 3: Use const whenever possible
 
+`const`를 붙이면 컴파일러가 에러를 잡아내는데 도움을 준다. 또한 `const`는 어떤 유효범위에 있는 개체에도 붙을 수 있다. 예를 들어, 함수 매개변수 및 반환 타입에도 붙을 수 있으며, 멤버 함수에도 붙을 수 있다.
+
+멤버 함수가 상수 멤버라는 것은 다음 두 양대 개념이 있다.
+
+1. **비트수준 상수성**은 C++에서 적용하는 상수성이며, "그 객체의 어떤 데이터 멤버도 건드리지 않아야 그 멤버가 상수임을 정하는 개념"이다. 즉, 그 객체를 구성하는 비트들 중 어떤 것도 바뀌면 안된다는 것이다.
+2. **논리적 상수성**은 상수 함수여도 몇 비트 정도는 바꿀 수 있되, 사용자 측에서 알아채지 못하게만 하면 상수 멤버 자격이 있다고 판단하는 것이다(`mutable`).
+
+다음은 `length()` 함수가 비트 수준의 상수성을 지켜지게 한 예제이다.
+
+```cpp
+class CTextBlock {
+public:
+    ...
+    std::size_t length() const;
+private:
+    char *pText;
+    mutable std::size_t textLength;     // these data members may always be modified, even in const member functions
+    mutable bool lengthIsValid;
+};
+
+std::size_t CTextBlock::length() const {
+    if (!lengthIsValid) {
+        textLength = std::strlen(pText);    // now fine
+        lengthIsValid = true;               // also fine
+    }
+    return textLength;
+}
+```
+
+상수 멤버 및 비상수 멤버 함수가 기능적으로 똑같이 구현되어 있는 경우, 중복을 피하기 위해 비상수 버전이 상수 버전을 호출하도록 한다.
+
+### Item 4: Make sure that objects are initialized before they’re used
+
