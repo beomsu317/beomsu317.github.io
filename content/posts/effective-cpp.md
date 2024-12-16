@@ -331,3 +331,77 @@ private:
 	static std::string createLogString( parameters );
 };
 ```
+
+### Item 10: Have assignment operators return a reference to *this
+
+C++의 대입 연산은 우측 연관(right-associative) 연산이다. 따라서 다음과 같이 사용될 수 있다.
+
+```cpp
+int x, y, z;
+x = y = z = 15; // x = (y = (z = 15));
+```
+
+15가 `z`에 먼저 대입되고, 그 결과가 `y`에 대입된 후 `y`의 결과가 `x`에 대입된다. 이것이 가능하려면 대입 연산자가 좌변 인자에 대한 참조자를 반환하도록 구현되어 있을 것이다. 따라서 생성할 클래스에서도 이 컨벤션을 지키는 것이 좋다(모든 형태의 대입 연산자에 대해). 
+
+```cpp
+class Widget { 
+public:
+	...
+	Widget& operator=(const Widget& rhs) { // return type is a reference to the current class
+		...
+		return *this; // return the left-hand object
+	}
+	... 
+};
+```
+
+### Item 11: Handle assignment to self in operator=
+
+자기 대입(self assignment)는 어떤 객체가 자기 자신에 대해 대입 연산자를 적용하는 것이다. 같은 타입으로 만들어진 객체 여러 개를 참조자 혹은 포인터로 만들고 동작하는 코드를 작성할 때는 같은 객체가 사용될 가능성을 고려하는 것이 바람직하다.
+
+동적 할당된 비트맵을 가리키는 포인터를 데이터 멤버로 갖는 클래스가 있다고 하자.
+
+```cpp
+class Bitmap { ... };
+class Widget { 
+	...
+private:
+	Bitmap *pb; // ptr to a heap-allocated object
+};
+```
+
+다음과 같은 코드에서 `*this`와 `rhs`가 같은 객체일 가능성이 있다. 따라서 함수가 끝나는 시점엔 해당 `Widget` 객체는 자신의 포인터 멤버를 통해 갖고 있던 객체가 삭제되는 상태가 된다.
+
+```cpp
+Widget& Widget::operator=(const Widget& rhs) { // unsafe impl. of operator=
+	delete pb;                // stop using current bitmap
+	pb = new Bitmap(*rhs.pb); // start using a copy of rhs’s bitmap
+	return *this;
+}
+```
+
+따라서 일치성 검사(identity test)를 통해 자기대입을 점검해야 한다.
+
+```cpp
+Widget& Widget::operator=(const Widget& rhs) {
+	if (this == &rhs) return *this; // identity test: if a self-assignment, do nothing
+	delete pb;
+	pb = new Bitmap(*rhs.pb);
+	return *this; 
+}
+```
+
+위 코드는 예외 안정성에 대해서 여전히 문제이다. `new Bitmap()`에서 예외가 발생하면 `Widget` 객체는 삭제된 `Bitmap`을 가라키는 포인터를 갖게 된다.
+
+다음과 같이 `pb`를 삭제하지 말고 이 포인터가 가리키는 객체를 복사한 후 삭제하면 해결할 수 있다.
+
+```cpp
+Widget& Widget::operator=(const Widget& rhs) {
+	Bitmap *pOrig = pb; // remember original pb 
+	pb = new Bitmap(*rhs.pb); // point pb to a copy of rhs’s bitmap
+	delete pOrig; // delete the original pb
+	return *this; 
+}
+```
+
+> 효율이 신경쓰일 수 있으나, 일치성 검사 역시 공짜가 아니다. 
