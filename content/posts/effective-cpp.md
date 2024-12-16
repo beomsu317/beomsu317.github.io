@@ -134,3 +134,198 @@ FileSystem& tfs() {                 // this replaces the tfs object; it could be
     return fs;                      // return a reference to it
 }
 ```
+
+### Item 5: Know what functions C++ silently writes and calls
+
+생성자, 복사 생성자, 복사 대입 연산자, 소멸자는 클래스에 직접 선언하지 않으면 컴파일러가 기본형으로 만들어준다. 예를 들어 `class Empty{};
+`로 선언하면 다음과 같은 함수들이 자동으로 생성된다.
+
+```cpp
+class Empty { 
+public:
+	Empty() { ... }                 // default constructor 
+	Empty(const Empty& rhs) { ... } // copy constructor
+	~Empty() { ... }                // destructor — see below
+	                                // for whether it’s virtual
+	Empty& operator=(const Empty& rhs) { ... } // copy assignment operator
+};
+```
+
+### Item 6: Explicitly disallow the use of compiler-generated functions you do not want
+
+자동으로 생성되는 복사 생성자, 복사 대입 생성자의 경우 복사를 원하지 않는 클래스에서도 복사가 지원될 수 있다. 이는 `private` 멤버로 선언하여 해결할 수 있다.
+
+```cpp
+class HomeForSale { 
+public:
+	...
+private: 
+	...
+	HomeForSale(const HomeForSale&); // declarations only
+	HomeForSale& operator=(const HomeForSale&);
+};
+```
+
+### Item 7: Declare destructors virtual in polymorphic base classes
+
+`TimeKeeper`를 상속하는 여러 개의 클래스들이 있다고 가정하자.
+
+```cpp
+class TimeKeeper { 
+public:
+	TimeKeeper( ); 
+	~TimeKeeper( ); ...
+};
+
+class AtomicClock: public TimeKeeper { ... }; 
+class WaterClock: public TimeKeeper { ... }; 
+class WristWatch: public TimeKeeper { ... };
+```
+
+`getTimeKeeper()` 함수에서 반환되는 객체는 힙에 있으므로 메모리 릭을 막기 위해 해당 객체를 삭제해야 한다.
+
+```cpp
+TimeKeeper *ptk = getTimeKeeper();  // get dynamically allocated object from TimeKeeper hierarchy
+...           // use it
+delete ptk;   // release it to avoid resource leak
+```
+
+하지만 `getTimeKeeper()` 함수가 반환하는 포인터는 파생 클래스의 포인터이며, 이 포인터가 가리키는 객체가 삭제될 때는 기본 클래스 포인터(`TimeKeeper`)를 통해 삭제된다는 것, 그리고 기본 클래스에 들어있는 소멸자가 non-virtual 이라는 것이다.
+
+C++ 규정에 의하면 기본 클래스 포인터를 통해 파생 클래스 객체가 삭제될 때 기본 클래스에 non-virtual 소멸자가 있으면 해당 프로그램의 동작은 미정의 사항이라 되어 있다. 일반적으로 파생 클래스 부분이 소멸되지 않게 된다. 
+
+이를 해결하기 위해선 기본 클래스에 **가상 소멸자**를 선언하면 된다.
+
+```cpp
+class TimeKeeper { 
+public:
+	TimeKeeper( );
+	virtual ~TimeKeeper(); 
+	...
+};
+```
+
+Base 클래스로 의도하지 않은 클래스에 대해 가상으로 선언하는 것 또한 좋지 않다. 
+
+가상 소멸자로 만들어지는 순간 프로그램 실행 시 어떤 가상 함수를 호출해야 하는 결정하는데 쓰이는 정보인데, 실제로는 포인터 형태를 취하며 vptr(virtual table pointer)로 불린다. vptr은 가상 함수 주소(포인터 배열)를 가라키고 있으며 vtbl(virtual table)이라 불린다. 즉, 가상 함수를 하나라도 갖는 클래스는 반드시 이와 관련된 vtbl를 갖고 있다. 
+
+따라서 가상 함수가 들어가게 되면 해당 객체 크기가 커지게 되며, C 등의 다른 언어로 선언된 동일한 자료구조와도 호환성이 없어진다.
+
+### Item 8: Prevent exceptions from leaving destructors
+
+소멸자로부터 예외가 발생하는 경우 C++에서 막아주지 않는다. 다음과 같은 DB 연결을 위한 클래스가 있다고 하자.
+
+```cpp
+class DBConnection { 
+public:
+	...
+	static DBConnection create(); // function to return DBConnection objects; params omitted for simplicity
+	void close(); // close connection; throw an exception if closing fails
+};
+```
+
+`DBConnection`의 자원 관리 클래스인 `DBConn`를 만들어 소멸자에서 `DBConnection`의 `close()`를 호출하게 할 수 있다.
+
+```cpp
+class DBConn { // class to manage DBConnection objects
+public:
+	...
+	~DBConn() { // make sure database connections are always closed
+		db.close(); 
+	}
+private: 
+	DBConnection db;
+};
+```
+
+따라서 다음과 같이 프로그래밍 할 수 있다.
+
+```cpp
+{ // open a block
+	DBConn dbc(DBConnection::create()); // create DBConnection object and turn it over to a DBConn object to manage
+	... // use the DBConnection object via the DBConn interface
+} // at end of block, the DBConn object is destroyed, thus automatically calling close on the DBConnection object
+```
+
+그러나 `close()`를 호출했는데 여기서 예외가 발생했다고 하자. `DBConn`의 소멸자는 예외를 전파할 것이다. 즉, 소멸자에서 예외가 나가도록 내버려 둔다는 것이다. 
+
+이를 피하기 위한 두 가지 방법이 있다.
+
+1. `close()`에서 예외가 발생하면 `abort()` 호출로 프로그램을 바로 끝낸다.
+   ```cpp
+   DBConn::~DBConn( ) {
+   	try { db.close(); } 
+   	catch (...) {
+   		make log entry that the call to close failed;
+   		std::abort(); 
+   	}
+   }
+   ```
+2. `close()`를 호출한 곳에서 일어난 예외를 삼킨다. 이는 좋은 방식이 아니지만, 때에 따라 불완전한 프로그램 종료 혹은 미정의 동작으로 인한 위험을 감수하는 것보다 나을 수 있다.
+   ```cpp
+   DBConn::~DBConn( ) {
+   	try { db.close(); } 
+   	catch (...) {
+   		make log entry that the call to close failed; 
+   	}
+   }
+   ```
+
+### Item 9: Never call virtual functions during construction or destruction
+
+주식 거래가 발생될 때마다 로그에 거래 내역이 쌓이도록 하고 싶어 `Transaction` 클래스를 생성했다고 하자.
+
+```cpp
+class Transaction { // base class for all transactions
+public:
+	Transaction( );
+	virtual void logTransaction() const = 0; // make type-dependent log entry
+	... 
+};
+
+Transaction::Transaction() { // implementation of base class ctor
+	... 
+	logTransaction(); // as final action, log this transaction
+}
+
+class BuyTransaction: public Transaction { // derived class
+public:
+	virtual void logTransaction() const; // how to log transactions of this type
+	... 
+};
+```
+
+그리고 다음과 같이 코드를 작성했다고 하자. 
+
+```
+BuyTransaction b;
+```
+
+`Transaction` 생성자가 먼저 호출되며, 해당 생성자에서 `logTransaction()`을 호출하고 있다. 여기서 호출되는 `logTransaction()` 함수는 `Transaction`의 것이다.
+
+파생 클래스 객체의 기본 클래스 부분이 생성되는 동안 해당 객체의 타입은 기본 클래스이며, 객체가 소멸될 때에도 동일하다.
+
+이런 문제를 해결하려면 `logTransaction()`을 `Transaction`의 non-virtual 멤버 함수로 바꾸는 것이다. 그리고 파생 클래스의 생성자에서 필요한 로그 정보를 `Transaction`의 생성자로 넘겨야 한다는 규칙을 만들어 `logTransaction()`을 안전하게 호출할 수 있다.
+
+```cpp
+class Transaction { 
+public:
+	explicit Transaction(const std::string& logInfo);
+	void logTransaction(const std::string& logInfo) const; // now a non-virtual func
+	... 
+};
+
+Transaction::Transaction(const std::string& logInfo) {
+	...
+	logTransaction(logInfo); // now a non-virtual call
+}
+
+class BuyTransaction: public Transaction { 
+public:
+	BuyTransaction( parameters )
+	: Transaction(createLogString( parameters )) {...} // pass log info to base class constructor
+	...
+private:
+	static std::string createLogString( parameters );
+};
+```
