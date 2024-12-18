@@ -192,9 +192,9 @@ TimeKeeper *ptk = getTimeKeeper();  // get dynamically allocated object from Tim
 delete ptk;   // release it to avoid resource leak
 ```
 
-하지만 `getTimeKeeper()` 함수가 반환하는 포인터는 파생 클래스의 포인터이며, 이 포인터가 가리키는 객체가 삭제될 때는 기본 클래스 포인터(`TimeKeeper`)를 통해 삭제된다는 것, 그리고 기본 클래스에 들어있는 소멸자가 non-virtual 이라는 것이다.
+하지만 `getTimeKeeper()` 함수가 반환하는 포인터는 파생 클래스의 포인터이며, 이 포인터가 가리키는 객체가 삭제될 때는 기본 클래스 포인터(`TimeKeeper`)를 통해 삭제된다는 것, 그리고 기본 클래스에 들어있는 소멸자가 `non-virtual` 이라는 것이다.
 
-C++ 규정에 의하면 기본 클래스 포인터를 통해 파생 클래스 객체가 삭제될 때 기본 클래스에 non-virtual 소멸자가 있으면 해당 프로그램의 동작은 미정의 사항이라 되어 있다. 일반적으로 파생 클래스 부분이 소멸되지 않게 된다. 
+C++ 규정에 의하면 기본 클래스 포인터를 통해 파생 클래스 객체가 삭제될 때 기본 클래스에 `non-virtual` 소멸자가 있으면 해당 프로그램의 동작은 미정의 사항이라 되어 있다. 일반적으로 파생 클래스 부분이 소멸되지 않게 된다. 
 
 이를 해결하기 위해선 기본 클래스에 **가상 소멸자**를 선언하면 된다.
 
@@ -307,7 +307,7 @@ BuyTransaction b;
 
 파생 클래스 객체의 기본 클래스 부분이 생성되는 동안 해당 객체의 타입은 기본 클래스이며, 객체가 소멸될 때에도 동일하다.
 
-이런 문제를 해결하려면 `logTransaction()`을 `Transaction`의 non-virtual 멤버 함수로 바꾸는 것이다. 그리고 파생 클래스의 생성자에서 필요한 로그 정보를 `Transaction`의 생성자로 넘겨야 한다는 규칙을 만들어 `logTransaction()`을 안전하게 호출할 수 있다.
+이런 문제를 해결하려면 `logTransaction()`을 `Transaction`의 `non-virtual` 멤버 함수로 바꾸는 것이다. 그리고 파생 클래스의 생성자에서 필요한 로그 정보를 `Transaction`의 생성자로 넘겨야 한다는 규칙을 만들어 `logTransaction()`을 안전하게 호출할 수 있다.
 
 ```cpp
 class Transaction { 
@@ -567,3 +567,110 @@ FontHandle f2 = f1; // oops! meant to copy a Font object, but instead implicitly
 
 ### Item 16: Use the same form in corresponding uses of new and delete
 
+`new` 표현식에 `[]`를 사용했으면, `delete` 표현식에도 `[]`를 사용해야 한다. 
+`new` 표현식에 `[]`를 사용하지 않았으면, `delete` 표현식에도 `[]`를 사용하지 말아야 한다.
+
+### Item 17: Store newed objects in smart pointers in standalone statements
+
+동적으로 할당된 `Widget`에 대해 어떤 우선순위에 따라 처리를 적용할지 결정하는 함수가 있다고 하자.
+
+```cpp
+int priority();
+void processWidget(std::tr1::shared_ptr<Widget> pw, int priority);
+```
+
+다음과 같이 작성될 수 있으며, 이 코드는 문제가 있다.
+
+```cpp
+processWidget(std::tr1::shared_ptr<Widget>(new Widget), priority());
+```
+
+`processWidget()` 호출 코드를 만들기 전 이 함수의 매개변수로 넘겨지는 인자를 평가(evaluate)하는 순서가 있다. 컴파일러는 다음 세 연산을 위한 코드를 만들어야 한다.
+
+- `priority()` 호출
+- `new Widget` 실행
+- `tr1::shared_ptr` 생성자 호출
+
+여기서 각각의 연산이 실행되는 순서는 컴파일러 제작사마다 다르다는 것이다. `new Widget`은 `tr1::shared_ptr` 생성자가 실행되기 전 호출되어야 한다. 만약 어떤 컴파일러에서 `priority()` 호출이 두 번째라고 정했다고 하자.
+
+1. `new Widget` 실행
+2. `priority()` 호출
+3. `tr1::shared_ptr` 생성자 호출
+
+만약 `priority()`에서 예외가 발생했다면, `new Widget`으로 만들었던 포인터가 유실될 수 있다. `tr1::shared_ptr`에 저장되기 전 예외가 발생했기 때문이다. 
+
+이 문제를 피하기 위해 `Widget`을 생성해 스마트 포인터에 저장하는 코드를 별도의 문장 하나로 만들고, 그 스마트 포인터를 `processWidget()`에 넘기면 된다.
+
+```cpp
+std::tr1::shared_ptr<Widget> pw(new Widget); // store newed object in a smart pointer in a standalone statement
+processWidget(pw, priority()); // this call won’t leak
+```
+
+## Designs and Declarations
+
+### Item 18: Make interfaces easy to use correctly and hard to use incorrectly
+
+날짜를 나타내는 클래스에 생성자를 설계한다고 하자.
+
+```cpp
+struct Day {
+	explicit Day(int d) 
+	: val(d) {}
+	int val;
+};
+
+struct Month {
+	explicit Month(int m) 
+	: val(m) {}
+	int val;
+};
+
+struct Year {
+	explicit Year(int y) 
+	: val(y){}
+	int val;
+};
+
+class Date { 
+public:
+	Date(const Month& m, const Day& d, const Year& y);
+	... 
+};
+
+Date d(30, 3, 1995); // error! wrong types
+Date d(Day(30), Month(3), Year(1995)); // error! wrong types
+Date d(Month(3), Day(30), Year(1995)); // okay, types are correct
+```
+
+이렇게 타입을 적절히 준비해 두기만 해도 인터페이스 사용 에러를 막을 수 있다.
+
+다른 방법으로 타입에 제약을 부여하여 그 타입을 통해 할 수 있는 일들을 묶어버리는 방법이 있다. 흔히 `const`를 붙이는 것이다. `operator*`의 반환 타입을 `const`로 한정해 사용자가 정의 타입에 대해 실수를 저지르지 않도록 할 수 있다.
+
+```cpp
+if (a * b = c) ... // oops, meant to do a comparison!
+```
+
+**그렇게 하지 않을 번듯한 이유가 없다면 사용자 정의 타입은 기본제공 타입처럼 동작하게 만들자.** 기본제공 타입과 어긋나는 동작을 피하는 실질적인 이유는 일관성 있는 인터페이스 제공을 위해서다.
+
+사용자 쪽에서 뭔가 외워야 제대로 쓸 수 있는 인터페이스는 잘못 쓰기 쉽다. 처음부터 끝까지 문제가 생길 여지를 주지 않게끔 구현하는 편이 좋다. 즉, 다음과 같이 팩토리 함수가 포인터가 아닌 스마트 포인터를 반환하여 호출자 쪽에서 삭제를 책임지지 않게 만드는 것이다.
+
+```cpp
+std::tr1::shared_ptr<Investment> createInvestment();
+```
+
+### Item 19: Treat class design as type design
+
+좋은 타입은 문법(syntax)이 자연스럽고, 의미구조가(semantics)가 직관적이며, 효율적인 구현이 한 가지 이상 가능해야 한다.
+
+- **새로 정의한 타입의 객체 생성 및 소멸은 어떻게 이루어져야 하는가?** 이 부분이 어떻게 되느냐에 따라 클래스 생성자 및 소멸자의 설계가 바뀐다. 뿐만 아니라 메모리 할당 함수를 직접 작성할 경우 이들 함수의 설계에도 영향을 미친다.
+- **객체 초기화는 객체 대입과 어떻게 달라야 하는가?** 초가화와 대입을 헷갈리지 않는 것이 중요하다.
+- **새로운 타입으로 만든 객체가 값에 의해 전달되는 경우 어떤 의미를 줄 것인가?** 어떤 타입에 대해 '값에 의한 전달'을 구현하는 쪽은 복사 생성자이다.
+- **새로운 타입이 가질 수 있는 적법한 값에 대한 제약은 무엇으로 잡는가?** 클래스의 데이터 멤버의 몇 가지 조합 값은 반드시 유효해야 한다. 이런 조합을 클래스의 불변속성(invariant)라 하며, 클래스 차원에서 지켜주어야 한다. 특히 생성자, 대입 연산자, setter 함수는 불변속성에 많이 좌우된다.
+- **기존 클래스 상속 계통망(inheritance graph)에 맞출 것인가?** 이미 갖고 있는 클래스로부터 상속 한다면, 이들 클래스에 의해 제약을 받는다. 특히 `virtual`인가 `non-virtual`인가의 여부가 가장 큰 요인이다. 다른 클래스들이 상속할 수 있게 만들고자 한 경우, 이에 따라 멤버 `virtual` 함수 여부가 결정된다. 특히 소멸자가 그렇다.
+- **어떤 종류의 타입 변환을 허용할 것인가?** `T1` 타입 객체를 `T2` 타입 객체로 암시적으로 변환되도록 하고 싶다면, `T1` 클래스에 타입 변환 함수를 넣던가 아니면 인자 한 개로 호출될 수 있는 `non-explict` 생성자를 `T2` 클래스에 넣어야 할 것이다. `explict` 타입 변환만 허용하고 싶다면, 해당 변환을 맡는 별도 이름의 함수를 만들되 타입 변환 연산자 혹은 `non-explict` 생성자는 만들지 말아야 한다(Item 15). 
+- **어떤 연산자 함수를 두어야 의미가 있을끼?** 클래스 안에 선언할 함수가 여기서 결정된다. 어떤 것들은 멤버 함수로 적당하며, 또 몇몇은 그렇지 않을 것이다.
+- **표준 함수들 중 어떤 것을 허용하지 말 것인가?** `private`로 선언하는 함수가 여기에 해당된다.
+- **새로운 타입의 멤버에 대한 접근권한을 어느 쪽에 줄 것인가?** `public`, `protected`, `private` 영역에 둘 것인가를 결정하는 데 도움을 줄 질문이다.
+- **“선언되지 않은 인터페이스”로 무엇을 둘 것인가?** 만들 타입이 제공할 보장이 어떤 종류일까에 대한 질문으로, 보장할 수 있는 부분은 수행 성능 및 예외 안정성 그리고 자원 사용이다. 이들에 대해 보장하겠다고 결정한 결과는 클래스 구현에 있어 제약으로 작용한다.
+- **새로 만드는 타입이 얼마나 일반적인가?** 실제로 타입 하나를 정의하는 것이 아닌 타입군(family of types) 전체일수도 있다. 그렇다면 새로운 클래스가 아닌 새로운 클래스 템플릿을 정의해야 할 것이다.
+- **정말로 필요한 타입인가?** 기존 클래스에 대해 기능 몇 개가 아쉬어 파생 클래스를 새로 만든다면, 차라리 `non-member` 함수라든지 템플릿을 몇 개 더 정의하는 편이 낫다.
