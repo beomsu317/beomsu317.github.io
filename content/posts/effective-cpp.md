@@ -357,7 +357,7 @@ public:
 
 ### Item 11: Handle assignment to self in operator=
 
-자기 대입(self assignment)는 어떤 객체가 자기 자신에 대해 대입 연산자를 적용하는 것이다. 같은 타입으로 만들어진 객체 여러 개를 참조자 혹은 포인터로 만들고 동작하는 코드를 작성할 때는 같은 객체가 사용될 가능성을 고려하는 것이 바람직하다.
+자기 대입(self assignment)는 어떤 객체가 자기 자신에 대해 대입 연산자를 적용하는 것이다. 같은 타입으로 만들어진 객체 여러 개를 참조자 혹은 포인터로 만들고 동작하는 코드를 작성할 때는 같은 객체가 사용될 가능성을 고려하는 것이 바람직하다.
 
 동적 할당된 비트맵을 가리키는 포인터를 데이터 멤버로 갖는 클래스가 있다고 하자.
 
@@ -405,3 +405,165 @@ Widget& Widget::operator=(const Widget& rhs) {
 ```
 
 > 효율이 신경쓰일 수 있으나, 일치성 검사 역시 공짜가 아니다. 
+
+### Item 12: Copy all parts of an object
+
+`Customer` 클래스가 있고, 이를 상속한 `PriorityCustomer` 클래스가 있다고 하자.
+
+```cpp
+class Date { ... }; // for dates in time
+class Customer { 
+public:
+	...   // as before
+private:
+	std::string name; 
+	Date lastTransaction;
+};
+
+class PriorityCustomer: public Customer { // a derived class public:
+	...
+	PriorityCustomer(const PriorityCustomer& rhs); 
+	PriorityCustomer& operator=(const PriorityCustomer& rhs); 
+	...
+private:
+	int priority;
+};
+```
+
+객체의 복사 함수를 작성할 때는 해당 클래스의 데이터 멤버를 모두 복사해야 하며, 이 클래스가 상속한 기본 클래스의 복사 함수도 호출해야 한다.
+
+```cpp
+PriorityCustomer::PriorityCustomer(const PriorityCustomer& rhs)
+: Customer(rhs), // invoke base class copy ctor
+	priority(rhs.priority) {
+	logCall("PriorityCustomer copy constructor"); 
+}
+
+PriorityCustomer& PriorityCustomer::operator=(const PriorityCustomer& rhs) {
+	logCall("PriorityCustomer copy assignment operator");
+	Customer::operator=(rhs); // assign base class parts 
+	priority = rhs.priority;
+	return *this; 
+}
+```
+
+> 본문이 비슷하게 나오는 경우에 중복을 피라혀 한다면, 겹치는 부분을 별도의 `private` 함수로 분리하고, 이 함수(주로 이름에 `init`이 포함됨)를 호출하도록 한다. 
+
+## Resource Management
+
+### Item 13: Use objects to manage resources
+
+`createInvestment()`에서 얻은 객체를 사용하는 일이 없을 때, 이 객체를 삭제해야 하는 쪽은 호출자(caller)다.
+
+```cpp
+void f() {
+	Investment *pInv = createInvestment(); // call factory function
+	... // use pInv
+	delete pInv; // release object
+}
+```
+
+`...`에 `return`이 있거나 `delete`가 루프 안에 있고, `continue` 혹은 `goto`에 의해 루프에서 빠져나왔을 때 `delete`를 실행하지 않을 수 있다.
+
+`createInvestment()`로 얻어낸 자원이 항상 해제되도록 만드는 방법은, 자원을 객체에 넣고 자원 해제를 소멸자가 맡도록 하며, 이 소멸자는 `f()`가 끝날 때 호출되도록 하는 것이다.
+
+이 객체로 참조 카운팅 방식 스마트 포인터(Reference-Counting Smart Pointer: RCSP)가 있으며, 자원을 가리키는 외부 객체가 0이 되면 해당 자원을 삭제하는 스마트 포인터다. 
+
+> 가비지 컬렉션과 비슷하나, 참조 상태가 고리를 이루는 경우(다른 두 객체가 서로 가리키는 등)를 없앨 수 없다는 점은 가비지 컬렉션과 다르다.
+
+```cpp
+void f() {
+	...
+	std::tr1::shared_ptr<Investment> pInv(createInvestment()); // call factory function 
+	... // use pInv as before
+} // automatically delete pInv via shared_ptr's dtor
+```
+
+### Item 14: Think carefully about copying behavior in resource-managing classes
+
+뮤텍스 잠김을 관리하는 클래스가 있다고 하자.
+
+```cpp
+class Lock { 
+public:
+	explicit Lock(Mutex *pm)
+	: mutexPtr(pm)
+	{ lock(mutexPtr); } // acquire resource
+	~Lock() { unlock(mutexPtr); } // release resource
+private:
+	Mutex *mutexPtr;
+};
+```
+
+여기서 `Lock` 객체가 복사된다고 해보자.
+
+```cpp
+Lock ml1(&m);  // lock m
+Lock ml2(ml1); // copy ml1 to ml2 — what should happen here?
+```
+
+RAII 객체가 복사될 때는 다음과 같은 동작이 이루어져야 한다.
+
+- **복사를 금지한다.** `Lock` 클래스와 같이 복사되는 것 자체가 말이 안 되는 경우가 있다. 이러한 경우 클래스는 복사되지 않도록 해야 한다. 복사 함수를 `private`로 만들어 해결할 수 있다.
+- **관리하는 자원에 대한 참조 카운팅을 수행한다.** 자원을 참조하는 객체의 개수에 대한 카운트를 증가시키는 방법으로 `tr1::shared_ptr`이 사용하고 있다. `
+
+    `tr1::shared_ptr`은 삭제자(deleter)를 사용할 수 있다. 삭제자란 참조 카운트가 0이 되었을 때 실행할 함수 또는 객체이다. 즉, `Mutex`를 다 썼을 때 이에 대한 삭제가 아닌 잠금 해제만 수행할 수 있다.  
+
+    ```cpp
+    class Lock { 
+    public:
+        explicit Lock(Mutex *pm) 	// init shared_ptr with the Mutex to point to and the unlock func as the deleter
+        : mutexPtr(pm, unlock)
+        {
+            lock(mutexPtr.get()); // see Item 15 for info on “get”
+        } 
+    private:
+        std::tr1::shared_ptr<Mutex> mutexPtr; // use shared_ptr instead of raw pointer
+    };
+    ```
+
+- **관리하고 있는 자원을 진짜로 복사한다.** 이 경우 자원을 다 썼을 때 각가의 사본을 확실히 해제하는 것이 자원 클래스가 필요한 명분이다. 자원 관리 객체를 복사하면 그 객체의 자원까지 복사되어야(deep copy) 한다.
+- **관리하고 있는 자원의 소유권을 옮긴다.** 어떤 특정 자원에 대한 실제 참조하는 객체가 RAII 객체 하나만 존재하도록 하고 싶은 경우, 이 RAII가 복사될 때 그 자원의 소유권을 사본 쪽으로 옮겨야 할 경우도 있다(`auto_ptr`).
+
+### Item 15: Provide access to raw resources in resource-managing classes
+
+포인터를 담기 위해 `tr1::shared_ptr`을 사용했다고 하자.
+
+```cpp
+std::tr1::shared_ptr<Investment> pInv(createInvestment()); // from Item 13
+```
+
+`Investment` 포인터를 전달받는 다음과 같은 함수가 있다.
+
+```cpp
+int daysHeld(const Investment *pi); // return number of days investment has been held
+```
+
+RAII 클래스의 객체를 그 객체가 감싸고 있는 실제 자원(`Investment`)으로 변환할 방법이 필요하다. `tr1::shared_ptr`은 `get()`이라는 멤버 함수를 제공한다. 이 함수를 통해 스마트 포인터 객체에 들어있는 실제 포인터를 얻을 수 있다.
+
+RAII 클래스인 `Font`를 `FontHandle`로 변환해야 할 경우가 있다고 하자. `get()`을 통해 명시적으로 얻을 수도 있고, `operator`를 사용해 암시적으로도 얻을 수 있다.
+
+```cpp
+class Font { // RAII class
+public:
+	explicit Font(FontHandle fh) // acquire resource use pass-by-value, because the C API does
+	: f(fh) {}
+	~Font( ) { releaseFont(f); } // release resource
+	FontHandle get() const { return f; } // explicit conversion function
+	operator FontHandle() const { return f; } // implicit conversion function
+	... // handle copying (see Item 14)
+private: 
+	FontHandle f; // the raw font resource
+};
+```
+
+암시적 변환의 경우 `Font`를 쓰려고 한 부분에서 원치 않았는데 `FontHandle`로 바뀌는 실수를 저지를 여지가 많아진다.
+
+```cpp
+Font f1(getFont()); 
+...
+FontHandle f2 = f1; // oops! meant to copy a Font object, but instead implicitly converted f1 into its underlying FontHandle, then copied that
+```
+
+### Item 16: Use the same form in corresponding uses of new and delete
+
