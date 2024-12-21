@@ -192,9 +192,9 @@ TimeKeeper *ptk = getTimeKeeper();  // get dynamically allocated object from Tim
 delete ptk;   // release it to avoid resource leak
 ```
 
-하지만 `getTimeKeeper()` 함수가 반환하는 포인터는 파생 클래스의 포인터이며, 이 포인터가 가리키는 객체가 삭제될 때는 기본 클래스 포인터(`TimeKeeper`)를 통해 삭제된다는 것, 그리고 기본 클래스에 들어있는 소멸자가 `non-virtual` 이라는 것이다.
+하지만 `getTimeKeeper()` 함수가 반환하는 포인터는 파생 클래스의 포인터이며, 이 포인터가 가리키는 객체가 삭제될 때는 기본 클래스 포인터(`TimeKeeper`)를 통해 삭제된다는 것, 그리고 기본 클래스에 들어있는 소멸자가 non-virtual 이라는 것이다.
 
-C++ 규정에 의하면 기본 클래스 포인터를 통해 파생 클래스 객체가 삭제될 때 기본 클래스에 `non-virtual` 소멸자가 있으면 해당 프로그램의 동작은 미정의 사항이라 되어 있다. 일반적으로 파생 클래스 부분이 소멸되지 않게 된다. 
+C++ 규정에 의하면 기본 클래스 포인터를 통해 파생 클래스 객체가 삭제될 때 기본 클래스에 non-virtual 소멸자가 있으면 해당 프로그램의 동작은 미정의 사항이라 되어 있다. 일반적으로 파생 클래스 부분이 소멸되지 않게 된다. 
 
 이를 해결하기 위해선 기본 클래스에 **가상 소멸자**를 선언하면 된다.
 
@@ -307,7 +307,7 @@ BuyTransaction b;
 
 파생 클래스 객체의 기본 클래스 부분이 생성되는 동안 해당 객체의 타입은 기본 클래스이며, 객체가 소멸될 때에도 동일하다.
 
-이런 문제를 해결하려면 `logTransaction()`을 `Transaction`의 `non-virtual` 멤버 함수로 바꾸는 것이다. 그리고 파생 클래스의 생성자에서 필요한 로그 정보를 `Transaction`의 생성자로 넘겨야 한다는 규칙을 만들어 `logTransaction()`을 안전하게 호출할 수 있다.
+이런 문제를 해결하려면 `logTransaction()`을 `Transaction`의 non-virtual 멤버 함수로 바꾸는 것이다. 그리고 파생 클래스의 생성자에서 필요한 로그 정보를 `Transaction`의 생성자로 넘겨야 한다는 규칙을 만들어 `logTransaction()`을 안전하게 호출할 수 있다.
 
 ```cpp
 class Transaction { 
@@ -662,15 +662,451 @@ std::tr1::shared_ptr<Investment> createInvestment();
 
 좋은 타입은 문법(syntax)이 자연스럽고, 의미구조가(semantics)가 직관적이며, 효율적인 구현이 한 가지 이상 가능해야 한다.
 
-- **새로 정의한 타입의 객체 생성 및 소멸은 어떻게 이루어져야 하는가?** 이 부분이 어떻게 되느냐에 따라 클래스 생성자 및 소멸자의 설계가 바뀐다. 뿐만 아니라 메모리 할당 함수를 직접 작성할 경우 이들 함수의 설계에도 영향을 미친다.
-- **객체 초기화는 객체 대입과 어떻게 달라야 하는가?** 초가화와 대입을 헷갈리지 않는 것이 중요하다.
-- **새로운 타입으로 만든 객체가 값에 의해 전달되는 경우 어떤 의미를 줄 것인가?** 어떤 타입에 대해 '값에 의한 전달'을 구현하는 쪽은 복사 생성자이다.
-- **새로운 타입이 가질 수 있는 적법한 값에 대한 제약은 무엇으로 잡는가?** 클래스의 데이터 멤버의 몇 가지 조합 값은 반드시 유효해야 한다. 이런 조합을 클래스의 불변속성(invariant)라 하며, 클래스 차원에서 지켜주어야 한다. 특히 생성자, 대입 연산자, setter 함수는 불변속성에 많이 좌우된다.
-- **기존 클래스 상속 계통망(inheritance graph)에 맞출 것인가?** 이미 갖고 있는 클래스로부터 상속 한다면, 이들 클래스에 의해 제약을 받는다. 특히 `virtual`인가 `non-virtual`인가의 여부가 가장 큰 요인이다. 다른 클래스들이 상속할 수 있게 만들고자 한 경우, 이에 따라 멤버 `virtual` 함수 여부가 결정된다. 특히 소멸자가 그렇다.
-- **어떤 종류의 타입 변환을 허용할 것인가?** `T1` 타입 객체를 `T2` 타입 객체로 암시적으로 변환되도록 하고 싶다면, `T1` 클래스에 타입 변환 함수를 넣던가 아니면 인자 한 개로 호출될 수 있는 `non-explict` 생성자를 `T2` 클래스에 넣어야 할 것이다. `explict` 타입 변환만 허용하고 싶다면, 해당 변환을 맡는 별도 이름의 함수를 만들되 타입 변환 연산자 혹은 `non-explict` 생성자는 만들지 말아야 한다(Item 15). 
-- **어떤 연산자 함수를 두어야 의미가 있을끼?** 클래스 안에 선언할 함수가 여기서 결정된다. 어떤 것들은 멤버 함수로 적당하며, 또 몇몇은 그렇지 않을 것이다.
-- **표준 함수들 중 어떤 것을 허용하지 말 것인가?** `private`로 선언하는 함수가 여기에 해당된다.
-- **새로운 타입의 멤버에 대한 접근권한을 어느 쪽에 줄 것인가?** `public`, `protected`, `private` 영역에 둘 것인가를 결정하는 데 도움을 줄 질문이다.
-- **“선언되지 않은 인터페이스”로 무엇을 둘 것인가?** 만들 타입이 제공할 보장이 어떤 종류일까에 대한 질문으로, 보장할 수 있는 부분은 수행 성능 및 예외 안정성 그리고 자원 사용이다. 이들에 대해 보장하겠다고 결정한 결과는 클래스 구현에 있어 제약으로 작용한다.
-- **새로 만드는 타입이 얼마나 일반적인가?** 실제로 타입 하나를 정의하는 것이 아닌 타입군(family of types) 전체일수도 있다. 그렇다면 새로운 클래스가 아닌 새로운 클래스 템플릿을 정의해야 할 것이다.
-- **정말로 필요한 타입인가?** 기존 클래스에 대해 기능 몇 개가 아쉬어 파생 클래스를 새로 만든다면, 차라리 `non-member` 함수라든지 템플릿을 몇 개 더 정의하는 편이 낫다.
+- 새로 정의한 타입의 객체 생성 및 소멸은 어떻게 이루어져야 하는가?
+- 객체 초기화는 객체 대입과 어떻게 달라야 하는가?
+- 새로운 타입으로 만든 객체가 값에 의해 전달되는 경우 어떤 의미를 줄 것인가?
+- 새로운 타입이 가질 수 있는 적법한 값에 대한 제약은 무엇으로 잡는가?
+- 기존 클래스 상속 계통망(inheritance graph)에 맞출 것인가?
+- 어떤 종류의 타입 변환을 허용할 것인가?
+- 어떤 연산자 함수를 두어야 의미가 있을끼?
+- 표준 함수들 중 어떤 것을 허용하지 말 것인가?
+- 새로운 타입의 멤버에 대한 접근권한을 어느 쪽에 줄 것인가?
+- “선언되지 않은 인터페이스”로 무엇을 둘 것인가?
+- 새로 만드는 타입이 얼마나 일반적인가?
+- 정말로 필요한 타입인가?
+
+### Item 20: Prefer pass-by-reference-to-const to pass-by-value
+
+C++은 함수로부터 객체를 전달받거나 함수에 객체를 전달할 때 "값에 의한 전달(pass-by-value)" 방식을 사용한다.
+
+`Student` 클래스를 전달받는 `validateStudent()` 함수가 있다고 하자.
+
+```cpp
+bool validateStudent(Student s); // function taking a Student by value
+
+Student plato; // Plato studied under Socrates
+bool platoIsOK = validateStudent(plato); // call the function
+```
+
+`plato`로부터 매개변수 `s`를 초기화시키기 위해 `Student`의 복사 생성자가 호출되며, `validateStudent()`에서 복귀할 때 소멸될 것이다. 즉, 이 함수의 매개변수 전달 비용은 `Student`의 복사 생성자 호출 한 번, `Student`의 소멸자 호출 한 번이다.
+
+이러한 생성자, 소멸자 호출 비용을 지불하지 않기 위해 상수 객체에 대한 참조자(reference-by-const)로 전달할 수 있다. 새로 만들어지는 객체가 없기 때문에 생성자와 소멸자가 전혀 호출되지 않는다. 
+
+```cpp
+bool validateStudent(const Student& s);
+```
+
+> C++ 컴파일러에서 참조자는 보통 포인터를 써서 구현되기 때문에, 기본제공 타입(`int` 등) 및 반복자, 함수 객체 타입의 경우 참조자로 전달하는 것보다 값으로 전달하는 편이 효율적일 때가 많다. 
+
+### Item 21: Don’t try to return a reference when you must return an object
+
+`Rational`이라는 유리수 클래스에 `*` 연산에서 효율을 위해 참조자 객체를 반환하도록 구현했다고 하자.
+
+```cpp
+const Rational& operator*(const Rational& lhs, const Rational& rhs) // warning! bad code!
+{
+	Rational result(lhs.n * rhs.n, lhs.d * rhs.d); 
+	return result;
+}
+```
+
+이 연산자 함수는 `result`를 반환하는데, `result`는 로컬 객체다. 즉, 함수가 끝날 때 같이 소멸되는 객체라는 것이다.
+
+새로운 객체를 반환해야 하는 함수는 **새로운 객체를 반환하게 만들어야 한다**. 여기에 들어가는 비용은 올바른 동작에 지불되는 작은 비용이다. 
+
+```cpp
+inline const Rational operator*(const Rational& lhs, const Rational& rhs) {
+	return Rational(lhs.n * rhs.n, lhs.d * rhs.d); 
+}
+```
+
+> C++ 컴파일러는 기존 코드 수행 성능을 높이는 최적화가 적용되어 있다. 즉, 일부 조건하에서는 최적화에 의해 `operator*`의 반환 값에 대한 생성과 소멸 동작이 안전하게 제거될 수 있다(RVO: Return Value Optimization). 
+
+### Item 22: Declare data members private
+
+데이터 멤버를 `private`으로 두면 접근 불가, 읽기 전용, 쓰기 접근을 직접 구현할 수 있다.
+
+```cpp
+class AccessLevels { 
+pub
+lic:
+	...
+	int getReadOnly() const { return readOnly; }
+	void setReadWrite(int value) { readWrite = value; }
+	int getReadWrite() const { return readWrite; }
+	void setWriteOnly(int value) { writeOnly = value; }
+private:
+	int noAccess; // no access to this int
+	int readOnly; // read-only access to this int
+	int readWrite; // read-write access to this int
+	int writeOnly; // write-only access to this int
+};
+```
+
+어떤 식으로든 외부에 노출시키면 안 되는 데이터 멤버들이 꽤 있기 때문에 이러한 접근 제어는 중요하다.
+
+또한 데이터 멤버를 캡슐화하면 내부 구현을 융통성 있게 바꿀 수 있으며, 클래스의 불변속성을 강화할 수 있다.
+
+### Item 23: Prefer non-member non-friend functions to member functions
+
+똑같은 기능을 제공하는데 "멤버 함수를 쓸 것이냐, 비멤버 함수를 쓸 것이냐"를 생각해보면, 캡슐화 정도가 높은 후자이다. 비멤버 함수는 어떤 클래스의 `private` 멤버 부분을 접근할 수 있는 함수의 개수를 늘리지 않기 때문이다.
+
+C++로 더 자연스러운 방법은 `clearBrowser()`를 비멤버 함수로 두고, `WebBrowserStuff`와 같은 네임스페이스 안에 두는 것이다.
+
+```cpp
+namespace WebBrowserStuff {
+
+class WebBrowser { ... };
+void clearBrowser(WebBrowser& wb); 
+...
+
+}
+```
+
+### Item 24: Declare non-member functions when type conversions should apply to all parameters
+
+일반적으로 암시적 변환은 안좋은 생각이지만, 이 규칙에도 예외가 있다. 예를 들어 `Rational` 유리수 타입을 만든다고 하자. `operator*`는 클래스 안에 구현하는게 자연스러울 것이다.
+
+```cpp
+class Rational { 
+public:
+	Rational(int numerator = 0, int denominator = 1);// ctor is deliberately not explicit; allows implicit int-to-Rational conversions
+	int numerator() const; // accessors for numerator and denominator — see Item 22
+	int denominator() const;
+
+	const Rational operator*(const Rational& rhs) const; 
+private: 
+	...
+};
+```
+
+하지만 연산을 해보면 반쪽짜리 연산인 것을 알게 될 것이다. 두 번째 줄에서 정수 `2`는 클래스가 연관되지 않기 때문에 `operator*` 멤버 함수도 없다(컴파일 에러). 
+
+```cpp
+Rational oneHalf(1, 2);
+Rational result;
+
+result = oneHalf * 2; // oneHalf.operator*(2);
+result = 2 * oneHalf; // 2.operator*(oneHalf);
+```
+
+`Rational::operator*` 선언문을 보면 인자로 `Rational` 객체를 받도록 한다. 이는 암시적 타입 변환(implicit type conversion)으로 가능하다. 즉, 이 함수에 `int`를 넘기면 `Rational`로 타입 변환이 발생한다.
+
+
+```cpp
+const Rational temp(2);  // create a temporary Rational object from 2
+result = oneHalf * temp; // same as oneHalf.operator*(temp);
+```
+
+`operator*`를 비멤버 함수로 만들어 컴파일러 쪽에서 모든 인자에 대해 암시적 타입 변환을 수행하도록 할 수 있다.
+
+```cpp
+const Rational operator*(const Rational& lhs, const Rational& rhs) // contains no operator* now a non-member function
+{
+	return Rational(lhs.numerator() * rhs.numerator(),
+}
+```
+
+### Item 25: Consider support for a non-throwing swap
+
+표준 라이브러리에서 제공하는 `swap()` 알고리즘은 복사가 세 번 일어나게 된다. 타입에 따라서는 사본이 필요없는 경우도 있다.
+
+복사하면 손해보는 타입의 예로 pimpl(pointer to implementation)이다. 예로 `Widget` 클래스를 보자.
+
+```cpp
+class WidgetImpl { // class for Widget data; details are unimportant
+public:
+	...
+private:
+	int a, b, c; // possibly lots of data — expensive to copy!
+	std::vector<double> v; 
+	...
+};
+
+class Widget { // class using the pimpl idiom
+public:
+	Widget(const Widget& rhs);
+	Widget& operator=(const Widget& rhs) { // to copy a Widget, copy its WidgetImpl object. For details on implementing operator= in general, see Items 10, 11, and 12.
+		...
+		*pImpl = *(rhs.pImpl); 
+		...
+	} 
+	...
+private:
+	WidgetImpl *pImpl; // ptr to object with this Widget’s data
+}; 
+```
+
+`Widget` 객체를 바꾼다면, `pImpl` 포인터만 바꾸기만 하면 된다. `Widget` 객체를 바꿀 때는 `pImpl` 포인터만 바꾸도록 특수화를 해보자.
+
+`pImpl` 포인터는 `private` 멤버이기 때문에 `Widget` 내 `swap()` 멤버 함수를 선언하고 이 함수가 실제로 맞바꾸기를 수행하도록 한다. 이 함수는 예외를 던져서는 안 된다.
+
+```cpp
+class Widget { // same as above, except for the addition of the swap mem func
+public:
+	...
+	void swap(Widget& other) {
+		using std::swap; // the need for this declaration is explained later in this Item
+		swap(pImpl, other.pImpl); // to swap Widgets, swap their pImpl pointers
+	}
+	... 
+};
+```
+
+```cpp
+namespace std {
+
+template<> // revised specialization of std::swap
+void swap<Widget>(Widget& a, Widget& b) {
+	a.swap(b); // to swap Widgets, call their swap member function
+}
+
+}
+```
+
+만약 `Widget`이 클래스 템플릿으로 만들어져 있다고 하면`std::swap()`을 특수화하는 데 어려울 수 있다.
+
+```cpp
+template<typename T>
+class WidgetImpl { ... };
+
+template<typename T>
+class Widget { ... };
+```
+
+C++은 클래스 템플릿에 대해서는 부분 특수화가 가능하지만 함수 템플릿에 대해서는 허용하지 않는다. 따라서 함수 템플릿을 "부분적으로 특수화"하고 싶을 때는 오버로드 버전을 추가한다.
+
+```cpp
+namespace std {
+
+template<typename T> void swap(Widget<T>& a, Widget<T>& b) // an overloading of std::swap (note the lack of “<...>” after // “swap”), but see below for why this isn’t valid code
+{ a.swap(b); }
+
+}
+```
+
+`std` 내 템플릿 완전 특수화는 허용하지만, `std`에 새로운 템플릿을 추가하는 것은 불가하다. 
+
+멤버 `swap()`을 호출하는 비멤버 `swap()`을 선언하되, 비멤버 함수를 `std::swap()`의 특수화 버전이나 오버로딩 버전으로 선언하지만 않으면 된다. 예를 들어 `Widget` 관련 기능이 `WidgetStuff`에 들어 있다면 다음과 같이 작성하면 된다.  
+
+```cpp
+namespace WidgetStuff { 
+... // templatized WidgetImpl, etc.
+
+template<typename T> class Widget { ... }; // as before, including the swap member function
+...
+template<typename T> void swap(Widget<T>& a, Widget<T>& b) // non-member swap function; not part of the std namespace
+{
+a.swap(b);
+}
+
+}
+```
+
+타입 `T` 전용 버전이 있으면 이를 호출하고, `T` 타입 전용 버전이 없으면 `std`의 일반 버전이 호출되도록 하고 싶다면 다음과 같이 구현한다.
+
+```cpp
+template<typename T>
+void doSomething(T& obj1, T& obj2) {
+	using std::swap; // make std::swap available in this function
+	...
+	swap(obj1, obj2); // call the best swap for objects of type T
+	...
+}
+```
+
+## Implementations
+
+### Item 26: Postpone variable definitions as long as possible
+
+이 함수는 비밀번호가 충분히 길 경우에 해당 비밀번호를 암호화하여 반환하는 함수다.
+
+```cpp
+// this function defines the variable "encrypted" too soon 
+std::string encryptPassword(const std::string& password) {
+	using namespace std;
+	string encrypted;
+	if (password.length() < MinimumPasswordLength) { 
+		throw logic_error("Password is too short");
+	}
+	... // do whatever is necessary to place an encrypted version of password in encrypted
+	return encrypted; 
+}
+```
+
+`encrypted` 객체는 예외가 발생된 경우 사용되지 않는다. 즉, `encryptPassword()` 함수가 예외를 던지더라도 `encrypted` 객체의 생성과 소멸에 대한 비용을 내야 한다는 것이다.
+
+```cpp
+// this function postpones encrypted’s definition until it’s truly necessary 
+std::string encryptPassword(const std::string& password)
+{
+	using namespace std;
+	if (password.length() < MinimumPasswordLength) { 
+		throw logic_error("Password is too short");
+	}
+	string encrypted;
+	... // do whatever is necessary to place an encrypted version of password in encrypted
+	return encrypted; 
+}
+```
+
+### Item 27: Minimize casting
+
+C++은 네 가지 캐스팅 연산자를 제공한다.
+
+- `const_cast<T>(표현식)`: 객체의 상수성을 없애는 용도
+- `dynamic_cast<T>(표현식)`: "안전한 다운캐스팅"을 할 때 사용
+- `reinterpret_cast<T>(표현식)`: 포인터를 `int`로 바꾸는 등의 low-level 캐스팅을 위해 사용
+- `static_cast<T>(표현식)`: 암시적 변환을 강제로 진행할 때 사용(`int`를 `double`로 바꾸는 등)
+
+C++ 스타일의 캐스트를 쓰는 것이 바람직하다.  
+
+`dynamic_cast` 연산자는 상당수 구현환경에서 클래스 이름에 대한 문자열 비교 연산에 기반으로 매우 느리게 구현되어 있다. 따라서 다른 방법이 가능하다면 `dynamic_cast`는 피해야 한다.
+
+### Item 28: Avoid returning “handles” to object internals
+
+`Rectangle` 클래스 객체를 썼을 때 메모리 부담을 최대한 줄이고 싶어, 사각형의 꼭지점을 별도의 구조체에 넣은 후 `Rectangle`이 이 구조체를 가리키도록 구현했다고 하자. `upperLeft()`와 `lowerRight()`를 통해 `Point` 객체에 대한 참조자를 반환하도록 했다.
+
+```cpp
+class Point { // class for representing points
+public:
+	Point(int x, int y); 
+	...
+	void setX(int newVal); 
+	void setY(int newVal); 
+	...
+};
+
+struct RectData { // Point data for a Rectangle
+	Point ulhc; // ulhc = “upper left-hand corner”
+	Point lrhc; // lrhc = “lower right-hand corner”
+};
+
+class Rectangle { 
+public:
+	Point& upperLeft() const { return pData->ulhc; } 
+	Point& lowerRight() const { return pData->lrhc; }
+	... 
+private:
+	std::tr1::shared_ptr<RectData> pData; // see Item 13 for info on tr1::shared_ptr
+};
+```
+
+`upperLeft()`, `lowerRight()`는 상수 멤버 함수이다. 즉, `Rectangle` 객체는 수정할 수 없게 설계된 것이다. 그러나 이 함수들이 반환하는 것은 `private` 멤버인 내부 데이터에 대한 참조자다. 이를 사용해 마음대로 수정할 수 있다.
+
+참조자, 포인터, 반복자는 모두 핸들(handle: 다른 객체에 손을 댈 수 있게 하는 매개자)이고, 어떤 객체의 내부요소에 대한 핸들을 반환하게 하면 언제든 그 객체의 캡슐화를 무너뜨리는 위험이 있다.
+
+이는 멤버 함수 앞에 `const` 키워드를 붙여 해결할 수 있다.
+
+```cpp
+class Rectangle { 
+public:
+	...
+	const Point& upperLeft() const { return pData->ulhc; } 
+	const Point& lowerRight() const { return pData->lrhc; } 
+	...
+};
+```
+
+### Item 29: Strive for exception-safe code
+
+```cpp
+void PrettyMenu::changeBackground(std::istream& imgSrc)
+{
+	lock(&mutex); // acquire mutex (as in Item 14)
+	delete bgImage; // get rid of old background 
+	++imageChanges; // update image change count
+	bgImage = new Image(imgSrc); // install new background
+	unlock(&mutex);
+}
+```
+
+**예외 안정성**을 가진 함수라면 예외가 발생할 때 다음과 같이 동작해야 한다.
+
+- **자원이 새도록 만들지 않는다.** 자원 관리 전담 클래스를 사용해 해결할 수 있다.
+	- `new Image(imgSrc)`에서 예외를 던지면 `unlock()` 함수가 실행되지 않아 뮤텍스가 계속 잡힌 상태
+- **자료구조가 더럽혀지는 것을 허용하지 않는다.**
+	- `new Image(imgSrc)`에서 예외를 던지면 `bgImage`가 가리키는 객체는 이미 삭제된 상태이며, 새로운 그림이 정상적으로 변경되지 않았음에도 `imageChanges` 변수는 증가된 상태
+
+예외 안정성을 갖춘 함수는 다음 세 가지 보장(guarantee) 중 하나를 제공한다.
+
+1. **기본적인 보장(basic guarantee)**
+	- 함수 동작 중 예외가 발생하면, 실행 중인 프로그램에 관련된 모든 것들을 유효한 상태로 유지한다는 보장
+2. **강력한 보장(strong guarantee)**
+	- 함수 동작 중 예외가 발생하면, 프로그램 상태를 절대 변경하지 않는다는 보장
+	- 호출이 성공하면 마무리까지 완벽하게 성공하고, 호출이 실패하면 함수 호출이 없었던 것처럼 상태가 되돌아감
+	- **복사 후 맞바꾸기(copy-and-swap)**: 어떤 객체를 수정하고 싶으면 그 객체의 사본을 만들고 그 사본을 수정하는 것 
+3. **예외불가 보장(nothrow guarantee)**
+	- 예외를 던지지 않겠다는 보장
+	- 약속한 동작은 끝까지 완수한다는 의미
+
+```cpp
+void someFunc() {
+	... // make copy of local state
+	f1(); 
+	f2();
+	... // swap modified state into place
+}
+```
+
+`f1()` 혹은 `f2()`에서 보장하는 예외 안정성이 강력하지 못하면, `someFunc()` 역시 강력한 예외 안정성을 보장하기 힘들다.
+
+### Item 30: Understand the ins and outs of inlining
+
+`inline`은 컴파일레에 요청하는 것이지, 명력하는 것이 아니다. 클래스 정의 안에 함수를 바로 정의하면 컴파일러는 그 함수를 인라인 후보로 생각한다.
+
+```cpp
+class Person { 
+public:
+	...
+	int age() const { return theAge; } // an implicit inline request: age is defined in a class definition
+	...
+private:
+	int theAge;
+};
+```
+
+함수 인라인은 작고, 자주 호출되는 함수에 대해서만 수행하자.  
+
+> 대부분의 빌드 환경에서 인라인을 컴파일 도중에 실행하기 떄문에 대체로 헤더 파일에 있어야 한다.
+
+### Item 31: Minimize compilation dependencies between files
+
+pimpl(pointer to implementation) 패턴으로 설계하면 구현 세부사항과의 연관이 없게 된다. 
+
+```cpp
+#include <string> // standard library components shouldn’t be forward-declared
+#include <memory> // for tr1::shared_ptr; see below
+
+class PersonImpl; // forward decl of Person impl. class forward decls of classes used in Person interface
+class Date; 
+class Address;
+
+class Person { 
+public:
+	Person(const std::string& name, const Date& birthday, 
+				 const Address& addr);
+	std::string name() const; 
+	std::string birthDate() const; 
+	std::string address() const; 
+	...
+private:
+	std::tr1::shared_ptr<PersonImpl> pImpl; // ptr to implementation; see Item 13 for info on std::tr1::shared_ptr
+};
+```
+
+`Person` 사용자 쪽에서는 컴파일을 다시 할 필요가 없다. 
+
+> pimpl 패턴을 사용하는 `Person` 같은 클래스를 핸들 클래스라 한다.
+
+인터페이스와 구현을 둘로 나누는 열쇠는 *정의부에 대한 의존성(dependencies on definitions)*을*선언부에 대한 의존성(dependencies on declarations*)으로 바꾸어 놓는 데 있다. 이것이 컴파일 의존성을 최소화하는 핵심 원리이다.
+
+- **객체 참조자 및 포인터로 충분한 경우에는 객체를 직접 쓰지 않는다.**
+- **가능하면 클래스 정의 대신 클래스 선언에 최대한 의존하도록 만든다.**
+- **선언부와 정의부에 대해 별도의 헤더 파일을 제공한다.**
+
+> 핸들 클래스 방법 대신 다른 방법으로는 `Person`을 추상 클래스, 즉 인터페이스 클래스로 만드는 방법도 있다. 이런 클래스는 데이터 멤버도 없고, 생성자도 없으며, 하나의 가상 소멸자와 순수 가상 함수들만 있다.
+
+## Inheritance and Object-Oriented Design
+
+### Item 32: Make sure public inheritance models “is-a.”
