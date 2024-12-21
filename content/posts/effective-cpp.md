@@ -1187,4 +1187,118 @@ class Ellipse: public Shape { ... };
 
 > 순수 가상 함수에도 정의를 제공할 수 있으며, 이 함수를 호출하려면 반드시 클래스 이름을 한정자로 붙여 주어야 한다.
 
+단순 가상 함수는 순수 가상 함수처럼 파생 클래스로 하여금 함수의 인터페이스를 상속하는 점은 같지만, 파생 클래스 쪽에서 오버라이드 할 수 있는 함수 구현부터 제공하는 점에서 다르다.
 
+`error()`가 발생하더라도 파생 클래스에서 특별히 해주는 일이 없다면 `Shape()` 클래스에 기본으로 제공되는 에러 처리를 그냥 사용해도 된다.
+
+비가상 함수인 `objectID()`는 파생 클래스에서 다른 행동이 일어날 것으로 가정하지 않는다는 뜻이다.
+
+### Item 35: Consider alternatives to virtual functions
+
+`healthValue()`는 캐릭터의 체력이 얼마나 남았는지를 나타내는 정수 값을 반환한다고 하자.
+
+```cpp
+class GameCharacter { 
+public:
+	virtual int healthValue() const; 	// return character’s health rating;
+	... // derived classes may redefine this
+};
+```
+
+#### The Template Method Pattern via the Non-Virtual Interface Idiom
+
+`public` 비가상 멤버 함수를 통해 `private` 가상 함수를 간접적으로 호출하게 만드는 방법으로 NVI(Non-Virtual Interface) 패턴이 있다. 
+
+```cpp
+class GameCharacter { 
+public:
+	int healthValue() const { // derived classes do not redefine this — see Item 36
+		... // do “before” stuff — see below
+		int retVal = doHealthValue(); // do the real work
+		... // do “after” stuff — see below
+		return retVal; 
+	}
+	...
+private:
+	virtual int doHealthValue() const { // derived classes may redefine this
+		... // default algorithm for calculating character’s health
+	}
+};
+```
+
+#### The Strategy Pattern via Function Pointers
+
+체력 계산이 캐릭터의 일부가 아니라, 별개의 함수로 놓을수도 있다. 이는 전략(Strategy) 패턴의 예이다.
+
+```cpp
+class GameCharacter; // forward declaration
+// function for the default health calculation algorithm 
+int defaultHealthCalc(const GameCharacter& gc);
+
+class GameCharacter { 
+public:
+	typedef int (*HealthCalcFunc)(const GameCharacter&);
+	explicit GameCharacter(HealthCalcFunc hcf = defaultHealthCalc) 
+	: healthFunc(hcf) 
+	{}
+	int healthValue() const
+	{ return healthFunc(*this); }
+	...
+private:
+	HealthCalcFunc healthFunc;
+};
+```
+
+#### The Strategy Pattern via tr1::function
+
+`tr1::function` 타입을 써서 기존 함수 포인터 `healthFunc`를 대신하게 만들 수 있다. 
+
+```cpp
+class GameCharacter; // as before 
+int defaultHealthCalc(const GameCharacter& gc); // as before
+class GameCharacter { 
+public:
+// HealthCalcFunc is any callable entity that can be called with
+// anything compatible with a GameCharacter and that returns anything 
+// compatible with an int; see below for details
+	typedef std::tr1::function<int (const GameCharacter&)> HealthCalcFunc;
+	explicit GameCharacter(HealthCalcFunc hcf = defaultHealthCalc) 
+	: healthFunc(hcf)
+	{}
+	int healthValue() const
+	{ return healthFunc(*this); }
+	...
+private:
+	HealthCalcFunc healthFunc;
+};
+```
+
+`HealthCalcFunc`은 `tr1::function` 템플릿을 인스턴스화한 것의 `typedef` 타입이다. 즉, 이 타입은 일반화된 함수 포인터 타입처럼 동작한다.
+
+`HealthCalcFunc`는 `GameCharacter`를 참조자로 받고 `int`를 반환하는 함수로 이 시그니처와 호환되는 callable 객체 어떤 것도 가질 수 있다.
+
+#### The “Classic” Strategy Pattern
+
+체력 계산 함수를 나타내는 클래스 계통을 따로 만들고, 실제 계산 함수는 이 클래스 계통의 가상 멤버 함수로 만드는 방법도 있다.
+
+```cpp
+class GameCharacter; // forward declaration
+class HealthCalcFunc { 
+public:
+	...
+	virtual int calc(const GameCharacter& gc) const {...}
+	...
+};
+HealthCalcFunc defaultHealthCalc;
+class GameCharacter { 
+public:
+	explicit GameCharacter(HealthCalcFunc *phcf = &defaultHealthCalc) 
+	: pHealthCalc(phcf)
+	{}
+	int healthValue() const
+	{ return pHealthCalc->calc(*this); }
+	...
+private:
+	HealthCalcFunc *pHealthCalc; 
+};
+```
