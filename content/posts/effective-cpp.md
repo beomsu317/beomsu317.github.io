@@ -1110,3 +1110,58 @@ private:
 ## Inheritance and Object-Oriented Design
 
 ### Item 32: Make sure public inheritance models “is-a.”
+
+`public` 상속은 "is-a"를 의미한다. 
+
+```cpp
+class Person { ... };
+class Student: public Person { ... }; // Student is a Person
+```
+
+> 
+
+### Item 33: Avoid hiding inherited names
+
+C++은 겹치는 이름들의 타입이 같냐 다르냐에 대한 부분은 신경쓰지 않고 덮어버린다.
+
+```cpp
+class Base { 
+private:
+	int x;
+public:
+	virtual void mf1() = 0; 
+	virtual void mf1(int);
+	virtual void mf2();
+	void mf3();
+	void mf3(double);
+	... 
+};
+
+class Derived: public Base { 
+public:
+	virtual void mf1();
+	void mf3();
+	void mf4();
+	... 
+};
+```
+
+`Base` 클래스에 있는 함수들 중 `mf1()` 및 `mf3()`은 모두 `Derived` 클래스에 있는 `mf1()` 및 `mf3()`에 의해 가려진다. 이러한 현상은 바람직하지 않은 구현이다.
+
+이렇게 가려진 심볼들은 `using` 선언으로 꺼내올 수 있다.
+
+```cpp
+class Derived: public Base { 
+public:
+	using Base::mf1; // make all things in Base named mf1 and mf3 visible (and public) in Derived’s scope
+	using Base::mf3;
+
+	virtual void mf1(); 
+	void mf3();
+	void mf4();
+	...
+};
+```
+
+### Item 34: Differentiate between inheritance of interface and inheritance of implementation
+
