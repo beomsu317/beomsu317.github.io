@@ -1302,3 +1302,82 @@ private:
 	HealthCalcFunc *pHealthCalc; 
 };
 ```
+
+### Item 36: Never redefine an inherited non-virtual function
+
+비가상 함수는 **정적 바인딩(static binding)**으로 묶인다. 따라서 `Base`의 비가상 함수를 `Derived` 클래스가 동일한 이름의 함수로 정의하고 있다면 의도하지 않은 동작이 발생할 수 있다.
+
+### Item 37: Never redefine a function’s inherited default parameter value
+
+가상 함수는 동적으로 바인딩되지만, 디폴트 파라미터 값은 정적으로 바인딩된다. 
+
+```cpp
+// a class for geometric shapes 
+class Shape {
+public:
+	enum ShapeColor { Red, Green, Blue };
+	// all shapes must offer a function to draw themselves 
+	virtual void draw(ShapeColor color = Red) const = 0;
+	...
+};
+
+class Rectangle: public Shape { 
+public:
+	// notice the different default parameter value — bad! 
+	virtual void draw(ShapeColor color = Green) const;
+	...
+};
+```
+
+```cpp
+Shape *ps; // static type = Shape*
+Shape *pc = new Circle; // static type = Shape*
+Shape *pr = new Rectangle; // static type = Shape*
+```
+
+`pr`의 `draw()` 함수는 동적으로 바인딩되지만, 정적 타입은 `Shape`이므로 디폴트 파라미터(`Red`)는 `Shape` 클래스에서 가져온다.
+
+> NVI 패턴을 통해 해결할 수 있다.
+
+### Item 38: Model “has-a” or “is-implemented-in-terms-of” through composition
+
+Composition이란 어떤 타입의 객체들이 그와 다른 타입의 객체들을 포함하고 있을 경우 성립하는 그 타입들 사이 관계를 말한다.
+
+```cpp
+class Address { ... }; // where someone lives
+class PhoneNumber { ... };
+class Person { 
+public:
+	...
+private:
+	std::string name; // composed object
+	Address address; // ditto
+	PhoneNumber voiceNumber; // ditto
+	PhoneNumber faxNumber; // ditto
+};
+```
+
+Composition은 "has-a" 또는 "is-implemented-in-terms-of"를 뜻한다. 이는 소프트웨어 개발에서의 영역(domain)이 두 가지이기 때문이다.
+
+1. 응용 영역(Application domain)
+	- 일상생활에서 볼 수 있는 사물을 본 뜬 것
+	- "has-a" 관계
+2. 구현 영역(Implementation domain)
+	- 버퍼, 뮤텍스 등 순수하게 시스템 구현만을 위한 인공물
+	- "is-implemented-in-terms-of" 관계
+
+`List` 클래스를 써서 `Set` 클래스를 만든다고 하자. `List`를 상속받을 수 있으나, `Set`은 중복 원소를 가질 수 없는 컨테이너이므로 두 클래스 관계가 `public` 상속("is-a")이 맞지 않다. 그러나 `List` 객체를 사용해 구현되는 형태의 설계로 해결 가능하다.
+
+```cpp
+template<class T> class Set { // the right way to use list for Set
+public:
+	bool member(const T& item) const;
+	void insert(const T& item); 
+	void remove(const T& item);
+	std::size_t size() const;
+private:
+	std::list<T> rep; // representation for Set data
+};
+```
+
+
