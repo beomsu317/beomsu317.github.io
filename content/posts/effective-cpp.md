@@ -1165,3 +1165,26 @@ public:
 
 ### Item 34: Differentiate between inheritance of interface and inheritance of implementation
 
+기하학적 도형을 나타내는 클래스 계통구조를 보자.(
+
+```cpp
+class Shape { 
+public:
+	virtual void draw() const = 0;
+	virtual void error(const std::string& msg);
+	int objectID() const;
+	... 
+};
+
+class Rectangle: public Shape { ... }; 
+class Ellipse: public Shape { ... };
+```
+
+`draw()`는 순수 가상 함수이며, 순수 가상 함수는 다음 두 특징을 가진다.
+
+1. 순수 가상 함수를 물려받은 구체 클래스가 해당 순수 가상 함수를 다시 선언해야 한다.
+2. 순수 가상 함수는 전형적으로 추상 클래스 안에서 정의를 갖지 않는다.
+
+> 순수 가상 함수에도 정의를 제공할 수 있으며, 이 함수를 호출하려면 반드시 클래스 이름을 한정자로 붙여 주어야 한다.
+
+
