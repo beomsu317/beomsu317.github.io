@@ -43,7 +43,7 @@ CALL_WITH_MAX(++a, b+10);  // a is incremented once
 
 ```cpp
 template <typename T>                           // because we don’t
-inline void callWithMax(const T& a, const T& b) // know what T is, we
+inline void callWithMax(const T& a, const T& b) // know what T is, we 
 {                                               // pass by reference-to-
    f(a > b ? a : b);                            // const
 }
@@ -1369,15 +1369,59 @@ Composition은 "has-a" 또는 "is-implemented-in-terms-of"를 뜻한다. 이는 
 `List` 클래스를 써서 `Set` 클래스를 만든다고 하자. `List`를 상속받을 수 있으나, `Set`은 중복 원소를 가질 수 없는 컨테이너이므로 두 클래스 관계가 `public` 상속("is-a")이 맞지 않다. 그러나 `List` 객체를 사용해 구현되는 형태의 설계로 해결 가능하다.
 
 ```cpp
-template<class T> class Set { // the right way to use list for Set
+template<typename T>
+bool Set<T>::member(const T& item) const {
+	return std::find(rep.begin(), rep.end(), item) != rep.end(); 
+}
+
+template<typename T>
+void Set<T>::insert(const T& item) {
+	if (!member(item)) rep.push_back(item); 
+}
+
+template<typename T>
+void Set<T>::remove(const T& item) {
+	typename std::list<T>::iterator it = // see Item 42 for info on “typename” here
+		std::find(rep.begin(), rep.end(), item);
+	if (it != rep.end()) rep.erase(it); 
+}
+
+template<typename T> std::size_t Set<T>::size() const {
+	return rep.size(); 
+}
+```
+
+### Item 39: Use private inheritance judiciously
+
+`private` 상속의 의미는 "is-implemented-in-terms-of"이다. `Base` 클래스로부터 `private` 상속을 통해 `Derived` 클래스를 파생시킨 것은 `Base` 클래스에서 쓸 수 있는 기능들을 활용할 목적이지, 두 클래스 간 어떤 개념적 관계가 있어 한 행동이 아니다. 즉, `private` 상속은 그 자체로 구현 기법 중 하나이다.
+
+Item 38에 소개한 Composition도 "is-implemented-in-terms-of"의 의미를 갖는다. 가능하면 Composition을 사용하고, 꼭 필요한 경우 `private` 상속을 사용하자.
+
+`private` 상속 대신 `public` 상속에 Composition 조합이 더 많이 쓰인다. 다음 두 가지 장점이 있기 때문이다.
+
+1. `Widget` 클래스를 설계하는 데 있어 파생은 가능하되, 파생 클래스에서 `onTick()`을 재정의할 수 없도록 설계 차원에서 막고 싶을 때 유용하다.
+2. `Widget`의 컴파일 의존성을 최소화할 수 있다.
+
+```cpp
+class Timer {
 public:
-	bool member(const T& item) const;
-	void insert(const T& item); 
-	void remove(const T& item);
-	std::size_t size() const;
-private:
-	std::list<T> rep; // representation for Set data
+	explicit Timer(int tickFrequency); 
+	virtual void onTick() const; // automatically called for each tick
+	... 
 };
 ```
 
+```cpp
+class Widget { 
+private:
+	class WidgetTimer: public Timer {
+	public:
+		virtual void onTick() const;
+		... 
+	};
+	WidgetTimer timer;
+	... 
+};
+```
 
+> `private` 상속은 EBO(Empty Base Optimization)를 활성화시킬 수 있다. 이는 객체 크기를 고민하는 라이브러리 개발자에게 매력적인 특징이다.
