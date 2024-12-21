@@ -1469,3 +1469,50 @@ class IOFile: public InputFile, public OutputFile {...};
 
 ### Item 41: Understand implicit interfaces and compile-time polymorphism
 
+객체 지향 프로그램의 주요 특징은 명시적 인터페이스(explicit interface)와 런타임 다형성(runtime polymorphism)이다.
+
+`Widget` 클래스와 이를 사용하는 `doProcessing()` 함수가 있다고 하자.
+
+```cpp
+class Widget { 
+public:
+	Widget();
+	virtual ~Widget();
+	virtual std::size_t size() const; 
+	virtual void normalize();
+	void swap(Widget& other); // see Item 25
+	... 
+};
+```
+
+```cpp
+void doProcessing(Widget& w) {
+	if (w.size() > 10 && w != someNastyWidget) { 
+		Widget temp(w);
+		temp.normalize();
+		temp.swap(w);
+	} 
+}
+```
+
+`w`는 `Widget` 타입으로 해당 클래스의 인터페이스를 지원해야 한다. 이 인터페이스를 가리켜 **명시적 인터페이스**라 한다.
+
+`Widget`의 멤버 함수 중 몇 개는 `virtual` 함수이므로, 이 `virtual` 함수에 대한 호출은 **런타임 다형성**에 이루어진다. 
+
+템플릿 일반화 프로그래밍은 이와는 다른 부분이 있다. 명시적 인터페이스 및 런타임 다형성은 그대로 존재한다. 추가로 **암시적 인터페이스(implicit interface)**와 **컴파일 타임 다형성(compile-time polymorphism)**이 있다.
+
+`doProcessing()`을 함수 템플릿으로 바꾸어 보자.
+
+```cpp
+template<typename T> void doProcessing(T& w) {
+	if (w.size() > 10 && w != someNastyWidget) { 
+		T temp(w);
+		temp.normalize();
+		temp.swap(w);
+	} 
+}
+```
+
+`w`가 지원해야 하는 인터페이스는 이 템플릿 안에서 `w`에 대해 실행되는 연산이 결정한다. `T`는 `size()`, `normalize()`, `swap()` 멤버 함수를 지원해야 한다. 이 템플릿이  제대로 컴파일되려면 일부 표현식이 유효해야 하는데, 이 표현식들은 `T`가 지원해야 하는 **암시적 인터페이스**라는 것이다.
+
+`w`가 수반되는 함수 호출이 일어날 때, 예를 들어 `operator>` 및 `operator!=` 함수가 호출될 때 해당 호출을 성공시키기 위해 템플릿 인스턴스화가 일어난다. 이 인스턴스화가 일어나는 시점은 컴파일 도중이다. 인스턴스화를 진행하는 함수 템플릿에 어떤 템플릿 매개변수가 들어가느냐에 따라 호출되는 함수가 달라지기 때문에, 이것을 가리켜 **컴파일 타임 다형성**이라 한다.
