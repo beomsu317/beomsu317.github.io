@@ -1425,3 +1425,47 @@ private:
 ```
 
 > `private` 상속은 EBO(Empty Base Optimization)를 활성화시킬 수 있다. 이는 객체 크기를 고민하는 라이브러리 개발자에게 매력적인 특징이다.
+
+### Item 40: Use multiple inheritance judiciously
+
+다중 상속(MI: Multiple Inheritance)은 둘 이상의 기반 클래스로부터 똑같은 이름을 물려받을 가능성이 있다.
+
+```cpp
+class BorrowableItem { // something a library lets you borrow
+public:
+	void checkOut(); // check the item out from the library
+	... 
+};
+class ElectronicGadget { 
+private:
+	bool checkOut() const; // perform self-test, return whether test succeeds
+	...
+};
+```
+
+`checkOut()` 함수를 호출하는 부분에서 모호성이 발생한다. 이 모호성을 해소하기 위해 호출할 기반 클래스의 함수를 손수 지정해주어야 한다.
+
+MI는 상위 단계의 기반 클래스를 여러 개 갖는 클래스 계통에서 "죽음의 마름모꼴(deadly MI diamond)"라고 알려진 좋지 않은 모양이 나올 수 있다.
+
+```cpp
+class File { ... };
+class InputFile: public File { ... };    
+class OutputFile: public File { ... };
+class IOFile: public InputFile, public OutputFile {...};
+```
+
+이렇게 기반 클래스와 파생 클래스 사이 경로가 두 개 이상 되는 상속 계통에서 기반 클래스의 데이터 멤버가 경로 개수만큼 중복 생성된다.
+
+`virtual public` 상속을 통해 데이터 멤버의 중복 생성을 막을 수도 있지만, `virtual` 상속을 사용한 클래스로 만들어진 객체는 `virtual` 상속을 쓰지 않은 것보다 크기가 더 크다. 또한 `virtual` 기반 클래스의 데이터 멤버에 접근하는 속도도 `non-virtual` 기반 클래스의 데이터 멤버에 접근하는 속도보다 느리다. 
+
+그러므로 `virtual` 기반 클래스에 대한 조언은 간단하다.
+
+1. 구태여 쓸 필요가 없다면 `virtual` 기반 클래스를 사용하지 말자.
+2. `virtual` 기반 클래스를 꼭 사용해야 하는 상황이라면, `virtual` 기반 클래스에 최대한 데이터 멤버를 넣지 않는 쪽으로 신경써라.
+
+> 다중 상속을 적법하게 쓸 수 있는 경우가 있다. 여러 시나리오 중 하나는 인터페이스 클래스로부터 `public` 상속을 하고, 동시에 구현을 돕는 클래스로부터 `private` 상속을 하는 것이다.
+
+## Templates and Generic Programming
+
+### Item 41: Understand implicit interfaces and compile-time polymorphism
+
