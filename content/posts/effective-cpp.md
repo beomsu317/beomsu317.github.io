@@ -1576,4 +1576,579 @@ typename C::const_iterator iter(container.begin());
 
 ### Item 43: Know how to access names in templatized base classes
 
-asd
+회사에 메시지를 전송할 수 있는 앱을 만든다고 하자. `MsgSender` 클래스는 `Company` 템플릿 매개변수를 받는다.
+
+```cpp
+template<typename Company> 
+class MsgSender {
+public:
+	... // ctors, dtor, etc.
+	void sendClear(const MsgInfo& info) {
+		std::string msg; create msg from info;
+		Company c;
+		c.sendCleartext(msg); 
+	}
+	void sendSecret(const MsgInfo& info) // similar to sendClear, except calls c.sendEncrypted
+	{ ... }
+};
+```
+
+여기에 메시지를 보낼 때마다 관련 정보를 남기고 싶은 경우 파생 클래스에서 `sendClear()`를 호출하여 이 기능을 쉽게 붙일 수 있다.
+
+```cpp
+template<typename Company>
+class LoggingMsgSender: public MsgSender<Company> { 
+public:
+	... // ctors, dtor, etc.
+	void sendClearMsg(const MsgInfo& info) {
+		// write "before sending" info to the log;
+		sendClear(info); // call base class function; this code will not compile!
+		// write "after sending" info to the log; 
+	}
+	... 
+};
+```
+
+하지만 이 코드는 `sendClear()` 함수가 존재하지 않기 때문에 컴파일되지 않는다. 문제는 컴파일러가 `LoggingMsgSender` 클래스 템플릿 정의와 마주칠 때 이 클래스가 어디서 파생된 것인지 모른다는 것이다. `MsgSender<Company>`인 것은 분명하나, `Company`는 템플릿 매개변수이고, 이 템플릿 매개변수(`LoggingMsgSender`가 인스턴스로 만들어질 때)는 나중까지 아무것도 무엇이 될지 알 수 없다.
+
+이를 해결하기 위한 세 가지 방법이 존재한다.
+
+1. 기반 클래스 함수에 대한 호출문 앞에 `this->`를 붙인다.
+	```cpp
+	this->sendClear(info); 
+	```
+2. `using` 선언을 사용한다.
+	``cpp
+	using MsgSender<Company>::sendClear; 
+	```
+3. 호출할 함수가 기반 클래스 함수라는 것을 명시적으로 지정한다.
+	```cpp
+	MsgSender<Company>::sendClear(info);
+	```
+
+> 마지막 방법은 호출되는 함수가 가상 함수인 경우, 바인딩이 무시될 수 있기에 추천하지 않는다.
+
+### Item 44: Factor parameter-independent code out of templates
+
+아무 생각 없이 템플릿을 사용하면 코드 비대화(code bloat)가 초래될 수 있다. 따라서 코드가 비대화되는 불상사를 미연에 방지할 방법을 알아두어야 한다.
+
+**공통성 및 가변성 분석(commonality and variability analysis)**을 통해 코드 비대화를 방지할 수 있다.
+
+템플릿을 작성할 경우 템플릿이 아닌 코드에서는 코드 중복이 명시적이지만, 템플릿 코드에서는 코드 중복이 암시적이다. 소스코드에는 템플릿이 하나밖에 없기 때문에, 어떤 템플릿이 여러 번 인스턴스화될 때 발생할 수 있는 코드 중복을 감각적으로 알아채야 한다는 것이다.
+
+정방행렬을 나타내는 템플릿을 만든다고 하자. 이 행렬은 역행렬 연산을 지원한다.
+
+```cpp
+template<typename T, std::size_t n> // template for n x n matrices of objects of type T; see below for info on the size_t parameter
+class SquareMatrix { 
+public:
+	...
+	void invert(); // invert the matrix in place
+};
+```
+
+이 템플릿은 `size_t` 타입의 비타입 매개변수(non-type parameter) `n`을 받는다.
+
+```cpp
+SquareMatrix<double, 5> sm1; 
+SquareMatrix<double, 10> sm2; 
+```
+
+이 때 `invert()`는 사본이 인스턴스화되는데 만들어지는 사본의 개수가 두 개이다. 하지만 행과 열의 크기를 나타내는 상수만 빼면 두 함수는 완전히 동일하다. 이 현상이 코드 비대화를 일으키는 일반적인 형태 중 하나이다.
+
+`SquareMatrixBase`를 추가해 다음과 같이 구현해보자.
+
+```cpp
+template<typename T> class SquareMatrixBase { 
+protected:
+	SquareMatrixBase(std::size_t n, T *pMem) // store matrix size and a ptr to matrix values
+	: size(n), pData(pMem) {}
+	void invert(std::size_t matrixSize); // invert matrix of the given size
+	void setDataPtr(T *ptr) { pData = ptr; } // reassign pData
+	...
+private: 
+	std::size_t size; // size of matrix
+	T *pData; // pointer to matrix values
+};
+```
+
+행렬의 크기를 매개변수로 받도록 바뀐 `invert()` 함수가 기반 클래스에 있다. `SquareMatrixBase`는 행렬의 원소가 갖는 타입에 대해서만 템플릿화되어 있을 뿐이다. 따라서 같은 타입 객체를 원소로 갖는 모든 정방행렬은 오직 한 가지의 `SquareMatrixBase` 클래스를 공유한다.
+
+`SquareMatrixBase::invert()`는 자신이 상대할 데이터가 어떤 데이터인지 알아야 하는데, 이는 행렬 값(들)을 담는 메모리에 대한 포인터를 `SquareMatrixBase`가 저장하게 하여 해결할 수 있다.
+
+이렇게 설계하면 메모리 할당 방법의 결정 권한이 파생 클래스 쪽으로 넘어가게 된다. 어느 메모리에 데이터를 저장하느냐에 따라 설계가 달리지겠지만, 코드 비대화 측면에서 효과를 볼 수 있다.
+
+### Item 45: Use member function templates to accept “all compatible types.”
+
+스마트 포인터로 암시적인 타입 변환을 표현하려면 까다롭다.
+
+```cpp
+template<typename T> 
+class SmartPtr {
+public: // smart pointers are typically initialized by built-in pointers
+	explicit SmartPtr(T *realPtr);
+	... 
+};
+SmartPtr<Top> pt1 = SmartPtr<Middle>(new Middle); // convert SmartPtr<Middle> => SmartPtr<Top>
+SmartPtr<Top> pt2 = SmartPtr<Bottom>(new Bottom); // convert SmartPtr<Bottom> => SmartPtr<Top>
+SmartPtr<const Top> pct2 = pt1; // convert SmartPtr<Top> => SmartPtr<const Top>
+```
+
+같은 템플릿으로 만들어진 다른 인스턴스들 사이에는 어떤 관계도 없기 때문에, 컴파일러에게는 `SmartPtr<Middle>`과 `SmartPtr<Top>`은 완전 별개의 클래스다. `SmartPtr` 클래스들 사이 변환을 하고 싶다면, 변환되도록 직접 프로그램을 만들어야 한다.
+
+원칙적으로 원하는 생성자의 개수는 *무제한*이다. 템플릿을 인스턴스화하면 무제한 개수의 함수를 만들어 낼 수 있다. 바로 생성자를 만들어내는 템플릿을 쓰는 것이다. 이 생성자 템플릿은 **멤버 함수 템플릿(member function template)**의 한 예이다. 멤버 함수 템플릿은 어떤 클래스의 멤버 함수를 찍어내는 템플릿을 말한다.
+
+```cpp
+template<typename T> 
+class SmartPtr {
+public:
+	template<typename U> // member template for a ”generalized copy constructor”
+	SmartPtr(const SmartPtr<U>& other); 
+	...
+};
+```
+
+모든 `T` 타입 및 모든 `U` 타입에 대해 `SmartPt<T>` 객체가 `SmartPtr<U>`로부터 생성될 수 있다는 의미이다. 이런 꼴의 생성자를 가리켜 **일반화 복사 생성자(generalized copy constructor)**라 한다.
+
+하지만 이 일반화 복사 생성자는 `SmartPtr<Top>`으로부터 `SmartPtr<Bottom>`을 생성할 수 있다. 
+
+멤버 초기화 리스트를 사용해 `SmartPtr<T>` 데이터 멤버인 `T*` 타입의 포인터를 `SmartPtr<U>`에 들어 있는 `U*` 타입의 포인터로 초기화했다. 이렇게 하면 `U*`에서 `T*`로 진행되는 암시적 변환이 가능할 때만 컴파일 에러가 발생하지 않는다.
+
+```cpp
+template<typename T> 
+class SmartPtr {
+public:
+	template<typename U> SmartPtr(const SmartPtr<U>& other) // initialize this held ptr with other’s held ptr
+	: heldPtr(other.get()) { ... }
+	T* get() const { return heldPtr; }
+	...
+private: // built-in pointer held by the SmartPtr
+	T *heldPtr;
+};
+```
+
+### Item 46: Define non-member functions inside templates when type conversions are desired
+
+Item 24에서 소개된 `Rational` 클래스에 대한 `operator*` 부분을 템플릿으로 변경해보자.
+
+```cpp
+template<typename T>
+class Rational { 
+public:
+	Rational(const T& numerator = 0, const T& denominator = 1); // see Item 20 for why params are now passed by reference
+	const T numerator() const; // see Item 28 for why return values are still passed by value
+	const T denominator() const; // Item 3 for why they’re const
+	...
+};
+
+template<typename T>
+const Rational<T> operator*(const Rational<T>& lhs, const Rational<T>& rhs)
+{...}
+```
+
+```cpp
+Rational<int> oneHalf(1, 2); // this example is from Item 24, except Rational is now a template
+Rational<int> result = oneHalf * 2; // error! won’t compile
+```
+
+`operator*`에 넘겨진 두 번째 매개변수 `2`는 `int` 타입이다. 따라서 `2`를 `Rational<int>`로 변환하고, 이를 통해 `T`가 `int`라 유추할 수 있다고 생각할 수 있다. 하지만 컴파일러는 템플릿 인자 추론 과정에서 암시적 타입 변환이 고려되지 않아 이런 방식으로 동작하지 않는다.
+
+클래스 템플릿 안에 프렌드 함수를 넣으면 함수 템플릿으로서의 성격을 주지 않고 특정한 함수 하나를 나타낼 수 있다는 사실을 이용해 해결할 수 있다. 즉, `Rational<T>` 클래스에 대해 `operator*`를 프렌드 함수로 선언하는 것이 가능하다는 말이다. 클래스 템플릿 인자는 인자 추론 과정에 좌우되지 않으므로, `T`에 대한 정확한 정보는 `Rational<T>` 클래스가 인스턴스화되는 시점에 알 수 있다.
+
+```cpp
+template<typename T>
+class Rational {
+public:
+	...
+friend // declare operator* function (see below for details)
+	const Rational operator*(const Rational& lhs, const Rational& rhs);
+};
+```
+
+`oneHalf` 객체가 `Rational<int>` 타입으로 선언되며 `Rational<int>` 클래스가 인스턴스로 만들어지고, 이때 그 과정의 일부로서 `Rational<int>` 타입의 매개변수를 받는 프렌드 함수인 `operator*`도 자동으로 선언되기 때문이다. 이전과 달리 지금은 함수가 선언된 것이므로, 컴파일러는 이 호출문에 대해 암시적 변환 함수를 적용할 수 있게 된다.
+
+그러나 이 코드는 링크가 되지 않는다. `operator*` 함수는 `Rational` 안에 선언되어 있지, 정의까지 된 것은 아니다. 
+
+`operator*` 함수의 본문을 선언부와 붙이면 컴파일 및 링크까지 수행된다.
+
+```cpp
+template<typename T> 
+class Rational {
+public:
+	...
+friend const Rational operator*(const Rational& lhs, const Rational& rhs) {
+	return Rational(lhs.numerator() * rhs.numerator(), lhs.denominator() * rhs.denominator()); // same impl as in Item 24
+}
+};
+```
+
+### Item 47: Use traits classes for information about types
+
+`advance()` 템플릿은 지정된 반복자를 지정된 거리만큼 이동시키는 것이다.
+
+```cpp
+template<typename IterT, typename DistT> // move iter d units forward; 
+void advance(IterT& iter, DistT d);      // if d < 0, move iter backward
+```
+
+`+=` 연산을 지원하는 반복자는 임의 접근 반복자 뿐이므로, `iter += d`와 같이 구현하는 것은 한계가 있다. 다른 타입의 경우 `++`, `--` 연산을 사용해 구현해야 한다.
+
+STL 반복자는 각 반복자가 지원하는 연산에 따라 다섯 개의 범주로 나뉜다.
+
+1. 입력 반복자(input iterator)
+	- 전진만 가능
+	- 한 번에 한 칸씩 이동
+	- 자신이 가리키는 위치에서 읽기만 가능하며, 읽을 수 있는 횟수는 1번
+2. 출력 반복자(output iterator)
+	- 입력 반복자와 비슷하나 출력용인 점만 다름
+	- 자신이 가리키는 위치에 쓰기만 가능하며, 쓸 수 있는 횟수는 1번
+3. 순방향 반복자(forward iterator)
+	- 입력 반복자와 출력 반복자가 하는 일은 기본적으로 다 할 수 있음
+	- 자신이 가리키는 위치에서 읽기, 쓰기를 동시에 할 수 있으며, 여러 번 가능
+4. 양방향 반복자(bidirectional iterator)
+	- 순방향 반복자에 뒤로가는 기능 추가
+5. 임의 접근 반복자(random access iterator)
+	- 양방향 반복자에 "반복자 산술 연산" 수행 기능 추가
+
+C++ 표준 라이브러리는 위 다섯 개의 반복자 범주 각각을 식별하는 데 쓰이는 태그(tag) 구조체가 정의되어 있다.
+
+```cpp
+struct input_iterator_tag {};
+struct output_iterator_tag {};
+struct forward_iterator_tag: public input_iterator_tag {};
+struct bidirectional_iterator_tag: public forward_iterator_tag {};
+struct random_access_iterator_tag: public bidirectional_iterator_tag {};
+```
+
+다음 코드가 제대로 동작하려면 `iter`가 임의 접근 반복자인지를 판단할 수 있어야 한다.
+
+```cpp
+template<typename IterT, typename DistT> void advance(IterT& iter, DistT d) {
+	if (iter is a random access iterator) { 
+		iter += d; // use iterator arithmetic for random access iters
+	} else {
+		if (d >= 0) { while (d--) ++iter; } // use iterative calls to ++ or -- for other iterator categories
+		else { while (d++) --iter; }
+	}
+}
+```
+
+여기서 필요한 것이 **특성정보(traits)**이다. 컴파일 도중 어떤 타입의 정보를 얻을 수 있게 하는 객체를 지칭하는 개념이다.
+
+> 특성정보 기법은 포인터 등의 기본제공 타입에 적용할 수 있어야 한다.
+
+특성정보를 다루는 표준적인 방법은 해당 특성정보 템플릿 및 그 템플릿의 1개 이상의 특수화 버전에 넣는 것이다. 반복자의 경우 `iterator_traits`라는 이름으로 준비되어 있다.
+
+```cpp
+template<typename IterT> // template for information about iterator types
+struct iterator_traits; 
+```
+
+위처럼 특성정보를 구현하는 데 사용한 구조체를 가리켜 **특성정보 클래스**라 한다.
+
+`iterator_traits<IterT>` 안에 `IterT` 타입 각각에 대한 `iterator_category`라는 이름의 `typedef` 타입이 선언되어 있다. 이렇게 선언된 `typedef` 타입이 `IterT` 반복자의 범주를 가리키는 것이다.
+
+`iterator_traits` 클래스는 이 반복자 범주를 두 부분으로 나누어 구현한다.
+
+1. 사용자 정의 반복자 타입에 대한 구현
+
+	사용자 정의 반복자 타입으로 하여금 `iterator_category`라는 이름의 `typedef` 타입을 내부에 가질 것을 요구사항으로 둔다. 예를 들어, `list`의 반복자는 양방향 반복자이기 때문에 다음과 같다. 
+
+	```cpp
+	template < ... > 
+	class list { 
+	public:
+		class iterator { 
+		public:
+			typedef bidirectional_iterator_tag iterator_category;
+				... 
+			};
+		... 
+	};
+	```
+
+	이 `iterator` 클래스가 내부에 지닌 중첩 `typedef` 타입을 똑같이 재생한 것이 `iterator_traits`다.
+
+	```cpp
+	// the iterator_category for type IterT is whatever IterT says it is; 
+	// see Item 42 for info on the use of “typedef typename” 
+	template<typename IterT>
+	struct iterator_traits {
+		typedef typename IterT::iterator_category iterator_category;
+		... 
+	};
+	```
+
+	위 코드는 사용자 정의 타입에서 잘 돌아가나, 반복자의 실제 타입이 포인터인 경우 전혀 돌아가지 않는다. 포인터 안에 `typedef` 타입이 중첩되는 것부터 말이 안 되기 때문이다.
+
+2. 반복자가 포인터인 경우의 처리
+
+	포인터 타입 반복자를 지원하기 위해 `iterator_traits`는 포인터 타입에 대한 **부분 템플릿 특수화(partial template specialization)** 버전을 제공한다.
+
+	포인터의 동작 원리가 임의 접근 반복자와 똑같으므로, `iterator_traits`가 이런 식으로 지원하는 반복자 범주가 바로 임의 접근 반복자이다.
+
+	```cpp
+	template<typename T> // partial template specialization for built-in pointer types
+	struct iterator_traits<T*> 
+	{
+		typedef random_access_iterator_tag iterator_category;
+		... 
+	};
+	```
+
+지금까지가 특성정보 클래스의 설계 및 구현 방법이다.
+
+1. 다른 사람이 사용하도록 열어주고 싶은 타입 관련 정보를 확인
+2. 그 정보를 식별하기 위한 이름을 선택
+3. 지원하고자 하는 타입 관련 정보를 담은 템플릿 및 그 템플릿의 특수화 버전(`iterator_traits`) 제공
+
+따라서 `iterator_traits`가 주어졌으므로 `advance()`의 의사 코드를 다음과 같이 다듬을 수 있다.
+
+`if`문을 통해 태그를 구분할 수 있지만 프로그램 실행 도중 평가되므로, 컴파일 도중에 조건처리를 수행하기 위해서는 오버로딩을 사용한다.
+
+```cpp
+template<typename IterT, typename DistT> // use this impl for random access iterators
+void doAdvance(IterT& iter, DistT d, std::random_access_iterator_tag) 
+{
+	iter += d;
+}
+template<typename IterT, typename DistT> // use this impl for bidirectional iterators
+void doAdvance(IterT& iter, DistT d, std::bidirectional_iterator_tag) 
+{
+	if (d >= 0) { while (d--) ++iter; } 
+	else { while (d++) --iter; }
+}
+template<typename IterT, typename DistT> // use this impl for input iterators
+void doAdvance(IterT& iter, DistT d, std::input_iterator_tag)
+{
+	if (d < 0) {
+		throw std::out_of_range("Negative distance"); // see below
+	}
+	while (d--) ++iter;
+}
+```
+
+이제 `advance()`가 `doAdvance()`를 호출할 때 적절한 반복자 범주 타입 객체를 전달해주어야 한다.
+
+```cpp
+template<typename IterT, typename DistT> 
+void advance(IterT& iter, DistT d)
+{
+	doAdvance(iter, d, // call the version of doAdvance
+		typename std::iterator_traits<IterT>::iterator_category() // that is appropriate for iter’s iterator category
+	); 
+}
+```
+
+### Item 48: Be aware of template metaprogramming
+
+TMP는 컴파일 도중 실행되는 템플릿 기반 프로그램을 작성하는 것을 말한다. TMP는 강점 두 가지가 있다.
+
+1. TMP를 쓰면 다른 방법으로는 불가능한 일을 쉽게 할 수 있다.
+2. TMP는 C++ 컴파일이 진행되는 동안 실행되기 때문에, 기존 작업을 런타임 영역에서 컴파일 타임 영역으로 전환할 수 있다.
+
+이러한 결과로 런타임에 발생되는 에러들을 컴파일 도중 찾을 수 있으며, TMP를 쓰면 모든 면에서 효율적일 여지가 많아진다.
+
+TMP에서는 `if ... else` 구문을 나타내는 데 템플릿 및 템플릿 특수화 버전을 사용한다.
+
+TMP의 동작에서 루프를 빼놓을 수 없는데, 재귀를 통해 루프 효과를 낸다. 그런데 TMP의 루프는 재귀 함수 호출을 만들지 않고 **재귀식 템플릿 인스턴스화(recursive template instantiation)**를 한다.
+
+다음은 계승을 계산하는 템플릿이다.
+
+```cpp
+template<unsigned n> // general case: the value of Factorial<n> is n times the value of Factorial<n-1> 
+struct Factorial { 
+	enum { value = n * Factorial<n-1>::value };
+};
+template<> // special case: the value of struct 
+Factorial<0> { // Factorial<0> is 1
+	enum { value = 1 }; 
+};
+```
+
+C++ 프로그래밍에서 TMP가 효과를 발휘하는 예는 세 가지가 있다.
+
+1. 치수 단위(dimensional unit)의 정확성 확인
+2. 행렬 연산의 최적화
+3. 맞춤식 디자인 패턴 구현의 생성
+
+## Customizing new and delete
+
+### Item 49: Understand the behavior of the new-handler
+
+`operator new` 함수가 예외를 던지기 전, 이 함수는 사용자 쪽에서 지정할 수 있는 에러 처리 함수를 우선적으로 호출하게 되어 있다. 이 에러 처리 함수를 가리켜 new handler라고 한다.
+
+```cpp
+namespace std {
+	typedef void (*new_handler)();
+	new_handler set_new_handler(new_handler p) throw(); 
+}
+```
+
+사용자가 요청한 만큼 메모리를 할당하지 못하면, `operator new`는 충분한 메모리를 찾아낼 때까지 new handler를 되풀이해서 호출한다. New handler는 다음 동작 중 하나를 꼭 해주어야 한다.
+
+1. 사용할 수 있는 메모리를 더 많이 확보한다.
+2. 다른 new handler를 설치한다.
+3. new handler의 설치를 제거한다.
+4. 예외를 던진다.
+5. 복귀하지 않는다.
+
+`Widget` 클래스에 대한 메모리 할당 실패를 처리하고 싶다면, 호출될 new handler 함수를 만들어야 하므로, 이를 가리키는 `new_handler` 타입의 정적 멤버 데이터를 선언한다.
+
+```cpp
+class Widget { 
+public:
+	static std::new_handler set_new_handler(std::new_handler p) throw(); 
+	static void* operator new(std::size_t size) throw(std::bad_alloc);
+private:
+	static std::new_handler currentHandler;
+};
+
+std::new_handler Widget::currentHandler = 0; // init to null in the class impl. file
+```
+
+`Widget`이 제공하는 `set_new_handler()` 함수는 자신에게 넘어온 포인터를 아무 점검 없이 저장하고, 바로 전에 저장했던 포인터를 점검 없이 반환한다. (표준 라이브러리의 `set_new_handler()`와 동일)
+
+```cpp
+std::new_handler Widget::set_new_handler(std::new_handler p) throw() {
+	std::new_handler oldHandler = currentHandler; 
+	currentHandler = p;
+	return oldHandler;
+}
+```
+
+```cpp
+void outOfMem(); // decl. of func. to call if mem. alloc. for Widget objects fails
+
+Widget::set_new_handler(outOfMem); // set outOfMem as Widget’s new-handling function
+Widget *pw1 = new Widget; // if memory allocation fails, call outOfMem 
+
+std::string *ps = new std::string; // if memory allocation fails, call the global new-handling function (if there is one)
+
+Widget::set_new_handler(0); // set the Widget-specific new-handling function to nothing (i.e., null)
+Widget *pw2 = new Widget; // if mem. alloc. fails, throw an exception immediately. (There is no new- handling function for class Widget.)
+```
+
+### Item 50: Understand when it makes sense to replace new and delete
+
+`operator new`와 `operator delete`를 변경하려는 이유는 다음과 같을 수 있다.
+
+- 잘못된 힙 사용을 탐지하기 위해
+- 할당 및 해제 속력을 높이기 위해
+- 기본 메모리 관리자의 공간 오버헤드를 줄이기 위해
+- 적당히 타협한 기본 할당자의 바이트 정렬 동작을 보장하기 위해
+- 임의의 관계를 맺고 있는 객체들을 한 군데 나란히 모아놓기 위해
+- 그때그때 원하는 동작을 수행하도록 하기 위해
+
+### Item 51: Adhere to convention when writing new and delete
+
+관례에 맞는 `operator new`를 구현하려면 다음 요구사항을 지켜야 한다.
+
+- 반환 값이 제대로 되어 있어야 한다.
+- 가용 메모리가 부족할 경우 new handler 함수를 호출해야 한다.
+- 크기가 없는(0 byte) 메모리 요청에 대한 대비책을 갖춰야 한다.
+- 실수로 기본 형태의 `new`가 가려지지 않도록 한다.
+
+```cpp
+void* operator new(std::size_t size) throw(std::bad_alloc) { // your operator new might take additional params
+using namespace std;
+	if (size == 0) { // handle 0-byte requests by treating them as 1-byte requests
+		size = 1;
+	}
+	while (true) {
+		// attempt to allocate size bytes;
+		if (the allocation was successful) 
+			return (a pointer to the memory);
+
+		// allocation was unsuccessful; find out what the
+		// current new-handling function is (see below) 
+		new_handler globalHandler = set_new_handler(0); 
+		set_new_handler(globalHandler);
+
+		if (globalHandler) (*globalHandler)();
+		else throw std::bad_alloc(); 
+	}
+}
+```
+
+`operator delete`를 작성할 때의 관례로는 널 포인터에 대한 `delete` 적용이 항상 안전하도록 보장한다는 사실만 기억하자.
+
+```cpp
+void operator delete(void *rawMemory) throw() {
+	if (rawMemory == 0) return; // do nothing if the null pointer is being deleted
+	deallocate the memory pointed to by rawMemory; 
+}
+```
+
+### Item 52: Write placement delete if you write placement new
+
+C++ 런타임 시스템은 호출된 `operator new` 함수와 짝이 되는 `operator delete` 함수를 호출하는 것인데, 이것이 제대로 되려면 `operator delete` 함수들 가운데 어떤 것을 호출해야 하는지 런타임 시스템이 제대로 알고 있어야 한다.
+
+메모리 할당 정보로 로그를 기록할 `ostream`을 지정받는다고 가정하자. 그리고 클래스 전용 `operator delete`는 기본형이라고 하자.
+
+```cpp
+class Widget { 
+public:
+	...
+	static void* operator new(std::size_t size, std::ostream& logStream) 
+		throw(std::bad_alloc);
+	static void operator delete(void *pMemory) throw();
+	static void operator delete(void *pMemory, std::ostream& logStream) 
+		throw();
+	...
+};
+```
+
+사용자 정의 `operator new` 함수는 매개변수를 추가로 받는 형태로도 선언할 수 있다. 이런 형태의 함수를 가리켜 **위치지정(placement)** `new`라 한다.
+
+만약 메모리 할당은 성공했지만, `Widget` 생성자에서 예외가 발생한 경우 C++ 런타임 시스템이 책임지고 되돌려야 한다. 그런데 런타임 시스템 쪽에서 호출된 `operator new`가 어떻게 동작하는지 알아낼 수 없으므로, 자신이 할당 자체를 되돌릴 수 없다. 대신 런타임 시스템은 호출된 `operator new`가 받아들이는 매개변수의 개수 및 타입이 똑같은 버전의 `operator delete`를 찾았다면 이를 호출한다.
+
+```cpp
+void operator delete(void*, std::ostream&) throw();
+```
+
+이런 형태의 `operator delete`를 가리켜 **위치지정 삭제(placement delete)**라 한다.
+
+> 단, 바깥쪽 유효범위에 있는 어떤 함수의 이름과 클래스 멤버 함수 이름이 같으면 바깥쪽 유효범위 함수가 *이름만 같아도* 가려진다. 따라서 자신이 사용할 수 있다고 생각하는 다른 `new`들을 클래스 전용의 `new`에 가려지지 않도록 신경써야 한다. 
+
+## Miscellany
+
+### Item 53: Pay attention to compiler warnings
+
+컴파일러 경고를 쉽게 지나치지 말자. 컴파일러에서 지원하는 최고 경고 수준도 경고 메시지를 내지 않고 컴파일되는 코드를 만드는 쪽에 전력을 다해야 한다.
+
+### Item 54: Familiarize yourself with the standard library, including TR1
+
+TR1이 도입되면서 스마트 포인터, 일반화 함수 포인터, 해시 기반 컨테이너, 정규 표현식 등이 있다. 
+
+- 스마트 포인터(smart pointer)
+- `tr1::function`
+- `tr1::bind`
+- 해시 테이블
+- 정규 표현식
+- 튜플
+- `tr1::array`
+- `tr1::mem_fn`
+- `tr1::reference_wrapper`
+- 난수 발생
+- 특수 용도의 수학 함수
+- 타입 특성정보
+- `tr1::result_of`
+
+TR1 구현을 구할 수 있는 자료처 중 한 군데가 boost이다.
+
+### Item 55: Familiarize yourself with Boost
+
+부스트는 C++ 동료 심사를 거쳐 등록되고 무료로 배포되는 오픈소스 C++ 라이브러리이다.
+
+- 문자열 및 텍스트 처리
+- 컨테이너
+- 함수 객체 및 고차 프로그래밍
+- 일반화 프로그래밍 (Item 47)
+- TMP (Item 48)
+- 수학 및 수치 조작
+- 정확성 유지 및 테스트
+- 자료구조
+- 타 언어와 연동 지원
+- 메모리
+- 기타
