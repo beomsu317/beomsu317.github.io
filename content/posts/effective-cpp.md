@@ -1527,3 +1527,52 @@ template<typename T> void doProcessing(T& w) {
 `operator!=` 함수도 마찬가지로, `T`가 `operator!=` 함수를 지원해야 하는 필수 요구사항이 아니다. `operator!=`가 `X` 타입의 객체 하나와 `Y` 타입의 객체 하나를 받아들인다고 하면 이 부분은 별 걸림돌 없이 넘어갈 수 있다.
 
 결과적으로 `if`문의 조건식 부분은 불(boolean) 표현식이어야 하기 때문에, 표현식에 쓰이는 것들이 어떤 타입인지 상관없이 이 조건식 부분의 결과 값은 `bool`과 호환되어야 한다. 이것이 `doProcessing()` 템플릿 타입 매개변수인 `T`에 대해 요구하는 암시적 인터페이스의 일부이다.
+
+나머지 복사 생성자, `normalize()`, `swap()` 함수에 대한 호출이 `T` 타입의 객체에 대해 '유효'해야 한다.
+
+### Item 42: Understand the two meanings of typename
+
+다음과 같은 함수 템플릿이 있다고 하자.
+
+```cpp
+template<typename C> // print 2nd element in container;
+void print2nd(const C& container) { // this is not valid C++!
+	if (container.size() >= 2) { 
+		C::const_iteratoriter(container.begin()); // get iterator to 1st element
+		++iter; // move iter to 2nd element
+		int value = *iter;  // copy that element to an int 
+		std::cout << value; // print the int
+	} 
+}
+```
+
+`iter`의 타입은 `C::const_iteratoriter`인데, 템플릿 매개변수 `C`에 따라 달라지는 타입이다. 이렇게 템플릿 매개변수에 종속된 것을 가리켜 **의존 이름(dependent name)**이라 한다. 템플릿 매개변수가 특정 타입을 나타낼 때 그 타입 안에 정의된 멤버, 형식(type), 또는 함수 이름을 참조하는 경우 이를 **중첩 의존 이름(nested dependent name)**이라 한다.
+
+`value`는 `int` 타입이며, 템플릿 매개변수가 어떻든 상관없는 타입이다. 이를 **비의존 이름(non-dependent name)**이라 한다.
+
+코드 안에 중첩 의존 이름이 있으면 컴파일러가 구문 분석할 때 애로사항이 있을 수 있다.
+
+```cpp
+template<typename C>
+void print2nd(const C& container) {
+	C::const_iterator * x;
+	... 
+}
+```
+
+만약 `C::const_iterator`가 타입이 아니고, `const_iterator`라는 이름을 가진 정적 데이터 멤버이고, `x`가 다른 전역 변수의 이름이라면, 이 경우 `C::const_iterator`와 `x`를 피연산자로 한 곱셈 연산이 된다.
+
+C++은 이런 모호성을 해결하기 위해 구문 분석할 때 중첩 의존 이름을 만난다면 타입이라고 알려주지 않는 한 그 이름이 타입이 아니라고 가정하는 규칙이 있다.
+
+따라서 `iter`의 선언이 선언으로서 의미가 있으려면 `C::const_iterator`가 반드시 타입이어야 하는데, 이 경우 `C::const_iterator` 앞에 `typename` 키워드를 붙인다.
+
+```cpp
+typename C::const_iterator iter(container.begin());
+```
+
+> `typename`은 중첩 의존 이름만 식별하는데 사용해야 한다. 그 외 이름은 `typename`을 가져선 안 된다.
+
+> 중첩 의존 타입 이름이 기반 클래스 리스트에 있거나, 멤버 초기화 리스트 내 기반 클래스 식별자로서 있을 경우 `typename` 붙여주면 안 된다.
+
+### Item 43: Know how to access names in templatized base classes
+
