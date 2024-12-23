@@ -1619,7 +1619,7 @@ public:
 	this->sendClear(info); 
 	```
 2. `using` 선언을 사용한다.
-	``cpp
+	```cpp
 	using MsgSender<Company>::sendClear; 
 	```
 3. 호출할 함수가 기반 클래스 함수라는 것을 명시적으로 지정한다.
