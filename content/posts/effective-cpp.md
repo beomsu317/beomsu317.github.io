@@ -1504,7 +1504,8 @@ void doProcessing(Widget& w) {
 `doProcessing()`을 함수 템플릿으로 바꾸어 보자.
 
 ```cpp
-template<typename T> void doProcessing(T& w) {
+template<typename T> 
+void doProcessing(T& w) {
 	if (w.size() > 10 && w != someNastyWidget) { 
 		T temp(w);
 		temp.normalize();
