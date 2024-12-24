@@ -2,7 +2,7 @@
 title: "Effective C++"
 date: "2024-12-12"
 author: "Beomsu Lee"
-tags: ["c++", "language"]
+tags: ["c++", "language", "effective"]
 ---
 
 ## Accustoming Yourself to C++
