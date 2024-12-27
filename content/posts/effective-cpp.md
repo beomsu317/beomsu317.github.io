@@ -1899,13 +1899,22 @@ struct iterator_traits;
 
 지금까지가 특성정보 클래스의 설계 및 구현 방법이다.
 
-1. 다른 사람이 사용하도록 열어주고 싶은 타입 관련 정보를 확인
-2. 그 정보를 식별하기 위한 이름을 선택
+1. 다른 사람이 사용하도록 열어주고 싶은 타입 관련 정보를 확인(반복자의 경우 반복자 범주)
+2. 그 정보를 식별하기 위한 이름을 선택(`iterator_category`)
 3. 지원하고자 하는 타입 관련 정보를 담은 템플릿 및 그 템플릿의 특수화 버전(`iterator_traits`) 제공
 
 따라서 `iterator_traits`가 주어졌으므로 `advance()`의 의사 코드를 다음과 같이 다듬을 수 있다.
 
-`if`문을 통해 태그를 구분할 수 있지만 프로그램 실행 도중 평가되므로, 컴파일 도중에 조건처리를 수행하기 위해서는 오버로딩을 사용한다.
+```cpp
+template<typename IterT, typename DistT> void advance(IterT& iter, DistT d)
+{
+	if (typeid(typename std::iterator_traits<IterT>::iterator_category) == 
+			typeid(std::random_access_iterator_tag))
+	... 
+}
+```
+
+`if`문을 통해 태그를 구분할 수 있지만 프로그램 실행 도중 평가되므로, 컴파일 도중에 조건처리를 수행하기 위해서는 템플릿 오버로딩을 사용한다.
 
 ```cpp
 template<typename IterT, typename DistT> // use this impl for random access iterators
