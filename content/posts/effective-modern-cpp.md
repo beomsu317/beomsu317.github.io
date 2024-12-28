@@ -236,3 +236,108 @@ decltype(auto) authAndAccess(Container& c, Index i);
 컴파일러가 추론하는 타입을 IDE 편집기나 컴파일러 오류 메시지, Boost.TypeIndex 라이브러리를 이용해 파악할 수 있는 경우가 많다.
 
 ## auto
+
+### Item 5: Prefer auto to explicit type declarations
+
+`auto` 타입은 해당 초기치로부터 추론되므로, 반드시 초기치를 제공해야 한다. 따라서 초기화를 빼먹는 실수를 저지를 여지가 사라진다. 
+
+지역 변수 선언에서 변수의 값을 반복자 역참조로 초기화하는 것도 가능하다.
+
+```cpp
+template<typename It> // as before
+void dwim(It b, It e)
+  {
+    while (b != e) {
+      auto currValue = *b; // typename std::iterator_traits<It>::value_type => auto
+      ...
+    } 
+  }
+```
+
+그리고 `auto`는 타입 추론을 사용하므로(Item 2), 예전에는 컴파일러만 알던 타입을 지정할 수 있다.
+
+```cpp
+auto derefUPLess =                       // comparison func.
+  [](const std::unique_ptr<Widget>& p1,  // for Widgets
+     const std::unique_ptr<Widget>& p2)  // pointed to by
+  { return *p1 < *p2; };                 // std::unique_ptrs
+```
+
+`std::function`은 호출 가능한 객체이면 어떤 것도 가리킬 수 있다. 
+
+```cpp
+bool(const std::unique_ptr<Widget>&,  // C++11 signature for
+     const std::unique_ptr<Widget>&)  // std::unique_ptr<Widget>
+                                      // comparison function
+```
+
+위 함수 시그니처에 해당하는 `std::function`을 생성한다고 하면 다음과 같을 것이다.
+
+```cpp
+std::function<bool(const std::unique_ptr<Widget>&,
+                   const std::unique_ptr<Widget>&)> func;
+```
+
+람다 표현식이 산출하는 클로저는 호출 가능 객체이므로, `std::function` 객체에 저장할 수 있다.
+
+```cpp
+std::function<bool(const std::unique_ptr<Widget>&,
+                   const std::unique_ptr<Widget>&)>
+  derefUPLess = [](const std::unique_ptr<Widget>& p1,
+                   const std::unique_ptr<Widget>& p2)
+                  { return *p1 < *p2; };
+```
+
+이 때 `std::function`을 사용하는 것과 `auto`로 선언하는 것 사이 중요한 차이가 있다. 
+
+`auto`로 선언된 그리고 클로저를 담는 변수는 그 클로저와 같은 형식이며, 따라서 그 클로저에 요구되는 만큼의 메모리만 사용한다.
+
+그러나 클로저를 담는 `std::function`으로 선언된 변수 타입은 `std::function` 템플릿의 한 인스턴스이며, 이 크기는 임의의 주어진 시그니처에 대해 고정되어 있다. 그런데 이 크기는 요구된 클로저를 저장하기에 부족할 수 있으며, 이런 경우 `std::function`은 힙 메모리를 할당해 클로저를 저장한다. 
+
+즉, `std::function` 객체는 `auto`로 선언된 객체보다 메모리를 더 많이 소비한다. 그리고 인라인화(inlining)를 제한하고 간접 함수 호출을 산출하는 구현 세부사항 때문에 `std::function` 객체를 통해 클로저를 호출하는 것은 거의 항상 `auto`로 선언된 객체를 통해 호출하는 것보다 느리다.
+
+### Item 6: Use the explicitly typed initializer idiom when auto deduces undesired types
+
+`Widget`을 받아서 `std::vector<bool>`을 돌려주는 함수가 있다고 하자.
+
+```cpp
+Widget w; ...
+bool highPriority = features(w)[5];  // is w high priority?
+processWidget(w, highPriority);      // process w in accord
+                                     // with its priority
+```
+
+`highPriority`의 명시적 타입을 `auto`로 대체하면 상황이 달라진다. 컴파일은 되나 그 행동을 예측할 수 없다.
+
+```cpp
+auto highPriority = features(w)[5]; // is w high priority?
+processWidget(w, highPriority);      // undefined behavior!
+```
+
+`auto`를 사용하는 버전에서 `highPriority` 타입은 더 이상 `bool`이 아니다. 
+
+`std::vector<bool>`은 `bool`을 담는 컨테이너다. 그러나 `std::vector<bool>`의 `operator[]`가 돌려주는 것은 그 컨테이너의 한 요소에 대한 참조가 아닌, `std::vector<bool>::reference` 타입(`std::vector<bool>` 안에 내포된 클래스)의 객체이다.
+
+`std::vector<bool>::reference`가 존재하는 것은 `std::vector<bool>`이 자신의 `bool`들을 `bool` 당 1비트의 압축된 타입으로 표현하도록 명시되어 있기 때문이다. 따라서 `operator[]`를 직접 구현할 수 없다. `std::vector<T>`의 `operator[]`는 `T&`를 돌려주지만, C++에서 비트에 대한 참조는 금지되어 있다. 따라서 `std::vector<bool>`의 `operator[]`는 마치 `bool&`처럼 작동하는 객체를 돌려주도록 우회책을 사용한 것이다. 
+
+명시적 타입을 사용한 경우(`bool highPriority`) `features()`는 `std::vector<bool>` 객체를 돌려주며, 이 객체에 대해 `operator[]`가 호출된다. `operator[]`는 `std::vector<bool>::reference`를 돌려주며, 이 객체가 암묵적으로 `bool`로 변환되어 5번 비트가 `highPriority` 초기화에 쓰인다.
+
+`auto`를 사용할 경우(`auto highPriority`) `std::vector<bool>::reference` 객체를 돌려주는 것 까지는 동일하다. 그러나 `auto`에 의해 `highPriority` 타입이 추론되기 때문에 `std::vector<bool>` 타입의 5번 비트로 초기화되지 않게 된다.
+
+이때 `highPriority`가 가지는 값은 `std::vector<bool>::reference` 구현 방식에 따라 다르다. 이 구현 방식 중 하나는 그 객체의 참조된 비트를 담은 기계어 워드(word)를 가리키는 포인터 하나와 이 워드의 비트들 중 참조된 비트의 위치를 뜻하는 오프셋으로 구성된다. 이 경우 `features()`는 임시 `std::vector<bool>` 객체(`temp`라 하자)를 돌려주며, 이 객체에는 `temp`가 관리하는 비트들을 담은 자료구조의 한 워드를 가리키는 포인터와 그 워드에서 참조된 비트(5번)에 해당하는 비트의 오프셋이 담겨 있다. 따라서 `highPriority`는 `std::vector<bool>::reference` 객체의 한 복사본이며, `highPriority` 역시 `temp` 안의 해당 워드를 가리키는 포인터와 5번 비트 오프셋을 담게 된다. 즉, `highPriority`의 포인터는 댕글링 포인터가 되며 미정의 행동을 유발한다.
+
+`std::vector<bool>::reference`는 프록시 클래스(프록시 패턴), 즉 어떤 형식을 흉내내고 보강하는 것이 존재 이유인 클래스다. 프록시 패턴 중 클라이언트에게 명백히 드러나도록 설계된 것의 대표적인 예로 `std::shared_ptr`, `std::unique_ptr`가 있다. 반면 다른 프록시 패턴들은 다소 은밀하게 동작되도록 설계되었다.
+
+이러한 *보이지 않는* 프록시 클래스는 `auto`와 잘 맞지 않는다. 
+
+보통 프록시 클래스는 그 존재가 드러나지 않도록 설계되었지만, 그래도 라이브러리 문서에서 프록시 클래스의 존재가 명시되어 있는 경우가 많다. 이러한 방식을 통해 `auto`가 프록시 클래스 타입을 추론한다는 것을 알았다고 하자. 이때 `auto`가 다른 타입을 추론하도록 강제할 수 있다.
+
+> explicitly typed initializer idiom.
+
+변수를 `auto`로 선언하되 초기화 표현식의 타입을 `auto`가 추론하길 원하는 타입으로 캐스팅한다. 
+
+```cpp
+auto highPriority = static_cast<bool>(features(w)[5]);
+```
+
+이전과 같이 `std::vector<bool>::reference`를 돌려주나, 캐스팅 때문에 표현식 타입은 `bool`이 되어, `std::vector<bool>::operator[]`가 돌려준 `std::vector<bool>::reference` 객체는 자신이 지원하는 `bool`로의 변환을 수행하며, 그 변환 도중 `features()`가 돌려주는 `std::vector<bool>`을 가리키는 포인터가 역참조된다. 이 시점에서 포인터는 여전히 유효하므로, 미정의 행동 이슈는 더 이상 발생하지 않는다.
