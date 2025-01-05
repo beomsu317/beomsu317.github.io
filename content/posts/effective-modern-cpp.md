@@ -820,3 +820,64 @@ public:
 `std::unique_ptr`은 raw pointer와 거의 동일한 크기이며, 대부분의 연산들은 raw pointer와 정확히 동일한 명령들을 실행한다. 
 
 `std::unique_ptr`은 독점적 소유권(exclusive ownership) 의미론을 구현하고 있다. `std::unique_ptr`을 이동하면 소유권이 원본 포인터에서 대상 포인터로 옮겨진다(원본은 null로 설정). `std::unique_ptr`의 복사는 허용되지 않는다. 따라서 `std::unique_ptr`은 이동 전용(move-only) 타입이다. null이 아닌 `std::unique_ptr`은 소멸 시 자신이 가리키는 자원을 파괴한다. 
+
+기본적으로 자원 파괴는 `delete`를 통해 일어나나, 커스텀 삭제자(custom deleter)를 지정할 수도 있다.
+
+```cpp
+auto delInvmt = [](Investment* pInvestment)   // custom deleter
+                {                             // (a lambda expression)
+                  makeLogEntry(pInvestment);
+                  delete pInvestment;
+                };
+
+template<typename... Ts>                      // revised return type
+std::unique_ptr<Investment, decltype(delInvmt)>
+makeInvestment(Ts&&... params)
+{
+  // ...
+}
+```
+
+`std::unique_ptr`이 독점 소유권을 표현하는 주된 방법이라는 것 외에, `std::shared_ptr`로의 변환이 쉽고 효율적인 특징도 있다.
+
+```cpp
+std::shared_ptr<Investment> sp = // converts std::unique_ptr 
+  makeInvestment( arguments );   // to std::shared_ptr
+```
+
+팩토리 함수가 `std::unique_ptr`을 반환한다면, 호출자에서 좀 더 유연하게 변환할 수 있는 여지가 생긴다.
+
+### Item 19: Use std::shared_ptr for shared-ownership resource management
+
+`std::shared_ptr`을 통해 접근되는 객체의 수명은 그 공유 포인터가 공유된 소유권(shared ownership) 의미론을 통해 관리된다. 객체를 가리키던 마지막 `std::shared_ptr`이 더 이상 객체를 가리키지 않게 되면, `std::shared_ptr`은 자신이 가리키는 객체를 파괴한다.
+
+`std::shared_ptr`은 참조 횟수(reference count)를 통해 최후의 공유 포인터임을 알 수 있다. 참조 횟수는 관리되는 자원에 연관된 값으로, 그 자원을 가리키는 `std::shared_ptr`들의 개수에 해당한다.
+
+이러한 참조 횟수 관리는 성능에 다음과 같은 영향을 미친다.
+
+- **`std::shared_ptr`의 크기는 raw pointer의 두 배이다.**
+  - 자원 참조 횟수를 가리키는 raw pointer도 저장해야 하기 때문이다.
+- **참조 횟수를 담을 메모리를 반드시 동적으로 할당해야 한다.**
+  - `std::make_shared`를 이용해 `std::shared_ptr`을 생성하면 동적 할당 비용을 피할 수 있다.
+- **참조 횟수의 증가와 감소가 반드시 원자적 연산이어야 한다.**
+
+참조 횟수가 증가하지 않는 경우는 이동 생성을 사용할 경우이다. 기존의 `std::shared_ptr`을 이동해 새로우ㄴ `std::shared_ptr`을 생성하면, 원본 `std::shared_ptr`은 null이 된다. 즉, 새로운 `std::shared_ptr`의 수명이 시작되는 시점에 기존 `std::shared_ptr`은 더 이상 자원을 가리키지 않는 상태가 된다. 따라서 `std::shared_ptr`을 이동하는 것이 복사하는 것보다 빠르다. 
+
+`std::shared_ptr`은 `delete`를 기본적인 자원 파괴 메커니즘으로 사용하며, 커스텀 삭제자(custom deleter)를 지원한다. 그러나 지원하는 방식은 `std::unique_ptr`과는 다르다. `std::unique_ptr`은 삭제자 타입이 스마트 포인터 타입의 일부였지만, `std::shared_ptr`은 그렇지 않다. `std::shared_ptr`의 설계가 더 유연하다.
+
+```cpp
+auto loggingDel = [](Widget *pw)        // custom deleter (as in Item 18)
+                  {
+                    makeLogEntry(pw);
+                    delete pw; 
+                  };
+
+std::shared_ptr<Widget>          // deleter type is not part of ptr type
+spw(new Widget, loggingDel);
+```
+
+`std::shared_ptr`는 객체에 대한 참조 횟수를 가리킨다고 했지만, 사실은 **제어 블록(control block)** 이라는 자료구조를 가리키고 있다. 커스텀 삭제자를 지정했다면, 참조 횟수와 함께 커스텀 삭제자 복사본이 제어 블록에 담긴다. 커스텀 할당자(custom allocator)를 지정했다면 이 복사본도 제어 블록에 담긴다. 이외에도 약한 참조(weak count)라 부르는 이차적인 참조 횟수가 포함되며 이 밖의 다른 추가 자료도 포함될 수 있다.
+
+
+
+
