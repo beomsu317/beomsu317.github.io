@@ -683,3 +683,90 @@ RetType function(params);          // less optimizable
 
 `f()`의 구현자가 전제조건 위반을 `f()`에서 직접 점검한다고 하자. "전제조건 위반" 예외를 던질 수 있지만, `noexcept`로 선언되어 있어 이 방법은 불가능할 수 있다. 따라서 설계자들은 넓은 계약을 가진 함수들에 대해서만 `noexcept`를 사용하려는 경향이 있다.
 
+### Item 15: Use constexpr whenever possible
+
+`constexpr`이 적용된 객체는 실제로 `const`이며, 그 값은 컴파일 시점에 알려진다. 
+
+상수이자 컴파일 시점에서 알려진 정수 값을 C++에서 **정수 상수 표현식(integral constant expression)** 이 요구되는 문맥(배열 크기, 정수 템플릿 인수, 열거자 값, alignment 지정자 등)에서 사용할 수 있다. 이러한 변수를 `constexpr`로 선언하면 컴파일러는 이것이 컴파일 시점 상수임을 보장해준다.
+
+```cpp
+int sz;   // non-constexpr variable
+...
+constexpr auto arraySize1 = sz; // error! sz's value not known at compilation
+std::array<int, sz> data1;      // error! same problem
+
+constexpr auto arraySize2 = 10; // fine, 10 is a compile-time constant
+std::array<int, arraySize2> data2;  // fine, arraySize2 is constexpr
+```
+
+> 모든 `constexpr` 객체는 `const`지만, 모든 `const` 객체가 `constexpr`인 것은 아니다.
+
+`constexpr` 함수는 다음과 같은 특징을 가진다.
+
+- 컴파일 시점 상수를 요구하는 문맥에 `constexpr` 함수를 사용할 수 있다. 이런 문맥에서 `constexpr` 함수에 넘겨주는 인수의 값이 컴파일 시점에 알려진다면, 함수 결과는 컴파일 도중 계산된다. 인수 값이 컴파일 시점에 알려지지 않는다면, 코드의 컴파일이 거부된다.
+- 컴파일 시점에 알려지지 않는 하나 이상의 값들로 `constexpr` 함수를 호출하면 함수는 보통의 함수처럼 동작한다. 즉, 런타임에 계산된다.
+- `constexpr` 함수는 반드시 리터럴(literal) 타입들을 받고 돌려주어야 한다. C++14에서 모든 빌트인 타입이 리터럴 타입이며, 생성자와 적절한 멤버 함수들이 `constexpr`인 사용자 타입도 리터럴 타입이 될 수 있다.
+  
+  ```cpp
+  class Point {
+  public:
+    constexpr Point(double xVal = 0, double yVal = 0) noexcept 
+    : x(xVal), y(yVal) {}
+
+    constexpr double xValue() const noexcept { return x; } 
+    constexpr double yValue() const noexcept { return y; }
+  };
+  ```
+
+  `Point`의 생성자를 `constexpr`로 선언할 수 있는 이유는, 주어진 인수들이 컴파일 시점에 알려진다면 생성된 `Point` 객체의 자료 멤버들의 값 역시 컴파일 시점에 알려질 수 있기 때문이다.
+
+`constexpr`은 객체나 함수의 인터페이스의 일부라는 점을 명심하자. `constexpr`를 지정한다는 것은 "이 함수(또는 객체)를 C++이 상수 표현식을 요구하는 문맥에서 사용할 수 있다"는 사실을 말하는 것이다.
+
+### Item 16: Make const member functions thread safe
+
+다항식(Polynomial)을 표현하는 클래스가 있다고 하자. 이 클래스는 다항식의 근(root)들, 즉 다항식이 0으로 평가되는 값들을 계산하는 멤버 함수를 갖추어야 할 것이다. 중복된 계산을 피하기 위해 캐시에 저장해 돌려주도록 구현하는 것이 바람직하다.
+
+```cpp
+class Polynomial {
+  public:
+    using RootsType = std::vector<double>;
+    RootsType roots() const
+    {
+      if (!rootsAreValid) {   // if cache not valid
+        ...                   // compute roots, store them in rootVals
+        rootsAreValid = true;
+      }
+      return rootVals;
+    }
+private:
+  mutable bool rootsAreValid{ false };  // see Item 7 for info on initializers
+  mutable RootsType rootVals{}; 
+};
+```
+
+`roots()`는 `const`로 선언되어 있어 자신이 속한 `Polynomial` 객체를 변경하지 않는다. 그러나 캐시를 위해선 `rootVals`와 `rootsAreValid`의 변경이 필요할 수 있다. 
+
+만약 두 스레드가 하나의 `Polynomial` 객체에 대해 `roots`를 동시에 호출한다고 한다.
+
+```cpp
+Polynomial p;
+// ...
+/*-----  Thread 1  ----- */     /*-------  Thread 2  ------- */
+auto rootsOfP = p.roots();      auto valsGivingZero = p.roots()
+```
+
+지금 예에서는 `roots()` 안에서 두 스레드 중 하나나 둘 다가 자료 멤버 `rootVals`와 `rootsAreValid`를 수정하려 할 수 있다. 이는 레이스 컨디션(race condition)이 발생할 수 있다는 것을 의미하며 의도하지 않은 동작을 유발할 수 있다.
+
+이는 뮤텍스를 사용해 해결할 수 있다. 
+
+```cpp
+RootsType roots() const
+{
+  std::lock_guard<std::mutex> g(m); // lock mutex
+  if (!rootsAreValid) {             // if cache not valid compute/store roots
+    ...
+    rootsAreValid = true;
+  }
+  return rootVals;
+}   
+```
