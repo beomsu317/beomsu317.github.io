@@ -815,5 +815,8 @@ public:
 
 컴파일러가 작성한 함수들의 행동이 정확하다면 C++11에서 기본 행동을 사용하겠다는 의사를 `= default`를 이용해 명시적으로 표현할 수 있다.
 
+### Item 18: Use std::unique_ptr for exclusive-ownership resource management
 
+`std::unique_ptr`은 raw pointer와 거의 동일한 크기이며, 대부분의 연산들은 raw pointer와 정확히 동일한 명령들을 실행한다. 
 
+`std::unique_ptr`은 독점적 소유권(exclusive ownership) 의미론을 구현하고 있다. `std::unique_ptr`을 이동하면 소유권이 원본 포인터에서 대상 포인터로 옮겨진다(원본은 null로 설정). `std::unique_ptr`의 복사는 허용되지 않는다. 따라서 `std::unique_ptr`은 이동 전용(move-only) 타입이다. null이 아닌 `std::unique_ptr`은 소멸 시 자신이 가리키는 자원을 파괴한다. 
