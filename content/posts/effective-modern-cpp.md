@@ -1151,6 +1151,26 @@ public:                   // typedef for std::basic_string<char>
 
 `std::forward`에 대해서도 `std::move`와 비슷하게 적용된다. 단, `std::move`는 주어진 인수를 무조건 오른값으로 캐스팅하지만, `std::forward`는 특정 조건이 만족될 때만 캐스팅한다. 즉, 조건부 캐스팅이다.
 
+Universal reference 매개변수를 받아 이것을 다른 어떤 함수에 전달하는 함수를 보자.
 
+```cpp
+void process(const Widget& lvalArg);  // process lvalues
+void process(Widget&& rvalArg);       // process rvalues
 
- 
+template<typename T>                  // template that passes
+void logAndProcess(T&& param) {       // param to process
+  auto now =
+    std::chrono::system_clock::now(); // get current time
+
+  makeLogEntry("Calling 'process'", now);
+  process(std::forward<T>(param)); 
+}
+```
+
+```cpp
+Widget w;
+logAndProcess(w);             // call with lvalue
+logAndProcess(std::move(w));  // call with rvalue
+```
+
+`logAndProcess()`는 `param`을 함수 `process()`에 전달한다. 따라서 `logAndProcess()` 내부에서 일어나는 모든 `process()` 호출은 결국 `process()`의 왼값 오버로딩 버전을 실행하게 된다(`logAndProcess()`에 전달된 인수 자체는 왼값이므로). 이를 방지하기 위해 `param`을 초기화하는 데 쓰인 인수가 오른값이면, 이럴 때만 `param`을 오른값으로 캐스팅하는 메커니즘이 필요하다. `std::forward`가 하는 일이 바로 이것이다. 주어진 인수가 오른값으로 초기화된 것일 때만 이것을 오른값으로 캐스팅한다는 점에서 조건부 캐스팅이라 한다.
