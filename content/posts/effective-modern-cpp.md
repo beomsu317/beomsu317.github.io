@@ -944,3 +944,55 @@ if (wpw.expired()) ... // if wpw doesn't point
                                         // throw std::bad_weak_ptr
     ```
 
+### Item 21: Prefer std::make_unique and std::make_shared to direct use of new
+
+`std::make_shared`와 `std::make_unique`는 임의의 개수와 타입의 인수들을 받아 이것들을 생성자로 완벽 전달해 객체를 동적으로 생성하고, 그 객체를 가리키는 스마트 포인터를 돌려주는 세 가지 `make` 함수 중 둘이다. 나머지 하나는 `std::allocate_shared`이다. 이 함수는 `std::make_shared`처럼 작동하나, 첫 인수가 동적 메모리 할당에 쓰일 할당자 객체이다.
+
+다음과 같은 코드가 있다고 하자.
+
+```cpp
+processWidget(std::shared_ptr<Widget>(new Widget),  // potential 
+              computePriority());                   // resource
+                                                    // leak!
+```
+
+`processWidget()`을 호출할 경우 다음과 같은 일들이 발생한다.
+
+- 표현식 `new Widget`이 평가된다. 즉, `Widget`이 힙에 생성된다.
+- `new`가 산출한 포인터를 관리하는 `std::shared_ptr<Widget>`의 생성자가 실행된다.
+- `computePriority()`가 실행된다.
+
+그러나 컴파일러가 이 세 가지 작업들을 순서대로 실행하는 코드를 만드는 것은 아니다. `std::shared_ptr` 생성자가 호출되려면 그 인수가 먼저 평가되어야 하므로, `new Widget`이 `std::shared_ptr`보다 먼저 평가된다. 그러나 `computePriority()`는 이 호출들보다 먼저 실행되거나, 늦게 실행되거나, 혹은 중간에 실행될 수 있다. 따라서 다음과 같은 순서로 실행하는 오브젝트 코드를 산출할 수도 있다.
+
+1. `new Widget` 실행
+2. `computePriority()` 실행
+3. `std::shared_ptr` 생성자 실행
+
+만약 `computePriority()`가 예외를 던지면 1에서 생성된 `Widget` 객체의 누수(leak)가 발생할 수 있다. 
+
+`std::make_shared`를 사용하면 이와 같은 문제가 생기지 않는다. 위와 동일하게 `std::make_shared`가 먼저 실행되거나 늦게 실행될 수 있다. 만약 `std::make_shared`가 먼저라면, 동적으로 할당된 `Widget`을 가리키는 raw 포인터는 `computePriority()`가 호출되기 전 반환된 `std::shared_ptr`에 안전하게 저장된다. 그 다음 예외가 발생한다면, `std::shared_ptr`의 소멸자가 `Widget` 객체를 파괴한다. `computePriority()`가 먼저 호출되고 예외를 발생시킨다면, `std::make_shared`는 아예 호출되지 않아 메모리 누수가 발생될 가능성은 전혀 없다.
+
+또한 `std::make_shared`를 사용하면 더 간결한 자료구조를 사용하는 작고 빠른 코드를 산출할 수 있게 된다. `new`를 직접 사용한다면 `std::shared_ptr` 생성자는 제어 블록을 위한 메모리와 객체를 위한 메모리 할당, 즉 두 번의 할당이 일어난다. `std::make_shared`를 사용하면 객체와 제어 블록 모두를 담을 수 있는 크기의 메모리 조각을 한 번에 할당한다. 따라서 할당 호출 코드가 한 번만 있으면 되므로 프로그램의 정적 크기가 줄어든다.  
+
+`make` 함수 사용이 불가능 또는 부적합한 다음의 경우들이 있다.
+
+1. `make` 함수들은 커스텀 삭제자를 지정할 수 없다.
+2. `std::initializer_list`를 받는 생성자와 받지 않는 생성자를 모두 가진 형식의 객체를 생성할 때, 생성자 인수들을 중괄호로 감싸면 오버로딩 해소 과정에서 `std::initializer_list`를 받는 버전이 선택되고, 괄호로 감싸면 `std::initializer_list`를 받지 않는 버전이 선택된다(Item 7). 
+    
+    ```cpp
+    auto upv = std::make_unique<std::vector<int>>(10, 20);
+    auto spv = std::make_shared<std::vector<int>>(10, 20);
+    ```
+    
+    위 두 호출 모두 요소의 값이 20인 요소 10개의 `std::vector`를 생성한다. 중괄호 초기화를 사용하기 위해선 반드시 `new`를 직접 사용해야 한다. `make` 함수로 이와 같은 일을 하려면 중괄호 초기화를 완벽하게 전달해야 하는데, Item 30에서 설명하듯 중괄호 초기화의 완벽 전달은 불가능하다.
+
+`std::shared_ptr`에 대해서 `make` 함수가 부적합한 경우가 더 있다.
+
+1. 커스텀 메모리 관리 기능을 가진 클래스를 다루는 경우
+    
+    예를 들어 `Widget` 클래스를 위한 `operator new`와 `operator delete`라면 크기가 정확히 `sizeof(Widget)`인 메모리 조각들의 할당과 해제를 처리하는 데 특화된 경우가 많다. 이런 루틴들은 `std::shared_ptr`의 커스텀 할당(`std::allocate_shared`를 통한)과 커스텀 해제(커스텀 삭제자를 통한)에 잘 맞지 않는다. `std::allocate_shared`가 요구하는 메모리 조각의 크기는 객체의 크기가 아니라 그 크기에 제어 블록의 크기를 더한 것이기 때문이다.
+2. 메모리가 넉넉하지 않은 시스템에서 큰 객체를 다루어야 하고 `std::weak_ptr`들이 해당 `std::shared_ptr`보다 더 오래 살아남는 경우
+    
+    제어 블록에는 여러 관리용 정보가 있는데, 참조 횟수는 제어 블록을 참조하는 `std::shared_ptr`들의 개수를 뜻한다. 이외에도 제어 블록을 참조하는 `std::weak_ptr`들의 개수에 해당하는 또 다른 참조 횟수도 있다. 이 둘째 참조 횟수를 **약한 횟수(weak count)** 라 한다. 제어 블록을 참조하는 `std::weak_ptr`들이 존재하는 한 제어 블록을 담고 있는 메모리는 여전히 할당된 상태여야 한다. 따라서 `std::shared_ptr` 용 `make` 함수가 할당한 메모리 조각은 이것을 참조하는 마지막 `std::shared_ptr`과 마지막 `std::weak_ptre` 둘 다 파괴된 후에 해제될 수 있다.
+
+### 
