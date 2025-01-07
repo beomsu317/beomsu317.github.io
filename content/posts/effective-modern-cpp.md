@@ -1100,4 +1100,57 @@ Widget::~Widget() = default; // same effect as above
 
 ### Item 23: Understand std::move and std::forward
 
+`std::move`와 `std::forward`는 그냥 캐스팅을 수행하는 함수다. `std::move`는 주어진 인수를 무조건 오른값으로 캐스팅하고, `std::forward`는 특정 조건이 만족될 때마다 이런 캐스팅을 수행한다.
+
+```cpp
+template<typename T>              // C++14; still in
+decltype(auto) move(T&& param) {  // namespace std
+  using ReturnType = remove_reference_t<T>&&;
+  return static_cast<ReturnType>(param);
+}
+```
+
+`std::move`는 객체에 대한 참조(universal reference: Item 24)를 받아 같은 객체에 대한 어떤 참조를 돌려준다.
+
+함수의 반환 타입에 있는 `&&`은 하나의 오른값 참조를 돌려준다. 그러나 타입 `T`가 왼값 참조면 `T&&`는 왼값 참조가 된다. 이를 방지하기 위해 `T`에 `std::remove_reference_t`를 적용한다. 그러면 반환 타입의 `&&`은 항상 참조가 아닌 타입에 적용된다. 즉, `std::move`는 반드시 오른값 참조를 돌려준다. 
+
+`text`를 자료 멤버에 복사할 때 복사 연산 비용을 치르지 않고, `std::move`를 `text`에 적용해 오른값을 얻는다고 하자(Item 41).
+
+```cpp
+class Annotation {
+public:
+  explicit Annotation(const std::string text)
+  : value(std::move(text)) // "move" text into value; this code 
+  { ... }                  // doesn't do what it seems to!
+  ...
+private:
+  std::string value;
+};
+```
+
+`text`는 `value`로 이동하는 것이 아닌 **복사**가 된다. `std::move` 때문에 `text`가 오른값으로 캐스팅되지만, `text`는 `const std::string`으로 선언되어 캐스팅 이전에 왼값 `const std::string`이고, 캐스팅 결과는 오른값 `const std::string`이다. 즉, `const`가 그대로 유지된다.
+
+컴파일러가 `std::string` 생성자 중 하나를 선택할 때 `const`의 존재가 어떤 영향을 미치는지 보자.
+
+```cpp
+class string {            // std::string is actually a
+public:                   // typedef for std::basic_string<char>
+  ...
+  string(const string& rhs);  // copy ctor
+  string(string&& rhs);       // move ctor
+  ...
+};
+```
+
+`std::move(text)`의 결과는 `const std::string` 타입의 오른값이다. 이 오른값은 `std::string`의 이동 생성자에 전달할 수 없다. 왜냐하면, 이 이동 생성자는 `const`가 아닌 `std::string`에 대한 오른값 참조를 받기 때문이다. 그러나 `const std::string`을 복사 생성자에 전달할 수는 있다. 따라서 `std::string`의 복사 생성자를 호출한다. 
+
+여기서 배울 점은 두 가지이다.
+
+1. 이동을 지원할 객체는 `const`로 선언하지 말아야 한다.
+2. `std::move`는 실제 아무것도 이동하지 않으며, 캐스팅되는 객체가 이동 자격을 갖추게 된다는 보장도 제공하지 않는다. 확실한 것은 `std::move`를 적용한 결과가 하나의 오른값이라는 것 뿐이다.
+
+`std::forward`에 대해서도 `std::move`와 비슷하게 적용된다. 단, `std::move`는 주어진 인수를 무조건 오른값으로 캐스팅하지만, `std::forward`는 특정 조건이 만족될 때만 캐스팅한다. 즉, 조건부 캐스팅이다.
+
+
+
  
