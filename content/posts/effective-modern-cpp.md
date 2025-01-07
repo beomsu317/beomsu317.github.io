@@ -880,6 +880,67 @@ spw(new Widget, loggingDel);
 
 ![control block](images/control_block.png)
 
+제어 블록은 다음과 같은 규칙들로 생성된다.
 
+- `std::make_shared`는 항상 제어 블록을 생성한다(Item 21).
+- 고유 소유권 포인터(`std::unique_ptr`, `std::auto_ptr`)로부터 `std::shared_ptr` 객체를 생성하면 제어 블록이 생성된다.
+- raw pointer로 `std::shared_ptr` 생성자를 호출하면 제어 블록이 생성된다.
 
+raw pointer 타입의 변수로부터 `std::shared_ptr`을 생성하는 일은 피해야 한다. 다음은 `*pw`에 대해 두 개의 참조 횟수가 있다. 두 참조 횟수는 결국 0이 될 것이며, `*pw`의 파괴가 두 번 시도되어 의도되지 않은 동작이 발생할 것이다.
+
+```cpp
+auto pw = new Widget; // pw is raw ptr
+
+std::shared_ptr<Widget> spw1(pw, loggingDel); // create control block for *pw
+std::shared_ptr<Widget> spw2(pw, loggingDel); // create 2nd control block for *pw!
+```
+
+### Item 20: Use std::weak_ptr for std::shared_ptr- like pointers that can dangle
+
+`std::shared_ptr`처럼 행동하되 가리키는 자원의 소유권 공유에 참여하지 않는 것이 편리한 상황도 있다. 이런 종류의 스마트 포인터는 가리키는 대상이 이미 파괴되었을 수도 있는 문제를 극복해야 한다. 즉, 자신이 가리키는 객체가 더 이상 존재하지 않는 상황을 검출할 수 있어야 한다. `std::weak_ptr`이 바로 그런 포인터이다.
+
+대체로 `std::weak_ptr`은 `std::shared_ptr`을 이용해 생성한다. `std::weak_ptr`은 자신을 생성하는데 쓰인 `std::shared_ptr`이 가리키는 것과 동일한 객체를 가리키나, 그 객체의 참조 횟수에는 영향을 주지 않는다.
+
+```cpp
+auto spw =                       // after spw is constructed,
+  std::make_shared<Widget>();    // the pointed-to Widget's
+                                 // ref count (RC) is 1. (See
+                                 // Item 21 for info on
+                                 // std::make_shared.)
+...
+std::weak_ptr<Widget> wpw(spw); // wpw points to same Widget
+                                // as spw. RC remains 1
+...
+spw = nullptr;                  // RC goes to 0, and the
+                                // Widget is destroyed.
+                                // wpw now dangles
+```
+
+대상을 잃은 `std::weak_ptr`을 가리켜 "만료되었다(expired)"라고 한다. 만료 여부는 다음과 같이 확인한다.
+
+```cpp
+if (wpw.expired()) ... // if wpw doesn't point
+                       // to an object...
+```
+
+`std::weak_ptr`의 만료를 검사해 만료되지 않았다면 객체에 접근하는 방식의 코드를 생각할 수 있다. 하지만 `std::weak_ptr`은 역참조 연산이 없어 이런 용법은 허용되지 않는다.
+
+제대로 된 용법은 `std::weak_ptr`의 만료 여부를 점검하고, 아직 만료되지 않았다면 객체에 대한 접근을 돌려주는 연산을 하나의 원자적 연산으로 수행하는 것이다. 즉, `std::weak_ptr`로부터 `std::shared_ptr`을 생성하면 되는데, 이 생성 방법은 이미 만료된 `std::weak_ptr`로 `std::shared_ptr`을 생성했을 때의 행동 방식에 따라 두 가지로 나뉜다.
+
+1. `std::weak_ptr::lock()` 사용
+  
+  `lock()`은 `std::shared_ptr` 객체를 돌려준다. 만약 `std::weak_ptr`이 만료되었다면 null을 반환한다. 
+
+  ```cpp
+  std::shared_ptr<Widget> spw1 = wpw.lock();  // if wpw's expired, spw1 is null
+  auto spw2 = wpw.lock();                     // same as above, but uses auto
+  ```
+2. `std::weak_ptr`을 인수로 받는 `std::shared_ptr` 생성자 사용
+
+  이 경우 `std::weak_ptr`이 만료되었다면 예외가 발생한다.
+
+  ```cpp
+  std::shared_ptr<Widget> spw3(wpw);  // if wpw's expired,
+                                      // throw std::bad_weak_ptr
+  ```
 
