@@ -1098,4 +1098,6 @@ Widget::~Widget() = default; // same effect as above
     
     임의의 인수를 받아 이것들을 다른 함수로 전달하는 함수를 작성할 때, 그 대상 함수가 애초에 전달 함수가 받은 것과 정확히 같은 인수들을 받게 만들 수 있다.
 
-### 
+### Item 23: Understand std::move and std::forward
+
+ 
