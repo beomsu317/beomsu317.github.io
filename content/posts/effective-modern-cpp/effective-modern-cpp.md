@@ -878,7 +878,7 @@ spw(new Widget, loggingDel);
 
 `std::shared_ptr`는 객체에 대한 참조 횟수를 가리킨다고 했지만, 사실은 **제어 블록(control block)** 이라는 자료구조를 가리키고 있다. 커스텀 삭제자를 지정했다면, 참조 횟수와 함께 커스텀 삭제자 복사본이 제어 블록에 담긴다. 커스텀 할당자(custom allocator)를 지정했다면 이 복사본도 제어 블록에 담긴다. 이외에도 약한 참조(weak count)라 부르는 이차적인 참조 횟수가 포함되며 이 밖의 다른 추가 자료도 포함될 수 있다.
 
-![control block](./control_block.png)
+![control block](control_block.png)
 
 
 
