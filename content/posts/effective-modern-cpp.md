@@ -928,19 +928,19 @@ if (wpw.expired()) ... // if wpw doesn't point
 제대로 된 용법은 `std::weak_ptr`의 만료 여부를 점검하고, 아직 만료되지 않았다면 객체에 대한 접근을 돌려주는 연산을 하나의 원자적 연산으로 수행하는 것이다. 즉, `std::weak_ptr`로부터 `std::shared_ptr`을 생성하면 되는데, 이 생성 방법은 이미 만료된 `std::weak_ptr`로 `std::shared_ptr`을 생성했을 때의 행동 방식에 따라 두 가지로 나뉜다.
 
 1. `std::weak_ptr::lock()` 사용
-  
-  `lock()`은 `std::shared_ptr` 객체를 돌려준다. 만약 `std::weak_ptr`이 만료되었다면 null을 반환한다. 
-
-  ```cpp
-  std::shared_ptr<Widget> spw1 = wpw.lock();  // if wpw's expired, spw1 is null
-  auto spw2 = wpw.lock();                     // same as above, but uses auto
-  ```
+    
+    `lock()`은 `std::shared_ptr` 객체를 돌려준다. 만약 `std::weak_ptr`이 만료되었다면 null을 반환한다. 
+    
+    ```cpp
+    std::shared_ptr<Widget> spw1 = wpw.lock();  // if wpw's expired, spw1 is null
+    auto spw2 = wpw.lock();                     // same as above, but uses auto
+    ```
 2. `std::weak_ptr`을 인수로 받는 `std::shared_ptr` 생성자 사용
-
-  이 경우 `std::weak_ptr`이 만료되었다면 예외가 발생한다.
-
-  ```cpp
-  std::shared_ptr<Widget> spw3(wpw);  // if wpw's expired,
-                                      // throw std::bad_weak_ptr
-  ```
+    
+    이 경우 `std::weak_ptr`이 만료되었다면 예외가 발생한다.
+   
+    ```cpp
+    std::shared_ptr<Widget> spw3(wpw);  // if wpw's expired,
+                                        // throw std::bad_weak_ptr
+    ```
 
