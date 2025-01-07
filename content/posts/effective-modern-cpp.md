@@ -418,7 +418,7 @@ Widget w3(); // most vexing parse! declares a function!
 
 ### Item 8: Prefer nullptr to 0 and NULL
 
-`nullptr`은 정수 타입 또는 포인터 타입이 아니다. `nullptr`의 실제 타입은 `std::nullptr_t`인데 `std::nullptr_t` 자체는 다시 `nullptr`의 타입으로 정의된다. `std::nullptr_t`는 모든 raw 포인터 타입으로 암묵적으로 변환되며, 따라서 `nullptr`은 마치 모든 타입의 포인터처럼 행동한다.
+`nullptr`은 정수 타입 또는 포인터 타입이 아니다. `nullptr`의 실제 타입은 `std::nullptr_t`인데 `std::nullptr_t` 자체는 다시 `nullptr`의 타입으로 정의된다. `std::nullptr_t`는 모든 raw pointer 타입으로 암묵적으로 변환되며, 따라서 `nullptr`은 마치 모든 타입의 포인터처럼 행동한다.
 
 ```cpp
 auto result = findRecord( /* arguments */ );
@@ -970,7 +970,7 @@ processWidget(std::shared_ptr<Widget>(new Widget),  // potential
 
 만약 `computePriority()`가 예외를 던지면 1에서 생성된 `Widget` 객체의 누수(leak)가 발생할 수 있다. 
 
-`std::make_shared`를 사용하면 이와 같은 문제가 생기지 않는다. 위와 동일하게 `std::make_shared`가 먼저 실행되거나 늦게 실행될 수 있다. 만약 `std::make_shared`가 먼저라면, 동적으로 할당된 `Widget`을 가리키는 raw 포인터는 `computePriority()`가 호출되기 전 반환된 `std::shared_ptr`에 안전하게 저장된다. 그 다음 예외가 발생한다면, `std::shared_ptr`의 소멸자가 `Widget` 객체를 파괴한다. `computePriority()`가 먼저 호출되고 예외를 발생시킨다면, `std::make_shared`는 아예 호출되지 않아 메모리 누수가 발생될 가능성은 전혀 없다.
+`std::make_shared`를 사용하면 이와 같은 문제가 생기지 않는다. 위와 동일하게 `std::make_shared`가 먼저 실행되거나 늦게 실행될 수 있다. 만약 `std::make_shared`가 먼저라면, 동적으로 할당된 `Widget`을 가리키는 raw pointer는 `computePriority()`가 호출되기 전 반환된 `std::shared_ptr`에 안전하게 저장된다. 그 다음 예외가 발생한다면, `std::shared_ptr`의 소멸자가 `Widget` 객체를 파괴한다. `computePriority()`가 먼저 호출되고 예외를 발생시킨다면, `std::make_shared`는 아예 호출되지 않아 메모리 누수가 발생될 가능성은 전혀 없다.
 
 또한 `std::make_shared`를 사용하면 더 간결한 자료구조를 사용하는 작고 빠른 코드를 산출할 수 있게 된다. `new`를 직접 사용한다면 `std::shared_ptr` 생성자는 제어 블록을 위한 메모리와 객체를 위한 메모리 할당, 즉 두 번의 할당이 일어난다. `std::make_shared`를 사용하면 객체와 제어 블록 모두를 담을 수 있는 크기의 메모리 조각을 한 번에 할당한다. 따라서 할당 호출 코드가 한 번만 있으면 되므로 프로그램의 정적 크기가 줄어든다.  
 
@@ -994,5 +994,108 @@ processWidget(std::shared_ptr<Widget>(new Widget),  // potential
 2. 메모리가 넉넉하지 않은 시스템에서 큰 객체를 다루어야 하고 `std::weak_ptr`들이 해당 `std::shared_ptr`보다 더 오래 살아남는 경우
     
     제어 블록에는 여러 관리용 정보가 있는데, 참조 횟수는 제어 블록을 참조하는 `std::shared_ptr`들의 개수를 뜻한다. 이외에도 제어 블록을 참조하는 `std::weak_ptr`들의 개수에 해당하는 또 다른 참조 횟수도 있다. 이 둘째 참조 횟수를 **약한 횟수(weak count)** 라 한다. 제어 블록을 참조하는 `std::weak_ptr`들이 존재하는 한 제어 블록을 담고 있는 메모리는 여전히 할당된 상태여야 한다. 따라서 `std::shared_ptr` 용 `make` 함수가 할당한 메모리 조각은 이것을 참조하는 마지막 `std::shared_ptr`과 마지막 `std::weak_ptre` 둘 다 파괴된 후에 해제될 수 있다.
+
+### Item 22: When using the Pimpl Idiom, define special member functions in the implementation file
+
+Pimpl 관용구는 클래스의 자료 멤버들을 구현 클래스를 가리키는 포인터로 대체하고, 주 클래스에 쓰이는 멤버들을 그 구현 클래스로 옮기고, 포인터를 통해 간접적으로 접근하는 기법이다. 이 기법은 클래스 구현과 클라이언트 사이 컴파일 의존성을 줄여 빌드 시간을 감소시킨다.
+
+```cpp
+class Widget {  // still in header "widget.h"
+public:
+  Widget();
+  ~Widget();    // dtor is needed—see below
+  ...
+private:
+  struct Impl;  // declare implementation struct
+  Impl *pImpl;  // and pointer to it
+};
+```
+
+```cpp
+#include "widget.h"          // in impl. file "widget.cpp"
+#include "gadget.h"
+#include <string>
+#include <vector>
+
+struct Widget::Impl {        // definition of Widget::Impl
+  std::string name;          // with data members formerly
+  std::vector<double> data;  // in Widget
+  Gadget g1, g2, g3;
+};
+
+Widget::Widget()            // allocate data members for
+: pImpl(new Impl)           // this Widget object
+{}
+
+Widget::~Widget()           // destroy data members for
+{ delete pImpl; }           // this object
+```
+
+> 선언만 하고 정의는 하지 않는 타입을 불완전 타입(incomplete type)이라 부른다. 여기서는 `Widget::Impl`이 이런 타입이다.
+
+`std::unique_ptr`(Item 18)을 통해 raw pointer를 대체해보자.
+
+```cpp
+class Widget {  // in "widget.h"
+public:
+  Widget(); 
+  ...
+  struct Impl;
+  std::unique_ptr<Impl> pImpl;  // use smart pointer instead of raw pointer
+};
+```
+
+```cpp
+#include "widget.h"   // in "widget.cpp" 
+#include "gadget.h"
+#include <string>
+#include <vector>
+
+struct Widget::Impl { // as before
+  // ...
+};
+
+Widget::Widget()                  // per Item 21, create
+: pImpl(std::make_unique<Impl>()) // std::unique_ptr
+{}                                // via std::make_unique
+```
+
+위 코드 자체는 컴파일되나, 이를 사용하는 클라이언트 쪽에서는 컴파일 되지 않는다.
+
+```cpp
+#include "widget.h"
+Widget w;            // error!
+```
+
+`w`가 파괴되는 지점에서 `w`의 소멸자가 호출되는데, `std::unique_ptr`을 이용하는 `Widget` 클래스에는 따로 소멸자가 선언되어 있지 않다(소멸자에서 해야 할 일이 없음). 이 경우 컴파일러가 생성하는 특수 멤버 함수에 대한 통상적인 규칙들에 의해 컴파일러가 대신 소멸자를 작성해준다. 이 소멸자 안에 `Widget`의 자료 멤버 `pImpl`의 소멸자를 호출하는 코드를 삽입한다. 즉, 기본 삭제자를 사용하는 `std::unique_ptr`이고, 그 기본 삭제자는 `std::unique_ptr` 안에 있는 raw pointer에 대해 `delete`를 적용하는 함수이다. 그런데 대부분의 삭제자 함수는 `delete`를 적용하기 전, raw pointer가 *불완전한 형식*을 가리키지는 않는지 `static_assert`를 이용해 점검한다. 컴파일러는 `Widget` 객체 `w`의 파괴를 위한 코드를 산출하는 과정에서 `static_assert`는 참이 아닌 것으로 판정되며, 오류가 발생하게 된다.
+
+`std::unique_ptr<Widget::Impl>`을 파괴하는 코드가 만들어지는 지점에서 `Widget::Impl`이 완전한 형식이 되게 하면 문제는 해결된다. 컴파일러는 형식의 정의를 보게 되면 그 형식을 완전한 형식으로 간주한다. 그리고 `Widget::Impl`의 정의는 widget.cpp에 있다. 따라서 `Wdiget::Impl` 정의 이후에 컴파일러가 그 소스 파일에 있는 `Widget`의 소멸자의 본문(즉, 컴파일러가 `std::unique_ptr` 자료 멤버를 파괴하는 코드를 작성하는 곳)을 보게 한다면 클라이언트 코드는 문제없이 컴파일된다.
+
+```cpp
+class Widget {   // as before, in "widget.h" 
+public:
+  Widget();
+  ~Widget();     // declaration only
+  ...
+private:         // as before
+  struct Impl;
+  std::unique_ptr<Impl> pImpl;
+};
+```
+
+```cpp
+Widget::~Widget() = default; // same effect as above
+```
+
+객체 내부 `pImpl` 포인터가 구현 객체를 독점적으로 소유한다는 점에서, Pimpl 관용구에 적합한 스마트 포인터는 `std::unique_ptr`이다. 
+
+## Rvalue References, Move Semantics, and Perfect Forwarding
+
+- 이동 의미론(move semantics)
+    
+    컴파일러는 비싼 복사 연산 대신 덜 비싼 이동 연산으로 대체할 수 있다.
+- 완벽 전달(perfect forwarding)
+    
+    임의의 인수를 받아 이것들을 다른 함수로 전달하는 함수를 작성할 때, 그 대상 함수가 애초에 전달 함수가 받은 것과 정확히 같은 인수들을 받게 만들 수 있다.
 
 ### 
