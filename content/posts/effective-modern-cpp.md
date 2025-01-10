@@ -1177,6 +1177,155 @@ logAndProcess(std::move(w));  // call with rvalue
 
 `std::move`는 주어진 인수를 무조건 오른값으로 캐스팅하겠다는 뜻이지만, `std::forward`는 오른값에 묶인 참조만 오른값으로 캐스팅하겠다는 뜻이다. 후자는 객체의 왼값 또는 오른값 성질을 유지한 채로 다른 함수에 넘겨주는, 즉 전달하는(forward) 것이다.
 
+### Item 24: Distinguish universal references from rvalue references
+
+어떤 타입 `T`에 대해 오른값 참조를 선언할 때는 `T&&` 표기를 사용한다. 따라서 `T&&`를 발견한다면 이것이 오른값 참조라 가정할 수 있지만, 그렇게 단순하지 않다.
+
+`T&&`에는 두 가지 의미가 있다.
+
+1. 오른값 참조
+    - 오직 오른값에만 묶이며, 일차적인 존재 이유는 이동의 원본이 될 수 있는 객체를 지정하는 것
+2. 오른값 참조 또는 왼값 참조 중 하나
+    - 소스 코드에서는 오른값 참조(`T&&`)로 보이나, 때에 따라서는 왼값 참조(`T&`)인 것처럼 행동한다. 따라서 이런 참조는 오른값 또는 왼값으로 묶일 수 있다.
+    - 더욱이 이런 참조는 `const` 객체에 묶을 수도 있고, `non-const` 객체도 묶을 수 있으며, `volatile` 객체에 묶을 수도 있고 `non-volatile` 객체에도 묶을 수 있다.
+    - 즉, 거의 모든 것에 묶을 수 있다 하여 **보편 참조(universal reference)** 라 한다.
+
+보편 참조는 두 가지 문맥에서 나타난다.
+
+1. 템플릿 매개변수
+
+    ```cpp
+    template<typename T>
+    void f(T&& param); // param is a universal reference
+    ```
+
+2. `auto` 선언
+
+    ```cpp
+    auto&& var2 = var1; // var2 is a universal reference
+    ```
+
+이 두 문맥의 경우 타입 추론이 일어난다. 템플릿 `f()`에서는 `param`의 타입 추론이 되고, `var2`의 선언에서는 `var2`의 타입이 추론된다. 타입 추론이 일어나지 않는 경우 `T&&`가 있다면 이는 오른값 참조이다.
+
+```cpp
+void f(Widget&& param);   // no type deduction;
+                          // param is an rvalue reference
+Widget&& var1 = Widget(); // no type deduction;
+                          // var1 is an rvalue reference
+```
+
+보편 참조는 참조이므로 반드시 초기화해야 한다. 보편 참조가 오른값 참조를 나타내는지 왼값 참조를 나타내는지는 보편 참조의 초기치(initializer)가 결정한다. 초기치가 왼값이면 보편 참조는 왼값 참조에 해당한다. 보편 참조가 함수의 매개변수인 경우, 초기치는 이 함수를 호출하는 지점에서 제공한다.
+  
+```cpp
+Widget w;             // lvalue passed to f; param's type is
+f(w);                 // Widget& (i.e., an lvalue reference)
+
+f(std::move(w));      // rvalue passed to f; param's type is
+                      // Widget&& (i.e., an rvalue reference)
+```
+
+### Item 25: Use std::move on rvalue references, std::forward on universal references
+
+오른값 참조는 이동할 수 있는 객체에만 바인딩된다. 어떤 매개변수가 오른값 참조라면, 그 참조에 바인딩된 객체를 이동할 수 있다. 
+
+반면 보편 참조는 이동에 적합한 객체 바인딩될 수도 있고 아닐 수도 있다. 보편 참조는 오른값으로 초기화되는 경우에만 오른값으로 캐스팅되어야 한다(`std::forward`). 
+
+즉, 오른값 참조를 다른 함수로 전달할 때는 오른값으로의 무조건적인 캐스팅(`std::move`)을 적용하고, 보편 참조를 다른 함수로 전달할 때는 오른값으로의 조건부 캐스팅을 적용해야 한다(`std::forward`).
+
+오른값 참조에 `std::forward`를 사용해도 원하는 동작이 수행되나, 코드가 길어지고 실수의 여지가 있으며 관용구에 벗어난 모습이 된다. 따라서 오른값 참조에 `std::forward`를 사용하는 것은 피해야 한다.
+
+보편 참조에 `std::move`를 적용하는 것은 더 좋지 않다. 이렇게 되면 왼값(지역변수 등)이 의도치 않게 수정되는 결과가 일어날 수 있다.
+
+```cpp
+class Widget {
+public:
+  template<typename T>
+  void setName(T&& newName)        // universal reference compiles, but is
+  { name = std::move(newName); }   // bad, bad, bad!
+  ...
+private:
+  std::string name;
+  std::shared_ptr<SomeDataStructure> p;
+};
+
+std::string getWidgetName();       // factory function
+Widget w;
+auto n = getWidgetName();          // n is local variable
+w.setName(n);                      // moves n into w!
+...                                // n's value now unknown
+```
+
+다음과 같이 '복사'를 '이동'으로 바꾸어 함수를 최적화할 수 있다고 생각할 수 있다.
+
+```cpp
+Widget makeWidget()        // Moving version of makeWidget
+{
+  Widget w;
+  ...
+  return std::move(w);     // move w into return value (don't do this!)
+}
+```
+
+그러나 여기서 간과한 것은 이런 종류의 최적화를 위한 대비책이 이미 마련되어 있다는 것이다. 지역변수 `w`를 함수의 반환값을 위해 마련한 메모리 안에 생성한다면 `w`의 복사를 피할 수 있다. 이를 **반환값 최적화(RVO: Return Value Optimization)** 이라 한다.
+
+컴파일러가 결과를 값 전달 방식으로 반환하는 함수의 어떤 지역 객체의 복사를 제거할 수 있으려면
+
+1. 그 지역 객체의 타입이 함수의 반환 타입과 같아야 하고
+2. 그 지역 객체가 함수의 반환값이어야 한다.
+
+```cpp
+Widget makeWidget()  // "Copying" version of makeWidget
+{
+  Widget w;
+  ...
+  return w;           // "copy" w into return value
+}
+```
+
+따라서 위 예에서는 조건이 모두 만족되므로 반환값 최적화를 적용해 `w`의 복사를 피할 것이다. 
+
+하지만 `std::move(w)`를 적용한 버전은 반환값은 지역 객체 `w`가 아닌 `w`에 대한 참조이다. 따라서 RVO의 조건을 만족하지 못하며, 컴파일러는 반드시 `w`를 함수의 반환값 장소로 옮겨야 한다. 결과적으로 `std::move`를 통해 최적화하려 했으나, 실제로는 컴파일러가 할 수 있는 최적화를 제한하게 된다.
+
+### Item 26: Avoid overloading on universal references
+
+오버로딩된 `logAndAdd()`가 있고, 
+
+```cpp
+std::string nameFromIdx(int idx);      // return name corresponding to idx
+
+void logAndAdd(int idx)                // new overload 
+{
+  auto now = std::chrono::system_clock::now(); 
+  log(now, "logAndAdd"); 
+  names.emplace(nameFromIdx(idx));
+}
+
+template<typename T> void logAndAdd(T&& name) {
+  auto now = std::chrono::system_clock::now(); 
+  log(now, "logAndAdd"); 
+  names.emplace(std::forward<T>(name));
+}
+```
+
+클라이언트가 인덱스 값을 담은 `short`를 전달한다고 하자.
+
+```cpp
+short nameIdx;
+...                     // give nameIdx a value
+logAndAdd(nameIdx);     // error!
+```
+
+보편 참조를 받는 버전은 `T`를 `short&`로 추론할 수 있으며, 이러면 주어진 인수와 정확히 부합되는 형태가 되어 보편 참조 오버로딩이 호출된다. 보편 참조를 받는 오버로딩에서 `name`은 주어진 `short`에 바인딩된다. 그 다음 `name`이 `std::forward`를 통해 `names`의 멤버 함수 `emplace()`에 전달된다. `emplace()`는 이를 `std::string` 생성자에 전달한다. 그런데 `std::string` 생성자 중 `short`를 받는 버전은 없으므로 컴파일이 실패한다. 
+
+보편 참조를 받는 템플릿 함수는 C++에서 가장 욕심 많은 함수다. 이런 템플릿 인스턴스는 거의 모든 타입의 인수와 정확히 부합한다. 보편 참조 오버로딩이 예상한 것보다 훨씬 많은 인수 타입들을 받아들인다는 점에서 오버로딩과 결합하는 것은 거의 항상 나쁜 선택이다.
+
+완벽 전달(perfect forward) 생성자를 사용해 해결할 수 있겠지만 문제는 더 심각해진다. 이런 생성자는 대체로 `non-const` 왼값에 대한 복사 생성자보다 더 나은 부합이며, 기반 클래스 복사 및 이동 생성자들에 대한 파생 클래스의 호출들을 가로챌 수 있기 때문이다.
+
+
+
+
+
+
 
 
 
