@@ -1428,4 +1428,170 @@ void fwd(Ts&&... params)            // accept any arguments
     
         `const` 참조는 비트필드 자체에 바인딩되는 것이 아니라 복사된 '보통' 객체에 바인딩된다.
 
-##
+## Lambda Expressions
+
+- **클로저(closure)** 는 람다에 의해 만들어진 런타임 객체이다. 캡처 모드에 따라 클로저가 캡처된 자료의 복사본을 가질 수도 있고, 그 자료에 대한 참조를 가질 수도 있다. 
+- **클로저 클래스**는 클로저를 만드는 데 쓰인 클래스를 말한다.
+
+컴파일 타임에 존재하는 것(람다와 클로저 클래스)와 런타임에 존재하는 것(클로저)을 구분하는 것이 중요하다.
+
+### Item 31: Avoid default capture modes
+
+C++11의 기본 캡처 모드는 두 가지이다.
+
+1. 참조에 의한(by-reference) 캡처 모드
+2. 값에 의한(by-value) 캡처 모드
+
+참조에 의한 캡처 모드를 사용하는 클로저는 지역 변수 또는 람다가 정의된 범위에서 볼 수 있는 매개변수에 대한 참조를 가지게 된다. 람다에 의해 생성된 클로저의 수명이 그 지역 변수나 매개변수의 수명보다 오래 지속되면 클로저 안의 참조 대상을 잃는다.
+
+```cpp
+void addDivisorFilter()
+{
+  auto calc1 = computeSomeValue1();
+  auto calc2 = computeSomeValue2();
+  
+  auto divisor = computeDivisor(calc1, calc2);
+
+  filters.emplace_back(                             // danger!
+    [&](int value) { return value % divisor == 0; } // ref to
+  );                                                // divisor
+}                                                   // will dangle!
+```
+
+`divisor`와 관련된 문제를 해결하는 방법은 값 캡처 모드를 사용하는 것이다. 
+
+```cpp
+filters.emplace_back(               // now divisor
+  [=](int value)                    // can't dangle
+{ return value % divisor == 0; }
+);
+```
+
+그러나 값 캡처 모드도 다른 문제가 있다. 포인터를 값으로 캡처하면 이 포인터는 람다에 의해 생성된 클로저 안으로 복사되는데, 람다 바깥의 어떤 코드가 이 포인터를 `delete`로 삭제하지 않는다고 보장할 수 없기 때문이다.
+
+```cpp
+class Widget {
+public:
+  ...                       // ctors, etc.
+  void addFilter() const;   // add an entry to filters
+private:
+  int divisor;              // used in Widget's filter
+};
+```
+
+캡처는 오직 람다가 생성된 범위 안에서 보이는 `static`이 아닌 지역 변수(또는 매개변수)에만 적용된다. 따라서 다음 코드는 컴파일되지 않는다.
+
+```cpp
+void Widget::addFilter() const
+{
+  filters.emplace_back( 
+    [divisor](int value)              // error! no local
+    { return value % divisor == 0; }  // divisor to capture
+  ); 
+}
+```
+
+람다가 클로저 안에 캡처하는 것은 `divisor`가 아니라 `Widget`의 `this` 포인터다. 즉, 컴파일러는 값 캡처 `[=]`를 다음과 같이 취급한다.
+
+```cpp
+void Widget::addFilter() const
+{
+  auto currentObjectPtr = this;
+  filters.emplace_back(
+    [currentObjectPtr](int value)
+    { return value % currentObjectPtr->divisor == 0; }
+  ); 
+}
+```
+
+결과적으로 이 람다에서 만들어진 클로저의 유효성이 `Wdiget` 객체의 수명에 의해 제한된다. 
+
+이 문제는 캡처하려는 멤버의 지역 복사본을 만들어 이 복사본을 캡처하면 된다. 이는 값 캡처 모드(`[=]`)에서도 잘 동작한다.
+
+```cpp
+void Widget::addFilter() const
+{
+  auto divisorCopy = divisor;               // copy data member
+  
+  filters.emplace_back(                     
+    [divisorCopy](int value)                // capture the copy
+    { return value % divisorCopy == 0; }    // use the copy
+  ); 
+}
+```
+
+C++14에서 멤버를 캡처하기 위해 일반화된 람다(Item 32)를 사용하는 방법도 있다.
+
+```cpp
+void Widget::addFilter() const
+{
+  filters.emplace_back(                 // C++14:
+    [divisor = divisor](int value)      // copy divisor to closure 
+    { return value % divisor == 0; }    // use the copy
+  ); 
+}
+```
+
+람다는 지역 변수나 매개변수 뿐 아니라 정적 저장소 수명 기간(static storage duration)를 가진 객체에도 의존할 수 있다. 전역 범위나 네임스페이스 범위에 정의된 객체와 클래스, 함수, 파일 안에서 `static`으로 선언된 객체들이 이에 해당한다. 그러나 값 캡처 모드는 이런 객체도 모두 캡처되어 격리되었다고 오해할 수 있다. 
+
+### Item 32: Use init capture to move objects into closures
+
+이동 전용 객체를 클로저 안으로 들여오려는 경우 값 캡처 모드나 참조 캡처 모드는 마땅치 않다. 그러나 C++14에서는 객체를 클로저 안으로 이동하는 수단을 직접 제공한다.
+
+C++14는 새로운 캡처 메커니즘으로 **초기화 캡처(init capture)** 를 도입했다. 초기화 캡처로 표현할 수 없는 것 하나는 기본 캡처 모드인데, Item 31에 설명하듯 어짜피 기본 캡처 모드는 피해야 한다.
+
+초기화 캡처로 다음과 같은 것들을 지정할 수 있다.
+
+1. 람다로부터 생성되는 클로저 클래스에 속한 자료 멤버의 이름
+2. 이 자료 멤버를 초기화하는 표현식
+
+다음은 초기화 캡처를 통해 `std::unique_ptr`을 클로저 안으로 이동하는 예다.
+
+```cpp
+class Widget {      // some useful type
+public:
+  ...
+  bool isValidated() const;
+  bool isProcessed() const;
+  bool isArchived() const;
+private: 
+  ...
+};
+
+auto pw = std::make_unique<Widget>();   // create Widget; see Item 21 
+                                        // for info on std::make_unique
+
+...                                     // configure *pw
+
+auto func = [pw = std::move(pw)]                // init data mbr
+            { return pw->isValidated()          // in closure w/
+                     && pw->isArchived(); };    // std::move(pw)
+```
+
+`=`의 좌변은 클로저 클래스 안 자료 멤버(클로저에서 사용할)의 이름이고, 우변은 이것을 초기화하는 표현식이다. 좌변의 범위는 해당 클로저 클래스의 범위이고, 우변의 범위는 람다가 정의되는 지점의 범위와 동일하다. 즉, `pw = std::move(pw)`는 "클로저 안에서 자료 멤버 `pw`를 생성하되, 지역 변수 `pw`에 `std::move`를 적용한 결과로 이 자료 멤버를 초기화하라"는 의미이다.
+
+만약 수정이 필요하지 않다면 지역 변수 `pw`는 필요하지 않다. 그냥 `[pw = std::make_unique<Widget>()]`와 같이 클로저 클래스의 멤버를 직접 초기화하면 된다.
+
+> C++11에서 람다를 고집한다면 `std::bind`를 사용해 비슷하게 흉내낼 수 있다. 그러나 Item 34에서 `std::bind`보다는 람다를 선호하라고 조언한다.
+
+### Item 33: Use decltype on auto&& parameters to std::forward them
+
+C++14에서 특별한 기능은 매개변수 명세에 `auto`를 사용한 람다이다. 람다의 클로저 클래스의 `operator()`를 템플릿 함수로 만들면 된다. 
+
+다음과 같은 람다 클래스가 있다고 하자.
+
+```cpp
+auto f = [](auto x){ return func(normalize(x)); };
+```
+
+클로저 클래스의 함수 호출 연산자는 다음과 같은 모습으로 산출된다.
+
+```cpp
+class SomeCompilerGeneratedClassName { 
+public:
+  template<typename T>              // see Item 3 for
+  auto operator()(T x) const        // auto return type
+  { return func(normalize(x)); }
+  ...                               // other closure class functionality
+};
+```
