@@ -1953,3 +1953,100 @@ public:
   ...                               // other closure class functionality
 };
 ```
+
+여기에서 람다는 매개변수 `x`를 항상 왼값으로 `normalize()`에 전달한다. 그런데 만약 `normalize()`가 왼값과 오른값을 다른 방식으로 처리한다면, 이 람다는 제대로 작성한 것이 아니다. 주어진 인수가 오른값이라면 오른값을 전달해야 한다.
+
+그러려면 코드에서 바꿀 점이 두 가지이다.
+
+1. `x`가 보편 참조여야 한다.
+2. `x`를 `std::forward`를 통해 `normalize()`에 전달해야 한다.
+
+```cpp
+auto f = [](auto&& x)
+         { return func(normalize(std::forward<???>(x))); };
+```
+
+일반적인 람다에서는 템플릿 함수처럼 사용할 타입 `T`가 없다. 람다가 산출하는 클래스 템플릿 `operator()`에는 `T`가 있지만, 람다에서는 이 `T`를 지정할 수 없다.
+
+람다에 주어진 인수가 왼값인지 오른값인지는 매개변수 `x`의 타입을 `decltype`을 사용해 조사해보면 알 수 있다. 따라서 완벽 전달 람다는 다음과 같이 작성하면 된다.
+
+```cpp
+auto f =
+  [](auto&& param)
+  {
+    return func(normalize(std::forward<decltype(param)>(param)));
+  };
+```
+
+또한 `...`을 두 번 추가해주면 임의 개수의 매개변수들을 받아 완벽하게 전달하는 람다가 된다.
+
+```cpp
+auto f =
+  [](auto&&... params) {
+    return
+    func(normalize(std::forward<decltype(params)>(params)...)); 
+  };
+```
+
+### Item 34: Prefer lambdas to std::bind
+
+프로그램의 어떤 지점에서 한 시간 후부터 30초간 소리를 내는 알람을 설정한다고 하자. 
+
+```cpp
+void setAlarm(Time t, Sound s, Duration d);
+```
+
+경보음은 미리 결정되지 않으며, 이런 경우 `setAlarm()`에 대한 소리만 지정하면 되는 인터페이스를 람다를 이용해 작성하면 편리할 것이다.
+
+```cpp
+auto setSoundL =
+  [](Sound s)
+  {
+    using namespace std::chrono;
+    using namespace std::literals;      // for C++14 suffixes
+    
+    setAlarm(steady_clock::now() + 1h,  // C++14, but
+             s,                         // same meaning
+             30s                        // as above
+};
+```
+
+이와 같은 일을 하는 함수 객체를 `std::bind`로 작성해보자.
+
+```cpp
+using namespace std::chrono;        // as above
+using namespace std::literals;
+using namespace std::placeholders;  // needed for use of "_1"
+
+auto setSoundB =
+  std::bind(setAlarm,                 // "B" for "bind"
+            steady_clock::now() + 1h, // incorrect! see below 
+            _1,
+            30s);
+```
+
+`steady_clock::now() + 1h`라는 표현식은 `setAlarm()`이 호출되는 시점에 평가된다. 그러나 `std::bind` 호출에서 인수 `steady_clock::now() + 1h`는 `setAlarm()`이 아니라 `std::bind`로 전달되며, 따라서 그 표현식이 평가되어 나오는 시간이 `std::bind`가 생성한 바인딩 객체에 저장된다. 즉, `std::bind`를 호출하고 한 시간이 지난 후 울리게 된다.
+
+이를 바로잡으려면 이 표현식을 `setAlarm()` 호출 때까지 지연하라고 `std::bind`에 알려주어야 한다.
+
+```cpp
+auto setSoundB =
+  std::bind(setAlarm,
+            std::bind(std::plus<>(), steady_clock::now(), 1h), 
+            _1,
+            30s);
+```
+
+람다와 비교해보면 훨씬 더 복잡하게 구현해야 한다.
+
+음량을 네 번째 매개변수로 받는 `setAlarm()` 오버로딩 버전을 추가한다고 하자. 
+
+```cpp
+void setAlarm(Time t, Sound s, Duration d, Volume v);
+```
+
+람다는 이전과 같이 인수 세 개짜리 `setAlarm()`이 호출된다. 반면 `std::bind`는 컴파일되지 않는다. 문제는 컴파일러로서 두 `setAlarm()` 중 어떤 것을 `std::bind`에 넘겨주어야 할지 결정할 수 없다는 것이다. 컴파일러가 알고 있는 것은 함수 이름뿐이며, 이로써는 중의성을 해소할 수 없다. 
+
+`std::bind` 호출이 컴파일되려면 `setAlarm()`을 적절한 함수 포인터 타입으로 캐스팅해야 한다. 이렇게 구현하면 람다와 `std::bind`의 차이점이 하나 더 생기는데, `setSoundL`에 대한 함수 호출 연산자 안에서 `setAlarm()` 호출은 컴파일러가 통상적인 방식으로 인라이닝할 수 있는 보통의 함수 호출이다. 그러나 `std::bind` 호출은 `setAlarm()`을 가리키는 함수 포인터를 전달하므로, `setSoundB`를 통한 `setAlarm()` 호출은 `setSoundL`을 통한 호출에 비해 인라인될 가능성이 낮다.
+
+`std::bind`를 사용하는 코드는 람다에 비해 읽기 힘들고 표현력이 낮다. 또한 효율성이 떨어질 가능성이 있다. 
