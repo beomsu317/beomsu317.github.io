@@ -1321,17 +1321,111 @@ logAndAdd(nameIdx);     // error!
 
 완벽 전달(perfect forward) 생성자를 사용해 해결할 수 있겠지만 문제는 더 심각해진다. 이런 생성자는 대체로 `non-const` 왼값에 대한 복사 생성자보다 더 나은 부합이며, 기반 클래스 복사 및 이동 생성자들에 대한 파생 클래스의 호출들을 가로챌 수 있기 때문이다.
 
+### Item 30: Familiarize yourself with perfect forwarding failure cases
 
+전달(forwarding)은 한 함수가 자신들의 인수들을 다른 함수에 넘겨주는 것을 뜻한다. 이때 목표는 둘째 함수(전달받는 함수)가 첫 함수(전달하는 함수)가 받았던 것과 동일한 객체들을 받게 하는 것이다. 값 전달 방식의 매개변수로는 이런 목표를 달성할 수 없다. 원래의 호출자가 넘겨준 인수의 복사본이기 때문이다. 우리가 원하는 것은 전달받는 함수가 원래 전달된 객체를 다룰 수 있게 하는 것이다.
 
+완벽 전달은 단순히 객체들을 전달하는 것만이 아니라, 그 객체들의 타입, 왼값, 오른값 여부, `const`나 `volatile` 여부까지 전달하는 것이다. 이를 위해선 보편 참조 매개변수(Item 24)가 필요하다. 
 
+```cpp
+template<typename... Ts>
+void fwd(Ts&&... params)            // accept any arguments 
+{
+  f(std::forward<Ts>(params)...);   // forward them to f 
+}
+```
 
+대상 함수 `f()`와 전달 함수 `fwd()`가 있다고 할 때, 만약 어떤 인수로 `f()`을 호출했을 때 일어나는 일과 같은 인수로 `fwd()`를 호출했을 때 일어나는 일이 다르다면 완벽 전달은 실패한 것이다.
 
+이러한 실패 사례들을 살펴보자.
 
+1. Braced initializers
 
+    `f()`의 선언이 다음과 같다고 할 때,
 
+    ```cpp
+    void f(const std::vector<int>& v);
+    ```
 
+    중괄호 초기화(`fwd()`)에 넘겨주는 코드는 컴파일되지 않는다.
 
+    ```cpp
+    fwd({ 1, 2, 3 }); // error! doesn't compile
+    ```
 
+    템플릿 `fwd()`를 통해 `f()`를 간접적으로 호출할 때, 컴파일러는 `fwd()`의 호출 지점에서 전달된 인수들과 `f()`에 선언된 매개변수를 직접 비교할 수 없다. 대신 컴파일러는 `fwd()`에 전달되는 인수들의 타입을 추론하고, 추론된 타입들을 `f()`의 매개변수 선언들과 비교한다. 이때 다음 두 조건 중 하나라도 만족하면 완벽 전달은 실패한다.
 
+    1. `fwd()`의 매개변수들 중 하나 이상에 대해 컴파일러가 타입을 추론하지 못한다.
+    2. `fwd()`의 매개변수들 중 하나 이상에 대해 컴파일러가 타입을 잘못 추론한다.
 
+    `fwd({ 1, 2, 3 })` 호출에서는 `std::initializer_list`가 될 수 없는 타입으로 선언된 함수 템플릿 매개변수에 중괄호 초기화로 넘겨준다는 것이다. 이를 **비추론 문맥(non-deduced context)** 이라 한다. 즉, `fwd()`의 매개변수가 `std::initializer_list`가 될 수 없는 타입으로 선언되어 있어 `fwd()`에 쓰인 표현식 `{ 1, 2, 3 }`의 타입을 컴파일러가 추론하는 것이 금지되어 있다는 뜻이다.
+2. 0 or NULL as null pointers
 
+    0이나 `NULL`을 템플릿에 넘겨주려 하면 컴파일러는 이를 포인터 타입이 아닌 정수 타입으로 추론한다(Item 8). 해결책으로 `nullptr`을 사용하면 된다.
+
+3. Declaration-only integral static const and constexpr data members
+
+    `static const` 멤버와 `static constexpr` 멤버는 클래스 안에서 정의할 필요가 없다. 선언만 하면 된다. 이런 멤버의 값에 대해 컴파일러는 **const 전파(const propagation)** 를 적용해, 이런 멤버의 값을 위한 메모리를 따로 마련할 필요가 없어지기 때문이다.
+
+    ```cpp
+    class Widget {
+    public:
+      static const std::size_t MinVals = 28;    // MinVals' declaration
+      ... 
+    };
+    ...                                         // no defn. for MinVals
+    ```
+
+    `fwd(Widget::MinVals)`를 호출하면 링크에 실패한다. 코드에 `MinVals`의 주소를 취하는 부분이 없다 해도, `fwd()` 매개변수는 보편 참조이며 컴파일러가 산출한 코드에서 참조는 포인터처럼 취급되는 것이 보통이다. 따라서 `MinVals`를 참조로 전달하는 것은 사실상 포인터로 넘겨주는 것이며, 이런 포인터가 가리킬 뭔가가 필요하다. 따라서 `static const` 멤버와 `static constexpr` 멤버를 참조로 전달하려면 이 멤버를 **정의**할 필요가 있다.
+
+    ```cpp
+    const std::size_t Widget::MinVals;     // in Widget's .cpp file
+    ```
+4. Overloaded function names and template names
+
+    `f()`가 다음과 같이 함수 포인터를 받고, 
+
+    ```cpp
+    void f(int pf(int));
+    ```
+
+    오버로딩된 `processVal()` 함수가 있다고 하자.
+
+    ```cpp
+    int processVal(int value);
+    int processVal(int value, int priority);
+    ```
+
+    함수 템플릿 `fwd(processVal)`은 이러한 호출에 필요한 타입에 대한 정보가 전혀 없다. 따라서 컴파일러는 어떤 오버로딩을 선택해야 할지 결정하지 못한다.
+
+    함수 템플릿을 사용하려 할 때도 같은 문제가 발생한다. 함수 템플릿은 하나의 함수를 나타내는 것이 아니라 다수의 함수를 대표한다.
+
+    ```cpp
+    template<typename T>
+    T workOnVal(T param)    // template for processing values 
+    { ... }
+    fwd(workOnVal);         // error! which workOnVal instantiation?
+    ```
+
+    `fwd()` 같은 완벽 전달 함수가 오버로딩된 함수 이름이나 템플릿 이름을 받아들이게 하려면, 전달하고자 하는 오버로딩이나 템플릿 인스턴스를 명시적으로 지정하면 된다.
+
+    ```cpp
+    using ProcessFuncType = int (*)(int)            // make typedef; see Item 9
+    ProcessFuncType processValPtr = processVal;     // specify needed signature for processVal
+    fwd(processValPtr);                             // fine
+    fwd(static_cast<ProcessFuncType>(workOnVal));   // also fine
+    ```
+5. Bitfields
+
+    비트필드가 함수 인수로 쓰일 때 완벽 전달이 실패한다. 임의의 비트들을 가리키는 포인터를 생성하는 방법은 없으며, 따라서 참조를 임의의 비트들에 묶는 방법도 없다.
+
+    그러나 우회책을 사용해 비트필드의 완벽 전달을 가능하게 할 수 있다. 전달 대상 함수가 항상 비트필드 값의 복사본을 받게 되는 사실을 활용하는 것이다.
+
+    1. 값으로 전달
+        
+        호출될 함수가 비트필드 값의 복사본임이 명확하다.
+    2. `const`에 대한 참조로 전달
+    
+        `const` 참조는 비트필드 자체에 바인딩되는 것이 아니라 복사된 '보통' 객체에 바인딩된다.
+
+##
