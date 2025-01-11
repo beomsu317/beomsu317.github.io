@@ -1319,7 +1319,366 @@ logAndAdd(nameIdx);     // error!
 
 보편 참조를 받는 템플릿 함수는 C++에서 가장 욕심 많은 함수다. 이런 템플릿 인스턴스는 거의 모든 타입의 인수와 정확히 부합한다. 보편 참조 오버로딩이 예상한 것보다 훨씬 많은 인수 타입들을 받아들인다는 점에서 오버로딩과 결합하는 것은 거의 항상 나쁜 선택이다.
 
-완벽 전달(perfect forward) 생성자를 사용해 해결할 수 있겠지만 문제는 더 심각해진다. 이런 생성자는 대체로 `non-const` 왼값에 대한 복사 생성자보다 더 나은 부합이며, 기반 클래스 복사 및 이동 생성자들에 대한 파생 클래스의 호출들을 가로챌 수 있기 때문이다.
+완벽 전달(perfect forward) 생성자를 사용해 해결할 수 있겠지만 문제는 더 심각해진다. `std::string`을 받는 `Person` 클래스를 만들어보자.
+
+```cpp
+class Person {
+public:
+  template<typename T>
+  explicit Person(T&& n)          // perfect forwarding ctor; initializes data member
+  : name(std::forward<T>(n)) {}
+
+  explicit Person(int idx)        // int ctor
+  : name(nameFromIdx(idx)) {}
+  ...
+
+private:
+  std::string name;
+};
+```
+
+`int` 이외의 정수 타입을 넘겨주면 `int`를 받는 생성자 대신 보편 참조를 받는 생성자가 호출되어 컴파일에 실패한다. C++은 특정 조건에서 복사 생성자와 이동 생성자를 자동으로 작성하며, 심지어 템플릿화된 생성자가 복사 생성자나 이동 생성자에 해당하는 서명으로 인스턴스화되는 경우에도 자동으로 만들어진다. 따라서 `Person`에 대해 복사 생성자와 이동 생성자가 작성된다면 다음과 같을 것이다.
+
+```cpp
+class Person {
+public:
+  template<typename T>            // perfect forwarding ctor
+  explicit Person(T&& n)
+  : name(std::forward<T>(n)) {}
+
+explicit Person(int idx);         // int ctor
+  Person(const Person& rhs);      // copy ctor (compiler-generated)
+  Person(Person&& rhs);           // move ctor (compiler-generated)
+  ... 
+};
+```
+
+따라서 다음과 같은 코드는 이상하게 동작할 것이다.
+
+```cpp
+Person p("Nancy");
+auto cloneOfP(p);   // create new Person from p;
+                    // this won't compile!
+```
+
+이 코드는 완벽 전달 생성자가 호출한다. 이 함수는 `Person`의 `std::string` 자료 멤버를 `Person` 객체(`p`)로 생성하려 하는데, `std::string`은 `Person`을 받는 생성자가 없으므로 컴파일이 실패한다.
+
+복사할 객체를 `const`로 바꾸면 상황이 달라진다.
+
+```cpp
+const Person cp("Nancy"); // object is now const 
+auto cloneOfP(cp);        // calls copy constructor!
+```
+
+이제 복사 생성자와 정확히 부합된다.
+
+> C++의 오버로딩 해소 규칙에 어떤 함수 호출이 템플릿 인스턴스와 비템플릿 인스턴스(보통 함수)에 똑같이 부합한다면, 보통 함수를 우선시하는 규칙이 있기 때문이다. 그래서 복사 생성자가 자신과 같은 서명을 가진 템플릿 인스턴스보다 우선시된다.
+
+상속에 관여하는 클래스에서는 완벽 전달 생성자와 컴파일러가 작성한 복사 및 이동 연산들 사이 상호작용히 미치는 여파가 더욱 커진다. 파생 클래스의 복사, 이동 생성자는 해당 기반 클래스의 복사, 이동 생성자를 호출하는 것이 아니라, 기반 클래스의 완벽 전달 생성자를 호출한다.
+
+```cpp
+class SpecialPerson: public Person {
+public:
+  SpecialPerson(const SpecialPerson& rhs)  // copy ctor; calls 
+  : Person(rhs)                            // base class
+  { ... }                                  // forwarding ctor!
+
+  SpecialPerson(SpecialPerson&& rhs)       // move ctor; calls
+  : Person(std::move(rhs))                 // base class
+  { ... }                                  // forwarding ctor!
+};
+```
+
+완벽 전달 생성자는 대체로 `non-const` 왼값에 대한 복사 생성자보다 더 나은 부합이며, 기반 클래스 복사 및 이동 생성자들에 대한 파생 클래스의 호출들을 가로챌 수 있기 때문이다.
+
+### Item 27: Familiarize yourself with alternatives to overloading on universal references
+
+보편 참조에 대한 오버로딩이 아닌 기법을 이용해, 또는 보편 참조에 대한 오버로딩이 부합할 수 있는 인수들의 타입을 제한하여 이런 바람직한 행동을 달성하는 방법들을 보자.
+
+1. Abandon overloading
+
+    오버로딩 버전에 각자 다른 이름을 붙이면 보편 참조에 대한 오버로딩에 대한 단점을 피할 수 있다(Item 26). 그러나 생성자 오버로딩에서 문제가 발생될 수 있다.
+2. Pass by const T&
+
+    보편 참조 대신 `const`에 대한 왼값 참조 매개변수를 사용하는 것이다(Item 26). 그러나 보편 참조와 오버로딩의 상호 작용에 의한 문제점이 있으니 효율성을 포기하더라도 예상치 않은 문제를 피하는 것이 좋다.
+3. Pass by value
+
+    복잡도를 높이지 않고 성능을 높일 수 있는 한 가지 방식으로, 참조 전달 매개변수 대신 값 전달 매개변수를 사용하는 것이다.
+
+    ```cpp
+    class Person {
+    public:
+      explicit Person(std::string n) // replaces T&& ctor; see
+      : name(std::move(n)) {}        // Item 41 for use of std::move
+      
+      explicit Person(int idx)       // as before
+      : name(nameFromIdx(idx)) {}
+      ...
+    private:
+      std::string name;
+    };
+    ```
+4. Use Tag dispatch
+    보편 참조를 사용하려는 이유가 완벽 전달이라면, 보편 참조 말고는 다른 대안이 없다. 이 경우에도 보편 참조와 오버로딩 둘 다 사용하되 보편 참조에 대한 오버로딩을 피하려면 **태그 디스패치(tag dispatch)** 를 사용하면 된다. 
+
+    매개변수 목록에 보편 참조 매개변수 뿐 아니라 보편 참조가 **아닌** 매개변수들도 포한되어 있으면, 보편 참조 매개변수가 있는 오버로딩을 제치고 선택될 가능성이 있다. 이것이 태그 디스패치 접근 방식이다.
+
+    실제 작업을 수행하는 두 함수의 이름을 `logAndAddImpl()`로 한다. 즉, 이들에 대해서 오버로딩을 수행한다. 둘 중 하나는 보편 참조를 받는다. 두 함수는 전달된 인수가 정수 타입인지 아닌지를 뜻하는 매개변수를 받는다.
+
+    ```cpp
+    template<typename T>
+    void logAndAdd(T&& name)
+    {
+      logAndAddImpl(std::forward<T>(name), 
+                    std::is_integral<T>()); // not quite correct
+    }
+    ```
+
+    이 함수는 자신의 매개변수를 `logAndAddImpl()`에 전달하며, 이와 함께 매개변수 타입 `T`가 정수인지를 뜻하는 인수도 전달한다. 만약 `name`으로 전달된 인수가 왼값이면 `T`는 왼값 참조 타입으로 추론(Item 28)된다. 따라서 `int` 타입의 왼값이 `logAndAdd()`에 전달되면, `T`는 `int&`로 추론된다. 참조는 정수 타입이 아니므로 `std::is_integral<T>`는 거짓이 된다.
+    
+    이를 해결하기 위해 `std::remove_reference`를 사용한다.
+
+    ```cpp
+    template<typename T>
+    void logAndAdd(T&& name)
+    {
+      logAndAddImpl(
+        std::forward<T>(name),
+        std::is_integral<typename std::remove_reference<T>::type>()
+      ); 
+    }
+    ```
+
+    `std::true_type` 타입과 `std::false_type` 타입은 오버로딩 해소에 우리가 원하는 방식으로 일어나게 하는 데에 쓰이는 일종의 "태그(tag)"이다.
+5. Constraining templates that take universal references
+
+    완벽 전달 생성자에 대한 문제는 태그 디스패처로는 해결할 수 없다. 컴파일러가 자동으로 복사 생성자와 이동 생성자를 작성하기 때문에, 생성자 하나만 작성해 그 안에서 태그 디스패치를 사용한다면 일부 생성자 호출은 컴파일러가 작성한 함수들로 처리되어 태그 디스패치가 적용되지 않을 위험이 있다.
+
+    `std::enable_if`를 이용하면 컴파일러가 마치 특정 템플릿이 존재하지 않는 것처럼 행동할 수 있다. 이런 템플릿을 비활성화된(disabled) 템플릿이라 한다. `Person` 예에서는 `Person`이 아닌 타입의 인수가 전달된 경우에만 `Person`의 완벽 전달 생성자가 활성화되게 해야 한다. 
+
+    ```cpp
+    class Person {
+    public:
+      template<typename T,
+               typename = typename std::enable_if<condition>::type>
+      explicit Person(T&& n);
+      ...
+    };
+    ```
+
+    두 타입이 같은지를 확인하는 `std::is_same`이 있다. 이를 이용해 `!std::is_same<Person, T>::value` 표현식을 조건으로 지정하면 되겠다. 그러나 왼값으로 초기화되는 보편 참조는 항상 왼값 참조로 추론된다. 즉, `Person&`로 추론되어 `std::is_same`은 다르다고 판정할 것이다.
+
+    그렇다면 `T`에 대해 다음 두 사항을 무시해야 할 것이다.
+
+    1. 참조 여부
+    2. `const`성과 `volatile`성
+
+    표준 라이브러리에는 `std::decay`라는 특질(trait)이 있다. `std::decay<T>::type`은 `T`에서 모든 참조와 cv-한정사(cv-qualifier: `const`, `volatile` qualifier)를 제거한 타입에 해당한다. 결과적으로 다음과 같은 코드가 될 것이다.
+
+    ```cpp
+    class Person {
+    public:
+      template<
+        typename T,
+        typename = typename std::enable_if<
+                     !std::is_same<Person,
+                                   typename std::decay<T>::type
+                                   >::value
+                   >::type
+        >
+      explicit Person(T&& n);
+      ... 
+    };
+    ```
+    
+    그러나 아직 `Person`에서 파생된 클래스에서 문제가 발생될 수 있다. `SpecialPerson` 객체가 복사 연산들과 이동 연산들을 통상적인 방식으로 구현했다고 하자(Item 26).
+
+    복사, 이동 생성자들은 `SpecialPerson` 객체를 기반 클래스의 생성자들에 넘겨주는데, `SpecialPerson`은 `Person`과 같지 않으므로(`std::decay` 적용 후에도) 기반 클래스의 보편 참조 생성자 템플릿이 활성화된다. 
+
+    특정 타입에서 파생된 것인지를 알려주는 `std::is_base_of` 특질이 있다. `std::is_base_of<T1, T2>::value`는 만일 T2가 T1에서 파생된 타입이면 참이게 된다. 따라서 ` std::is_same`만 `std::is_base_of`로 바꾸면 된다. C++14 버전으로 더 간결한 코드를 만들 수 있다.
+
+    ```cpp
+    class Person {                    // C++14
+    public:
+      template<
+        typename T,
+        typename = std::enable_if_t<  // less code here
+                     !std::is_base_of<Person,
+                                      std::decay_t<T> // and here
+                                     >::value
+                     >                                // and here
+      >
+      explicit Person(T&& n);
+      ... 
+    };
+    ```
+
+    이제 마지막으로 다음 두 가지만 하면 된다.
+
+    1. 정수 인수들을 처리하는 `Person` 생성자 오버로딩 추가
+    2. 이런 인수들에 대해서는 템플릿화된 생성자가 비활성화되도록 하는 조건 추가
+
+    ```cpp
+    class Person {
+    public:
+      template<
+        typename T,
+        typename = std::enable_if_t<
+        !std::is_base_of<Person, std::decay_t<T>>::value
+        &&
+        std::is_integral<std::remove_reference_t<T>>::value
+        > 
+      >
+      explicit Person(T&& n)      // ctor for std::strings and
+      : name(std::forward<T>(n))  // args convertible to
+      { ... }                     // std::strings
+      
+      explicit Person(int idx)    // ctor for integral args
+      : name(nameFromIdx(idx)) 
+      { ... }
+      ...                         // copy and move ctors, etc.
+    private:
+      std::string name;
+    };
+    ```
+6. Trade-offs
+
+    처음의 세 가지 기법은 호출되는 함수들의 각 매개변수 타입을 지정한다. 
+
+    1. 오버로딩을 피하는 것
+    2. `const T&`를 전달하는 것
+    3. 값을 전달하는 것
+
+    나머지 두 기법은 완벽 전달을 사용하므로, 매개변수 타입을 지정하지 않는다.
+
+    1. 태그 디스패치
+    2. 템플릿 활성화 제한
+
+    완벽 전달이 더 효율적이나 단점들이 있다. 완벽 전달이 불가능한 인수들이 있다는 점과 클라이언트가 유효하지 않은 인수를 전달했을 때 오류 메시지가 난해하다는 것이다. 
+
+    `Person`의 경우 보편 참조 매개변수가 `std::string`에 대한 초기화로 쓰일 것을 알고 있으므로, 이 초기화로 사용하는 것이 가능하지 미리 `static_assert`를 통해 점검하는 방법도 있다. `std::is_constructible` 특질은 한 타입의 객체를 다른 한 타입의 객체로부터 생성할 수 있는지를 컴파일 타임에 판정할 수 있다. 
+
+    ```cpp
+    static_assert(
+        std::is_constructible<std::string, T>::value,
+        "Parameter n can't be used to construct a std::string"
+      );
+    ```
+
+### Item 28: Understand reference collapsing
+
+템플릿 매개변수 `T`에 대해 추론된 타입을 `param`으로 전달된 인수가 왼값이었는지 오른값이었는지에 대한 정보가 인코딩될 것이다.
+
+```cpp
+template<typename T>
+void func(T&& param);
+```
+
+C++에서 참조에 대한 참조는 위법이다.
+
+```cpp
+int x;
+auto& & rx = x; // error! can't declare reference to reference
+```
+
+그런데 보편 참조를 받는 함수 템플릿에 왼값을 넘겨주면 `T`에 대해 추론된 타입(`Widget &`)으로 템플릿이 인스턴스화한 결과는 다음과 같다.
+
+```cpp
+void func(Widget& && param);
+```
+
+이는 참조에 대한 참조지만 컴파일된다. 보편 참조 `param`은 왼값으로 초기화되므로, `param` 타입은 왼값 참조가 된다. 따라서 컴파일러가 `T`에 대해 추론된 타입을 템플릿에 대입하면 위와 같은 시그니처가 나온다. 그러나 실제로 만들어지는 시그니처는 다음과 같다.
+
+```cpp
+void func(Widget& param);
+```
+
+이는 **참조 축약(reference collapsing)** 이다. 참조에 대한 참조는 위법이나, 특정 문맥에서 컴파일러가 참조에 대한 참조를 산출하는 것이 허용된다. 템플릿 인스턴스화가 이런 문맥 중 하나이다.
+
+참조는 두 종류(왼값, 오른값)로 참조에 대한 참조가 가능한 조합은 총 네 가지이다. 
+
+> 만일 두 참조 중 하나라도 왼값이면 결과는 왼값 참조이다. 그렇지 않으면(둘 다 오른값 참조) 결과는 오른값 참조이다.
+
+`std::forward`가 작동하는 것은 이 참조 축약 덕분이다. Item 25에서 설명하듯 `std::forward`는 보편 참조 매개변수에 적용된다. 
+
+```cpp
+template<typename T>
+void f(T&& fParam)
+{
+  ...   // do some work
+  someFunc(std::forward<T>(fParam)); // forward fParam to someFunc
+}
+```
+
+`fPararm`이 보편 참조이므로 `f()`에 전달된 인수가 왼값인지 오른값인지에 대한 정보가 타입 매개변수 `T`에 인코딩된다. 
+
+다음은 `std::forward`의 가능한 구현 중 하나이다.
+
+```cpp
+template<typename T>        // in namespace std
+T&& forward(typename
+            remove_reference<T>::type& param)
+{
+  return static_cast<T&&>(param);
+}
+```
+
+`f()`에 전달된 인수가 `Widget` 타입의 왼값이라고 하자. 그러면 `T`는 `Widget&`로 추론되며 `std::forward<Widget&>` 타입으로 인스턴스화된다. `Widget&`를 `std::forward`의 구현에 대입하면 다음과 같아질 것이다.
+
+```cpp
+Widget& && forward(typename
+                   remove_reference<Widget&>::type& param)
+{ return static_cast<Widget& &&>(param); }
+```
+
+`remove_reference<Widget&>::type`는 `Widget`을 산출하므로 `std::forward`는 다음과 같이 변한다.
+
+```cpp
+Widget& && forward(Widget& param)
+{ return static_cast<Widget& &&>(param); }
+```
+
+참조 축약이 적용된 최종 버전은 다음과 같다.
+
+```cpp
+Widget& forward(Widget& param)          // still in
+{ return static_cast<Widget&>(param); } // namespace std
+```
+
+만약 `f()`에 전달된 인수가 `Widget` 타입의 오른값이면 `f()` 타입 매개변수 `T`에 대해 추론되는 타입은 그냥 `Widget`이다.
+
+```cpp
+Widget&& forward(typename
+                 remove_reference<Widget>::type& param)
+{ return static_cast<Widget&&>(param); }
+```
+
+`remove_reference`를 비참조 타입 `Widget`에 적용하면 `Widget`이 산출되므로 `std::forward`는 다음과 같아진다.
+
+```cpp
+Widget&& forward(Widget& param)
+{ return static_cast<Widget&&>(param); }
+```
+
+여기서 참조 축약이 일어난 문맥은 네 가지이다.
+
+1. 템플릿 인스턴스화
+2. `auto` 변수에 대한 타입 추론
+3. `typedef`와 별칭 선언의 지정 및 사용(Item 9)
+4. `decltype` 사용
+
+### Item 29: Assume that move operations are not present, not cheap, and not used
+
+다음은 C++에서 이동 의미론이 도움이 되지 않는 몇 가지 시나리오다.
+
+
+1. **이동 연산이 없다.** 이동할 객체가 이동 연산들을 제공하지 않는다. 이 경우 이동 요청은 복사 요청이 된다.
+2. **이동이 더 빠르지 않다.** 이동할 객체의 이동 연산이 해당 복사 연산보다 빠르지 않다.
+3. **이동을 사용할 수 없다.** 이동이 일어나려면 이동 연산이 예외를 방출하지 않아야 하는 문맥에서, 해당 연산이 noexcept로 선언되어 있지 않다.
+
+다음은 이동 의미론이 효율성 면에서 이득이 되지 않는 시나리오다.
+
+1. **원본 객체가 왼값이다.** 드문 경우(Item 25)지만, 오직 오른값만 이동 연산의 원본이 될 수 있는 경우도 있다.
 
 ### Item 30: Familiarize yourself with perfect forwarding failure cases
 
