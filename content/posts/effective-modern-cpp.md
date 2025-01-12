@@ -2550,6 +2550,14 @@ vs.emplace_back("xyzzy");   // construct std::string inside
 2. 추가할 인수 타입(들)이 컨테이너가 담는 타입과 다르다.
 3. 컨테이너가 기존 값과의 중복 때문에 새 값을 거부할 우려가 별로 없다.
 
+생성 삽입 함수들의 주목할 점 중 하나는 `explicit` 생성자들과의 상호작용 방식이다. 
+
+정규표현식들을 담을 컨테이너를 만들어보자.
+
+```cpp
+std::vector<std::regex> regexes;
+```
+
 다음과 같이 비슷한 초기화 구문이 다른 결과를 낸다.
 
 ```cpp
@@ -2562,7 +2570,6 @@ std::regex r2(nullptr);   // compiles
 생성 삽입 함수는 직접 초기화를 사용한다. 따라서 `explicit` 생성자를 지원한다. 삽입 함수는 복사 생성자를 사용하므로 `explicit` 생성자를 지원하지 않는다.
 
 ```cpp
-std::vector<std::regex> regexes;
 regexes.emplace_back(nullptr); // compiles. Direct init permits use of explicit std::regex ctor taking a pointer
 regexes.push_back(nullptr); // error! copy init forbids use of that ctor
 ```
