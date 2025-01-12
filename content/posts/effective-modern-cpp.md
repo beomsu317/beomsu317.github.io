@@ -2050,3 +2050,281 @@ void setAlarm(Time t, Sound s, Duration d, Volume v);
 `std::bind` 호출이 컴파일되려면 `setAlarm()`을 적절한 함수 포인터 타입으로 캐스팅해야 한다. 이렇게 구현하면 람다와 `std::bind`의 차이점이 하나 더 생기는데, `setSoundL`에 대한 함수 호출 연산자 안에서 `setAlarm()` 호출은 컴파일러가 통상적인 방식으로 인라이닝할 수 있는 보통의 함수 호출이다. 그러나 `std::bind` 호출은 `setAlarm()`을 가리키는 함수 포인터를 전달하므로, `setSoundB`를 통한 `setAlarm()` 호출은 `setSoundL`을 통한 호출에 비해 인라인될 가능성이 낮다.
 
 `std::bind`를 사용하는 코드는 람다에 비해 읽기 힘들고 표현력이 낮다. 또한 효율성이 떨어질 가능성이 있다. 
+
+### Item 35: Prefer task-based programming to thread- based
+
+`doAsyncWork()` 함수를 비동기적으로 실행한다고 하면 두 가지 방법이 존재한다.
+
+1. thread-based: `std::thread` 객체를 생성해 이 객체에서 `doAsyncWork()`를 실행하는 것
+
+    ```cpp
+    int doAsyncWork(); 
+    std::thread t(doAsyncWork);
+    ```
+
+2. task-based: `doAsyncWork()`를 `std::async`에 넘겨주는 것
+
+    ```cpp
+    auto fut = std::async(doAsyncWork);
+    ```
+
+    `std::async`에 전달된 함수 객체는 하나의 과제(task)로 간주된다.
+
+과제 기반 접근방식에서는 반환값에 접근이 가능하다. `std::async`가 돌려주는 `future` 객체에 `get()`이라는 멤버 함수가 있기 때문이다. `get()` 함수는 `doAsyncWork()`가 예외를 방출하는 경우 더욱 중요해진다. `get()`을 통해서 그 예외에 접근할 수도 있기 때문이다. 스레드 기반 접근방식은 `doAsyncWork()`가 예외를 던지면 프로그램도 죽는다.
+
+동시성 C++ 소프트웨어에서 스레드는 세 가지 의미로 사용된다.
+
+1. 실제 계산을 수행하는 스레드를 뜻하는 하드웨어 스레드. CPU 코어 당 하나 이사의 하드웨어 스레드를 제공한다.
+2. OS가 하드웨어 스레드들에서 실행되는 모든 프로세서와 일정을 관리하는 데 사용하는 소프트웨어 스레드. 대체로 하드웨어 스레드보다 많은 소프트웨어 스레드를 생성할 수 있다.
+3. C++ 라이브러리의 `std::thread`. 하나의 C++ 프로세스 안에서 `std::thread` 객체는 핸들로 작용한다. `std::thread`는 널(null) 핸들을 나타내기도 한다. 즉, `std::thread` 객체가 어떤 소프트웨어 스레드에도 대응되지 않을 수 있다.
+
+소프트웨어 스레드는 제한된 자원이다. 즉, 시스템이 제공할 수 있는 것보다 많은 소프트웨어 스레드를 생성하면 `std::system_error` 예외가 발생한다.
+
+과다구독(oversubscription) 떄문에 문제가 발생할 수 있다. 과다구독이 발생하면 스레드 스케줄러는 하드웨어상의 실행 시간을 여러 조각으로 나누어 소프트웨어 스레드들에게 배분한다. 한 소프트웨어 스레드에 부여된 시간이 끝나고 다른 소프트웨어 스레드를 시작할 때 컨텍스트 스위칭(context switching)이 수행되는데, 이 작업은 시스템 전반적인 스레드 관리 부담을 증가시킨다.
+
+> 과다구독이란 실행 준비가 된(차단되지 않은) 소프트웨어 스레드가 하드웨어 스레드보다 많은 상황을 가리킨다.
+
+다음번 소프트웨어 스레드가 실행될 하드웨어 스레드가 이전 시간 조각(time slice)에서 그 소프트웨어 스레드가 실행된 하드웨어 스레드와 다른 코어에 있는 경우 컨텍스트 스위칭 비용이 더 커진다.
+
+1. 일반적으로 CPU 캐시는 그 소프트웨어 스레드에 대해 차갑다.(cold: 그 소프트웨어 스레드에 유용한 자료와 명령이 거의 없음을 뜻함)
+2. 그 코어에서 '새로운' 소프트웨어 스레드를 실행하면 그 코어에서 실행되던, 그리고 다음번에도 그 코어에서 실행될 가능성이 큰 '기존' 스레드들에 대한 CPU 캐시들이 오염된다.
+
+이런 문제들을 떠넘기는 방법은 `std::async`를 사용하는 것이다. `std::async`는 스레드 관리 책임을 프로그래머로부터 C++ 표준 라이브러리로 옮긴다. 이렇게 하면 가용 스레드 부족 때문에 예외를 받을 가능성이 크게 줄어든다. 
+
+`std::async`에서도 GUI 스레드 반응성이 여전히 문제가 될 수 있다. 스케줄러는 프로그래머의 스레드 중 반응성이 좋아야 하는 스레드가 어떤 것인지 알 수 없기 때문이다. 이 경우 `std::launch::async`라는 정책을 `std::async`에 넘겨주어 실행하고자 하는 함수가 실제로 현재 스레드와는 다른 스레드에서 실행되게 할 수 있다(Item 36).
+
+스레드를 직접 다루는 게 적합한 경우도 있다.
+
+1. 기본 스레드 적용 라이브러리의 API에 접근해야 하는 경우
+2. 애플리케이션 스레드 사용량을 최적화해야 하는, 그리고 할 수 있어야 하는 경우
+3. C++ 동시성 API가 제공하는 것 이상의 스레드 적용 기술을 구현해야 하는 경우
+
+### Item 36: Specify std::launch::async if asynchronicity is essential
+
+`std::async` 호출은 함수를 어떤 실행 정책(launch policy)에 따라 실행한다는 좀 더 일반적인 의미를 갖는다.
+
+함수 `f()`를 실행할 때,
+
+1. `std::launch::async`를 지정하면 `f()`는 반드시 비동기적으로(다른 스레드에서) 실행된다.
+2. `std::launch::deferred`를 지정하면 `f()`는 `std::async`가 돌려준 `std::future`에 대해 `get()`이나 `wait()`이 호출될 때에만 실행될 수 있다.
+
+기본 실행 정책은 이 둘을 OR 결합한 것이다. 결과적으로 `f()`는 비동기적으로 실행될 수도 있고 동기적으로 실행될 수도 있다.1
+
+기본 실행 정책을 사용하면 흥미로운 경우가 있다. 예를 들어 다음 문장이 스레드 `t`에서 실행된다고 하자.
+
+```cpp
+auto fut = std::async(f);   // run f using default launch policy
+```
+
+- `f()`가 지연 실행될 수도 있으므로 `f()`가 `t`와 동시에 실행될지 예측하는 것이 불가능하다.
+- `f()`가 `fut`에 대해 `get()`이나 `wait()`을 호출하는 스레드와는 다른 스레드에서 실행될지 예측하는 것이 불가능하다.
+- 프로그램의 모든 가능한 경로에서 `fut`에 대한 `get()`이나 `wait()` 호출이 일어난다는 보장이 없을 수 있으므로, `f()`가 반드시 실행될 것인지 예측하는 것이 불가능할 수도 있다.
+
+기본 실행 정책 스케줄링 유연성이 `thread_local` 변수들의 사용과는 잘 맞지 않는 경우도 있다. `f()`에 스레드 지역 저장소(TLS: Thread-Local Storage)를 읽거나 쓰는 코드가 있다고 할 때, 이 코드가 어떤 스레드의 지역 변수에 접근할지 예측할 수 없기 때문이다.
+
+지연된 작업(deffered task)에 `wait_for()`나 `wait_until()`을 호출하면 `std::future_status::deferred`라는 값이 반환되기 때문에, 언젠가는 끝날 것처럼 보이는 다음 루프가 실제로는 무한히 수행될 수도 있다.
+
+```cpp
+using namespace std::literals;      // for C++14 duration suffixes; see Item 34
+
+void f() {                          // f sleeps for 1 second, then returns
+  std::this_thread::sleep_for(1s);
+}
+
+auto fut = std::async(f);           // run f asynchronously (conceptually)
+
+while (fut.wait_for(100ms) !=       // loop until f has finished running...
+       std::future_status::ready)   // which may never happen!
+{ 
+  ...
+}
+```
+
+이러한 문제는 `std::async` 호출이 돌려주는 `future` 객체를 이용해 해당 작업(task)가 지연되었는지 확인하고, 지연되었다면 타임아웃 기반 루프에 진입하지 않도록 하여 해결할 수 있다.
+
+```cpp
+if (fut.wait_for(0s) ==             // if task is deferred...
+    std::future_status::deferred)
+{
+                  // ...use wait or get on fut
+  ...             // to call f synchronously
+
+}
+```
+
+결론은 어떤 작업에 대해 기본 실행 정책과 함께 `std::async`를 사용하는 것은 다음 조건들이 모두 성립할 때만 적합하다는 것이다.
+
+- 작업이 `get()`이나 `wait()`을 호출하는 스레드와 반드시 동기적으로 실행되어야 하는 것은 아니다.
+- 여러 스레드 중 어떤 스레드의 `thread_local` 변수들을 읽고 쓰는지가 중요하지 않다.
+- `std::async`가 돌려준 `future` 객체에 대해 `get()`이나 `wait()`이 반드시 호출된다는 보장이 있거나 작업이 전혀 실행되지 않아도 된다.
+- 작업이 지연 상태일 수도 있다는 점이 `wait_for()`나 `wait_until()`을 사용하는 코드에 반영되어 있다.
+
+이 조건이 성립하지 않는다면 `std::async`가 작업을 비동기적으로 실행되도록 강제할 필요가 있다. `std::launch::async`를 인수로 지정하는 것이다. `std::launch::async`를 명시적으로 지정하지 않도록 다음과 같은 템플릿을 만들 수도 있다.
+
+```cpp
+template<typename F, typename... Ts>
+inline
+auto // C++14 
+reallyAsync(F&& f, Ts&&... params)
+{
+  return std::async(std::launch::async,
+                    std::forward<F>(f),
+                    std::forward<Ts>(params)...);
+}
+```
+
+### Item 37: Make std::threads unjoinable on all paths
+
+모든 `std::thread` 객체는 합류 가능(joinable) 상태이거나 합류 불가능(unjoinable) 상태이다.
+
+합류가 불가능한 `std::thread`는 다음과 같은 것들이 있다.
+
+1. 기본 생성된 `std::thread`
+2. 다른 `std::thread` 객체로 이동된 후의 `std::thread` 객체
+3. `join()`에 의해 합류된 `std::thread`
+4. `detach()`에 의해 탈착된 `std::thread`
+
+`std::thread`의 합류 가능성이 중요한 이유 중 하나는, 만일 합류 가능한 스레드의 소멸자가 호출되면 프로그램이 종료된다는 것이다.
+
+```cpp
+constexpr auto tenMillion = 10000000;           // see Item 15 for constexpr
+   
+bool doWork(std::function<bool(int)> filter,    // returns whether computation was performed
+            int maxVal = tenMillion)            // see Item 2 for std::function
+{
+
+  std::vector<int> goodVals;                  // values that satisfy filter
+
+  std::thread t([&filter, maxVal, &goodVals]  // populate
+                {                             // goodVals
+                  for (auto i = 0; i <= maxVal; ++i)
+                    { if (filter(i)) goodVals.push_back(i); }
+                });
+  
+  auto nh = t.native_handle();    // use t's native handle to set t's priority
+  
+  ...
+  
+  if (conditionsAreSatisfied()) { 
+    t.join();                       // let t finish
+    performComputation(goodVals); 
+    return true;                    // computation was performed
+  }
+  return false;                     // computation was not performed
+}
+```
+
+`conditionsAreSatisfied()`가 `true`를 돌려주면 문제가 없지만, `false`를 돌려주거나 예외를 던지면 실행의 흐름이 `doWork()` 끝에 도달해 `std::thread` 객체 `t`의 소멸자가 호출되는데, 문제는 이 `t`가 여전히 합류 가능한 상태라는 것이다. 때문에 프로그램 실행이 종료된다.
+
+`std::thread`의 소멸자가 이렇게 행동하는 데에는 이유가 있다.
+
+1. **An implicit join.** `std::thread`의 소멸자가 비동기 기본 실행 스레드의 완료를 기다리는 것이다. 이는 실제로 추적하기 어려운 퍼포먼스 이상(performance anomaly)들을 나타날 수 있다.
+2. **An implicit detach.** `std::thread` 소멸자가 `std::thread` 객체와 기본 실행 스레드 사이 연결을 끊게 하는 것이다. 이는 더 심각하다. 위 예에서 `goodVals`는 지역 변수인데, 람다 참조에 의해 캡처되어 자신의 본문에서 수정한다. 만약 `conditionsAreSatisfied()`가 `false`를 돌려주어 `doWork()`가 반환되면 지역 변수들이 파괴되지만, 해당 스레드는 `doWork()` 호출 지점에서 계속 실행된다. 만약 다음 호출될 함수가 `f()`라면 `goodVals`는 `f()` 스택 프레임에 있을 것이며, `push_back()` 호출은 `f()` 스택 프레임에 있는 메모리 내용이 갑자기 변하는 기현상이 발생하게 된다.
+
+따라서 `std::thread` 객체를 사용할 때 그 객체가 정의된 범위 바깥의 모든 경로에서 합류 불가능하게 만드는 것은 프로그래머의 책임이다.
+
+한 범위 바깥으로 나가는 모든 경로에서 어떤 동작이 반드시 수행되어야 할 때 흔히 사용하는 접근방식은, 그 동작을 지역 객체 소멸자 안에 넣는 것이다. 이런 객체를 RAII(Resource Acquisition Is Initialize) 객체라 한다. `std::thread`에 대해서도 이런 접근방식을 사용해 스레드가 합류 가능 또는 불가능하도록 만들 수 있다.
+
+### Item 38: Be aware of varying thread handle destructor behavior
+
+합류 가능한 `std::thread`는 기본 시스템 스레드에 대응된다. 이와 비슷하게 지연되지 않은 작업(task)도 시스템 스레드에 대응된다. 따라서 `std::thread` 객체와 `future` 객체 모두 시스템 스레드에 대한 핸들이라 할 수 있다. 
+
+`std::thread`와 `future` 객체의 소멸자들은 다르게 행동한다. 합류 가능한 `std::thread`를 파괴하면 프로그램이 종료되나, `future` 객체의 소멸자는 어떨때는 마치 암묵적으로 `join()`을 수행한 결과를 내고, 어떨 때는 암묵적으로 `detach()`를 수행한 결과를 낸다.
+
+`future` 객체는 피호출자가 결과를 호출자에게 전송하는 통신 채널의 끝이다. 피호출자의 결과를 `std::promise`나 `std::future`에 저장할 수 없으므로, 둘 다 바깥에 있는 장소에 결과를 담아야 한다. 이 장소가 바로 **공유 상태(shared state)** 다.
+
+![shared state](images/shared_state.png)
+
+이런 공유 상태가 중요한 것은, `future` 객체 소멸자의 행동을 그 `future` 객체와 연관된 공유 상태가 결정하기 때문이다.
+
+- `std::async`를 통해 시작된 지연 작업에 대한 공유 상태를 참조하는 마지막 `future` 객체의 소멸자는 작업이 완료될 때까지 차단된다.
+- 다른 모든 `future` 객체의 소멸자는 그냥 해당 `future` 객체를 파괴한다.
+
+정상 행동(`future` 객체의 소멸자가 `future` 객체를 파괴하는 것)에 대한 예외는 다음 조건들을 모두 만족하는 `future` 객체에 대해서 일어난다.
+
+- `future` 객체가 `std::async` 호출에 의해 생성된 공유 상태를 참조한다.
+- 작업의 실행 정책이 `std::launch::async`이다.
+- `future` 객체가 공유 상태를 참조하는 마지막 `future` 객체이다. `std::future`의 경우 이 조건이 항상 성립하며, `std::shared_future`의 경우, `future` 객체가 파괴되는 동안 같은 공유 상태를 다른 `std::shared_future`가 참조하고 있다면, 파괴되는 `future` 객체는 정상 행동을 따른다.
+
+이 모든 조건이 성립할 때 `future` 객체의 소멸자는 비동기적으로 실행되는 작업이 완료될 때까지 소멸자의 실행이 블로킹된다는 것이다. 즉, `std::async`로 생성한 작업을 실행하는 스레드에 대해 암묵적 `join()`을 호출하는 것이다.
+
+소멸자의 특별한 행동은 공유 상태가 `std::async` 호출에서 비롯된 경우에만 일어날 수 있다. 그러나 이외의 여러 원인으로도 공유 상태가 생성될 수 있다. 그 중 하나가 `std::packaged_task`다. `std::packaged_task` 객체는 주어진 함수를 비동기적으로 실행할 수 있도록 '포장'하는데, 포장된 함수의 실행 결과는 공유 상태에 저장된다. 그 공유 상태를 참조하는 미래 객체를 얻으려면 `std::packaged_task`의 `get_future()` 함수를 호출하면 된다. 이 경우 `future` 객체가 `std::async` 호출로 만들어진 공유 상태를 참조하지 않으므로, 해당 소멸자는 정상적으로 행동한다.
+
+### Item 39: Consider void futures for one-shot event communication
+
+스레드 간 통신을 처리하는 방법 중 하나는 조건 변수(condition variable)을 사용하는 것이다. 조건을 검출하는 작업을 검출 작업(detecting task)라 부르고, 그 조건에 반응하는 작업을 반응 작업(reacting task)라 부르기로 할 때, 반응 작업은 하나의 조건 변수를 기다리고, 검출 작업은 이벤트가 발생하면 그 조건 변수를 통지하는 방식이다.
+
+```cpp
+std::condition_variable cv; // condvar for event
+std::mutex m;               // mutex for use with cv
+```
+
+```cpp
+... // detect event
+cv.notify_one(); // tell reacting task
+```
+
+이벤트 발생을 알려줄 반응 작업이 여러 개라면 `notify_all()` 사용이 적합하다. 반응 작업의 경우 조건 변수에 대해 `wait()`을 호출하기 전 먼저 `std::unique_lock` 객체를 통해 뮤텍스를 잠가야 한다.
+
+```cpp
+...                                     // prepare to react
+{                                       // open critical section
+  std::unique_lock<std::mutex> lk(m);   // lock mutex
+  cv.wait(lk);                          // wait for notify; this isn't correct!
+  ...                                   // react to event (m is locked)
+}                                       // close crit. section; unlock m via lk's dtor 
+...                                     // continue reacting (m now unlocked)
+```
+
+이 코드에서 처리해야 할 문제점이 있다.
+
+1. **만일 반응 작업이 `wait()`을 실행하기 전 검출 작업이 조건 변수를 먼저 통지하면 반응 작업이 멈추게 된다(hang).**
+2. **`wait()` 호출문은 가짜 기상(wakeup)을 고려하지 않는다.** 조건 변수를 기다리는 코드가 조건 변수가 노티하지 않았는데 깨어날 수 있는 것은 스레드 적용 API들에서 흔히 있는 일이다. 이런 일을 가짜 기상이라고 한다. 이를 제대로 처리하려면 기다리던 조건이 실제로 발생했는지 확인해야 하며, 기상 후 먼저 확인해야 한다.
+    
+    ```cpp
+    cv.wait(lk,
+      []{ return whether the event has occurred; });
+    ```
+
+`bool` 플래그를 추가하여 이벤트 발생을 검출할 수 있을 것이다. 반응 스레드에서는 이 플래그를 폴링한다. 플래그가 설정되어 있으면 기다리던 이벤트가 발생했다는 뜻이다. 그러나 폴링 비용이 단점이다.
+
+조건 변수와 플래그를 같이 사용한다고 하면 가짜 기상 문제와 폴링 비용은 줄일 수 있지만, 조건 변수를 노티해야 할 뿐만 아니라 `bool` 플래그도 설정해야 한다. 반응 작업에서는 이 `bool` 플래그를 점검해야 한다. 즉, 검출 작업에서 이벤트가 발생했음을 플래그를 설정해 반응 작업에 알려주지만, 반응 작업이 그 플래그를 점검하게 하려면 먼저 조건 변수를 노티해 반응 작업을 깨워야 한다.
+
+조건 변수와 뮤텍스, 플래그를 사용할 필요 없는 한 가지 대안은, 검출 작업이 설정한 `future` 객체를 반응 작업이 기다리게 하는 것이다. 전송 단자가 `std::promise`이고 수신 단자가 `future`인 객체를 사용할 수 있다. 
+
+검출 작업에는 `std::promise` 객체를 하나 두고, 반응 작업에는 이에 대응되는 `future` 객체 하나를 둔다. 기다리는 이벤트가 발생했음을 인식하면 검출 작업은 자신의 `std::promise`를 설정한다. 그 동안 반응 작업은 자신의 `future` 객체에 대해 `wait()`을 호출한 상태이다. `wait()` 호출은 `std::promise`가 설정될 때까지 차단된다.
+
+그런데 `std::promise`와 `future` 객체는 모두 타입 매개변수를 요구하는 템플릿이다. 이 타입 매개변수는 통신 채널을 통해 전송할 자료 타입을 뜻한다. 그러나 지금은 전송할 자료가 없다. 따라서 검출 작업에서는 `std::promise<void>`, 반응 작업에서는 `std::future<void>`나 `std::shared_future<void>`를 사용하면 된다.
+
+다음과 같은 `std::promise` 객체가 있을 때
+
+```cpp
+std::promise<void> p;
+```
+
+검출 작업의 코드는 다음과 같으며며
+
+```cpp
+...             // detect event
+
+p.set_value();  // tell reacting task
+```
+
+반응 작업에 코드는 다음과 같다.
+
+```cpp
+...                     // prepare to react
+
+p.get_future().wait();  // wait on future corresponding to p
+
+...                     // react to event
+```
+
+이 설계는 뮤텍스가 필요하지 않으며, 반응 작업이 `wait()`로 대기하기 전 검출 작업이 자신의 `std::promise`를 설정해도 동작하며, 가짜 기상(wakeup)도 없다. 
+
+이러한 방식을 사용하게 되면 `std::promise`와 `future` 객체 사이 공유 상태가 있게 되며, 대체로 이 공유 상태는 동적으로 할당된다. 따라서 이 설계는 힙 기반 할당 및 해제 비용을 유발한다.
+
+또한 `std::promise`를 한 번만 설정할 수 있다. 즉, `std::promise`와 `future` 객체 사이 통신 채널은 여러 번 되풀이해 사용할 수 없는 단발성(one-shot) 메커니즘이다.
+
+결과적으로 스레드를 한 번만 중지(suspend)한다면, `void`, `future` 객체를 이용하는 설계는 합리적인 선택이다.
+
