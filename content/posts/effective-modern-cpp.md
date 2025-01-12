@@ -2328,3 +2328,243 @@ p.get_future().wait();  // wait on future corresponding to p
 
 결과적으로 스레드를 한 번만 중지(suspend)한다면, `void`, `future` 객체를 이용하는 설계는 합리적인 선택이다.
 
+### Item 40: Use std::atomic for concurrency, volatile for special memory
+
+`std::atomic` 객체가 생성되면 이 객체에 대한 연산은 마치 뮤텍스로 보호되는 임계 영역(critical section) 안에서 수행되는 것처럼 작동한다. 그러나 이러한 원자적 연산은 실제로 뮤텍스를 사용할 때보다 좀 더 효율적인 기계어 명령들로 구현되는 것이 보통이다.
+
+```cpp
+std::atomic<int> ai(0); // initialize ai to 0
+ai = 10;                // atomically set ai to 10
+std::cout << ai;        // atomically read ai's value
+++ai;                   // atomically increment ai to 11
+--ai;                   // atomically decrement ai to 10
+```
+
+이 문장들을 실행하는 동안 `ai`를 읽는 다른 스레드들이 보게 되는 값은 0이나 10, 11 뿐이다. 
+
+예제에서 마지막 두 문장의 행동(`++ai`, `--ai`)를 주목할 필요가 있다. 증가 연산이나 감소 연산은 RMW(Read-Modify-Write) 연산이지만, 각각 원자적으로 수행된다. 따라서 `std::atomic` 객체가 생성되면, 그 객체에 대한 모든 멤버 함수는 RMW 연산들을 수행하는 멤버 함수도 다른 스레드들에게 반드시 원자적으로 보이게 된다.
+
+반면 `volatile`을 사용하는 코드는 다중 스레드 컨텍스트에서 거의 아무것도 보장하지 않는다.
+
+```cpp
+volatile int vi(0);     // initialize vi to 0
+vi = 10;                // set vi to 10
+std::cout << vi;        // read vi's value
+++vi;                   // increment vi to 11  
+--vi;                   // decrement vi to 10
+```
+
+이 코드 실행 중 `vi`의 값을 다른 스레드들이 읽는다면, 그 스레드들은 어떤 값이라도 볼 수 있다. 이런 코드는 의도되지 않은 행동을 유발한다(data race). 
+
+```cpp
+std::atomic<int> ac(0); // "atomic counter"
+volatile int vc(0);     // "volatile counter"
+
+/*-----  Thread 1  ----- */     /*-------  Thread 2  ------- */
+           ++ac;                            ++ac; 
+           ++vc;                            ++vc;
+```
+
+두 스레드의 실행이 끝난 후 `ac`의 값은 반드시 2이다. 그러나 `vc`의 값은 2일수도 있고 아닐수도 있다. 해당 연산이 원자적으로 실행되지 않았기 때문이다. 
+
+필요한 값이 준비되었음을 알려주는 코드가 있다고 하자. 
+
+```cpp
+std::atomic<bool> valAvailable(false);
+auto imptValue = computeImportantValue();  // compute value
+valAvailable = true;                       // tell other task it's available
+```
+
+컴파일러는 두 할당문을 단지 서로 독립적인 변수에 대한 두 할당으로 볼 뿐이다. 일반적인 규칙으로 이런 무관한 할당들의 순서를 컴파일러가 임의로 바꾸는 것은 적법하다. 순서를 바꾸면 코드가 더 빨리 실행되는 경우가 있기 때문이다.
+
+그러나 `std::atomic`을 사용하면 코드 순서 재배치에 대한 제약들이 생기며, 이런 제약 중 하나는 소스 코드에서 `std::atomic` 변수를 기록하는 문장 이전에 나온 그 어떤 코드도 그 문장 이후에 실행되지 않아야 한다는 것이다. `volatile`은 이런 코드 재배치 제약이 가해지지 않는다.
+
+다음 코드는 컴파일러가 둘째 줄 `y`에 대한 할당문을 제거해 오브젝트 코드를 최적화할 수 있다.
+
+```cpp
+auto y = x;           // read x
+y = x;                // read x again
+```
+
+이런 최적화는 메모리가 보통의 방식으로 행동할 때에만 유효하다. 그러나 특별한 메모리는 이런 식으로 행동하지 않는다. 특별한 메모리 중 흔히 접하는 것은 메모리 대응 입출력(memory-mapped I/O)에 쓰이는 메모리일 것이다. 만일 `x`가 온도계가 보고하는 값이라면, 두 번째 `x` 읽기는 불필요하지 않다. 첫 번째 읽기와 두 번째 읽기 사이 온도가 변했을 수 있기 때문이다.
+
+따라서 `volatile`은 해당 코드가 특별한 메모리를 다룬다는 점을 컴파일러에 알려주는 수단이다. 즉, 컴파일러는 "이 메모리에 대한 연산들에는 그 어떤 최적화도 수행하지 말라"는 지시라 생각한다. 만약 `x`가 특별한 메모리에 해당한다면 `volatile`로 선언해야 한다.
+
+### Item 41: Consider pass by value for copyable parameters that are cheap to move and always copied
+
+`Widget`의 `addName()` 함수의 구현의 방식 세 가지를 보자.
+
+```cpp
+class Widget {                              // Approach 1:
+public:                                     // overload for
+  void addName(const std::string& newName)  // lvalues and rvalues
+  { names.push_back(newName); }
+  void addName(std::string&& newName)
+  { names.push_back(std::move(newName)); } 
+  ...
+private:
+  std::vector<std::string> names;
+};
+
+class Widget {                              // Approach 2:
+public:                                     // use universal reference
+  template<typename T>
+  void addName(T&& newName)
+  { names.push_back(std::forward<T>(newName)); } 
+  ...
+};
+
+class Widget {                              // Approach 3:
+public:                                     // pass by value
+  void addName(std::string newName)
+  { names.push_back(std::move(newName)); } 
+  ...
+};
+```
+
+- 오버로딩 구현
+    - 같은 일을 하는 함수 두 개를 작성해야 한다. 오브젝트 코드에 실제 두 개의 함수가 존재하게 된다.
+    - 왼값의 경우 복사 1회
+    - 오른값의 경우 이동 1회
+- 보편 참조
+    - 보편 참조로는 전달할 수 없는 타입들(Item 30)이 있고, 클라이언트가 부적절한 타입 인수를 전달하면 컴파일러가 난해한 오류 메시지를 출력할 수 있다(Item 27).
+    - 왼값의 경우 복사 1회
+    - 오른값의 경우 이동 1회
+- 값 전달  
+    - `newName`은 인수가 왼값일 때에만 복사, 오른값일 때에는 이동 생성에 의해 생성된다.
+    - 왼값의 경우 복사 1회 + 이동 1회
+    - 오른값의 경우 이동 2회
+
+1. 값 전달을 사용하라가 아닌 **고려하라**는 것일 뿐이다.
+2. **복사 가능 매개변수**에 대해서만 값 전달을 고려해야 한다. 복사할 수 없는 매개변수느 반드시 이동 전용 타입일 것이다. 이동 전용 타입은 왼값 인수를 위한 오버로딩을 따로 둘 필요가 없다. 이런 타입에서 왼값의 복사는 복사 생성자 호출로 이어지는데, 이동 전용 타입에서는 복사 생성자가 비활성화되어 있기 때문이다. 따라서 오른값 인수를 위한 오버로딩만 제공하면 되며, 이 경우 오른값 참조를 받는 버전 하나만 있으면 된다.
+3. 값 전달은 **이동이 저렴한** 매개변수에 대해서만 고려해야 한다. 이동이 저렴한 경우 이동이 한 번 더 일어나도 큰 문제가 되지 않는다. 그러나 비용이 크다면, 이는 불필요한 복사를 수행하는 것과 비슷하다.
+4. 값 전달은 **항상 복사되는 매개변수**에 대해서만 고려해야 한다. `addName()`이 매개변수 `names` 컨테이너로 복사하기 전 이름이 길이를 점검한다면, `names`에 아무것도 추가하지 않는 경우에도 `newName`의 생성과 파괴 비용을 유발한다.
+    
+    ```cpp
+    class Widget {
+    public:
+      void addName(std::string newName)
+      {
+        if ((newName.length() >= minLen) &&
+            (newName.length() <= maxLen))
+          {
+            names.push_back(std::move(newName));
+          } 
+      }
+      ...
+    private:
+      std::vector<std::string> names;
+    };
+    ```
+
+이동이 저렴하더라도 값 전달이 적합하지 않은 경우가 있다. 이는 함수가 매개변수를 복사하는 방식이 두 가지이기 때문이다.
+
+1. 생성을 통한 복사
+2. 할당을 통한 복사
+
+패스워드를 나타내는 `Password` 클래스가 있다고 하자.
+
+```cpp
+class Password {
+public:
+  explicit Password(std::string pwd)    // pass by value construct text
+  : text(std::move(pwd)) {}
+  void changeTo(std::string newPwd)     // pass by value assign text
+  { text = std::move(newPwd); }
+  ...
+private:
+  std::string text;                     // text of password
+};
+```
+
+다음 코드는 생성자에서 값 전달이 쓰이므로 `std::string` 이동 생성 1회의 비용이 발생한다. 
+
+```cpp
+std::string initPwd("Supercalifragilisticexpialidocious");
+Password p(initPwd);
+```
+
+패스워드를 바꾸기 위해 다음 코드를 추가했다고 하자.
+
+```cpp
+std::string newPassword = "Beware the Jabberwock";
+p.changeTo(newPassword);
+```
+
+`changeTo()`가 매개변수 `newPwd`를 복사하려면 할당을 수행해야 하며, 이러면 함수의 값 전달 접근방식 때문에 비용이 커질 수 있다. `changeTo()`에 전달되는 인수는 왼값이다. 따라서 매개변수 `newPwd`가 생성될 때 호출되는 것은 `std::string`의 복사 생성자다. 이 생성자는 새로운 패스워드를 담을 메모리를 할당한다. 그 다음 `newPwd`가 `text`로 이동 할당되는데, 이에 의해 `text`가 차지하고 있던 메모리가 해제된다. 즉, 새 패스워드를 담을 메모리 할당과 기존 메모리가 차지하던 메모리를 해제하는 동적 메모리 관리 동작이 두 번 일어난다.
+
+기존 패스워드가 새로운 패스워드보다 길다고 할 때, 메모리를 할당하거나 해제할 필요가 없다. 오버로딩 접근방식을 사용하면 할당과 해제를 생략할 수 있다.
+
+```cpp
+void changeTo(const std::string& newPwd)  // the overload for lvalues
+{    
+  text = newPwd;                          // can reuse text's memory if
+}                                         // text.capacity() >= newPwd.size()
+```
+
+이처럼 매개변수가 할당으로 복사될 때는 값 전달 접근방식 비용 분석이 복잡해진다. 따라서 매개변수 타입에 대해 값 전달 방식이 충분히 효율적인 코드를 산출하는 것이 확실치 않다면 오버로딩이나 보편 참조를 사용하자.
+
+또한 값 전달에서는 잘림 문제(slicing problem)이 발생할 수 있다. 함수가 기반 클래스 타입이나 이로부터 파생된 임의의 타입의 매개변수를 받는 경우 그 매개변수를 값 전달 방식으로 선언하지 않는 것이 좋다. 만일 이런 매개변수를 값 전달로 선언하면, 파생 타입의 객체가 전달되었을 때 그 객체의 파생 클래스 부분이 잘려 나가기(slice off) 때문이다.
+
+### Item 42: Consider emplacement instead of insertion
+
+```cpp
+std::vector<std::string> vs;    // container of std::string 
+vs.push_back("xyzzy");          // add string literal
+```
+
+`std::vector`의 `push_back()`은 다음과 같다.
+
+```cpp
+template <class T,                          // from the C++11 Standard
+          class Allocator = allocator<T>>
+class vector {
+public:
+  ...
+  void push_back(const T& x);   // insert lvalue
+  void push_back(T&& x);        // insert rvalue
+  ...
+};
+```
+
+`push_back()`으로 넘겨주는 것은 문자열 리터럴이다. 따라서 컴파일러는 인수의 타입과 `push_back()`이 받는 매개변수 타입 불일치를 해소하기 위해 다음과 같은 코드를 산출한다.
+
+1. 문자열 리터럴 "xyzzy"로부터 임시 `std::string` 객체가 생성된다. 이 객체를 *temp*라 하자. *temp*의 생성이 첫 번째 `std::string`의 생성이다.
+2. *temp*가 `push_back()`의 오른값 오버로딩으로 전달된다. *temp*는 오른값 참조 매개변수 `x`에 바인딩된다. 그 다음 `std::vector`를 위한 메모리 안에서 `x`의 복사본이 생성된다. 이 생성이 두 번째 `std::string`의 생성이다.
+3. `push_back()`이 반환된 즉시 *temp*가 파괴되어 `std::string` 소멸자가 실행된다. 
+
+두 번째에서 `std::vector` 안에 `std::string` 객체를 생성하는 코드에 문자열 리터럴을 직접 전달할 수 있다면 *temp*의 생성과 파괴를 피할 수 있을 것이다.
+
+지금 필요한 것은 `emplace_back()`이다. `emplace_back()`은 주어진 인수를 이용해 `std::vector` 안에서 직접 `std::string`을 생성한다. 임시 객체는 관여하지 않는다.
+
+```cpp
+vs.emplace_back("xyzzy");   // construct std::string inside 
+                            // vs directly from "xyzzy"
+```
+
+이런 생성 삽입(emplacement) 함수들이 삽입 함수들보다 성능이 뛰어난 것은 인터페이스가 더 유연하기 때문이다. 삽입 함수들은 삽입할 객체를 받지만, 생성 삽입 함수는 삽입할 객체의 생성자를 위한 인수들을 받는다. 따라서 생성 삽입 함수들은 삽입 함수에서 꼭 필요할 수 있는 임시 객체의 생성과 파괴가 없다.
+
+다음 세 조건이 모두 성립하면 거의 항상 생성 삽입의 성능이 더 좋다.
+
+1. 추가할 값이 컨테이너에 할당되는 것이 아니라 컨테이너 안에 생성된다.
+2. 추가할 인수 타입(들)이 컨테이너가 담는 타입과 다르다.
+3. 컨테이너가 기존 값과의 중복 때문에 새 값을 거부할 우려가 별로 없다.
+
+다음과 같이 비슷한 초기화 구문이 다른 결과를 낸다.
+
+```cpp
+std::regex r1 = nullptr;  // error! won't compile 
+std::regex r2(nullptr);   // compiles
+```
+
+`r1`을 초기화하는 데 쓰인 구문은 복사 초기화이다. 반면 `r2`를 초기화하는 데 쓰인 구문은 직접 초기화이다. `explicit` 생성자에서는 복사 초기화를 사용할 수 없지만 직접 초기화는 사용할 수 있다. 따라서 `r2` 초기화 문장은 컴파일된다.
+
+생성 삽입 함수는 직접 초기화를 사용한다. 따라서 `explicit` 생성자를 지원한다. 삽입 함수는 복사 생성자를 사용하므로 `explicit` 생성자를 지원하지 않는다.
+
+```cpp
+std::vector<std::regex> regexes;
+regexes.emplace_back(nullptr); // compiles. Direct init permits use of explicit std::regex ctor taking a pointer
+regexes.push_back(nullptr); // error! copy init forbids use of that ctor
+```
+
+즉, 생성 삽입 함수는 삽입 함수라면 거부당했을 타입 변환들을 수행할 수도 있다. 
