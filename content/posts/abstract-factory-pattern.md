@@ -135,7 +135,3 @@ protected:
     Spell* CastSpell() const;
 };
 ```
-
-## Related Patterns
-
-추상 팩토리 패턴은 팩토리 메서드 패턴을 이용해 구현되는데, 프로토타입 패턴을 이용할 때도 있다. 구체 팩토리는 싱글톤 패턴을 이용해 구현되는 경우가 많다.
