@@ -230,3 +230,5 @@ void PMWindowImp::DeviceRect(Coord xO, Coord yO, Coord xl, Coord yl) {
         }
 }
 ```
+
+즉 `WindowImp` 인터페이스의 구체적인 구현을 각 플랫폼별 시스템에 맞춰 구현할 수 있게 된다.
