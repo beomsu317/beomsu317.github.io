@@ -149,8 +149,6 @@ void IconWindow::DrawContents() {
 }
 ```
 
-이외에도 다양한 `Window` 정의가 가능하다. 다이얼로그를 만들 때 윈도우와 교류가 필요하기 때문에 윈도우에 대한 포인터를 갖고 있어야 하는 `PaletteWindow`라든가, `IconWindow`이면서 배열이 가능한 `IconDockWindow` 등을 `Window`를 상속받아 확장할 수 있다.
-
 `Window` 연산들은 `WindowImp` 인터페이스에 따라 구현되는데, `Window`에 정의된 서비스 개념의 `DrawRect()`는 두 개의 `Point` 매개변수에서 네 개의 좌표를 구할 수 있다. `WindowImp`에 정의된 `DeviceRect()` 연산을 호출해 윈도우에 사각형을 그린다.
 
 ```cpp
