@@ -1,6 +1,6 @@
 ---
 title: "Facade Pattern"
-date: "2025-01-28"
+date: "2025-01-30"
 author: "Beomsu Lee"
 tags: ["c++", "design pattern", "structural pattern"]
 ---
