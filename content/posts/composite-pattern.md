@@ -1,5 +1,5 @@
 ---
-title: "Bridge Pattern"
+title: "Composite Pattern"
 date: "2025-01-28"
 author: "Beomsu Lee"
 tags: ["c++", "design pattern", "structural pattern"]
