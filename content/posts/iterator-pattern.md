@@ -276,7 +276,7 @@ IteratorPtr<Employee*> iterator(employees->CreateIterator());
 PrintEmployees(*iterator);
 ```
 
-### 내부 ListIterator
+### 각 원소에서 수행할 연산 전달
 
 내부 반복자 역할을 하는 `ListIterator` 클래스를 반복 제어를 직접 수행하며, 리스트의 각 원소에서 특정 연산을 실행하는 역할을 한다. 여기서 각 원소에서 수행할 연산을 어떻게 전달한 것인지에 대한 문제가 발생한다.
 
