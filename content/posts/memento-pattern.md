@@ -5,7 +5,7 @@ author: "Beomsu Lee"
 tags: ["c++", "design pattern", "behavioral pattern"]
 ---
 
-
+메멘토 패턴은 객체의 상태를 저장하고, 그 상태를 복원할 수 있도록 하는 패턴이다. 객체의 이전 상태를 추적하고 복원할 때 유용하다.
 
 ## Motivation
 
