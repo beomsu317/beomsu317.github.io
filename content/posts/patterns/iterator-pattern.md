@@ -21,7 +21,7 @@ tags: ["c++", "design pattern", "behavioral pattern"]
 
 ## Structure
 
-![iterator pattern structure](images/iterator_pattern_structure.png)
+![iterator pattern structure](images/patterns/iterator_pattern_structure.png)
 
 - `Iterator`: 원소를 접근하고 순회하는 데 필요한 인터페이스를 제공한다.
 - `ConcreteIterator`: `Iterator`에 정의된 인터페이스를 구현하는 클래스로, 순회 과정 중 집합 객체 내에서 현재 위치를 기억한다.

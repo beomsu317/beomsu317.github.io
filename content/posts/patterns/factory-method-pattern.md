@@ -21,7 +21,7 @@ tags: ["c++", "design pattern", "creational pattern"]
 
 ## Structure
 
-![factory method pattern structure](images/factory_method_pattern_structure.png)
+![factory method pattern structure](images/patterns/factory_method_pattern_structure.png)
 
 - `Product`: 팩토리 메서드가 생성하는 객체의 인터페이스를 정의
 - `ConcreteProduct`: `Product` 클래스에 정의된 인터페이스를 실제로 구현

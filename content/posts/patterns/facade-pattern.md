@@ -15,7 +15,7 @@ tags: ["c++", "design pattern", "structural pattern"]
 
 퍼사드 패턴을 사용해 시스템의 복잡한 부분을 숨기고, 애플리케이션이 필요한 고수준 기능만 사용할 수 있게 한다. 결과적으로 서브시스템들 사이 의사소통 및 종속성을 최소화할 수 있다.
 
-![using facade pattern](images/using_facade_pattern.png)
+![using facade pattern](images/patterns/using_facade_pattern.png)
 
 ## Applicability
 
@@ -25,7 +25,7 @@ tags: ["c++", "design pattern", "structural pattern"]
 
 ## Structure
 
-![facade pattern structure](images/facade_pattern_structure.png)
+![facade pattern structure](images/patterns/facade_pattern_structure.png)
 
 - `Facade`: 단순하고 일관된 통합 인터페이스를 제공하며, 서브시스템을 구성하는 어떤 클래스가 어떤 요청을 처리해야 하는지 알고 있으며, 사용자의 요청을 해당 서브시스템 객체에 전달한다.
 - `subsystem classes`: 서브시템의 기능을 구현하고, `Facade` 객체로 할당된 작업을 실제로 처리하지만 `Facade`에 대한 아무런 정보가 없다. 즉, 이들에 대한 어떤 참조자도 가지고 있지 않는다.

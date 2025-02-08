@@ -25,13 +25,13 @@ tags: ["c++", "design pattern", "structural pattern"]
 
 Class Adapter는 다중 상속을 활용해 한 인터페이스를 다른 인터페이스로 적응시킨다.
 
-![class adapter structure](images/class_adapter_structure.png)
+![class adapter structure](images/patterns/class_adapter_structure.png)
 
 ### Object Adapter
 
 Object Adapter는 객체 합성을 사용해 이루어진다.
 
-![object adapter structure](images/object_adapter_structure.png)
+![object adapter structure](images/patterns/object_adapter_structure.png)
 
 
 - `Target`: 사용자가 사용할 인터페이스를 정의하는 클래스

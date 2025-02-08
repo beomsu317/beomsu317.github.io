@@ -20,7 +20,7 @@ tags: ["c++", "design pattern", "behavioral pattern"]
 
 ## Structure
 
-![state pattern structure](images/state_pattern_structure.png)
+![state pattern structure](images/patterns/state_pattern_structure.png)
 
 - `Context`: 상태를 관리하는 클래스이다. 현재 상태를 나타내는 객체를 유지하며, 상태를 변경학고 상태에 맞는 동작을 처리한다.
 - `State`: 상태에 대한 인터페이스로, 상태별로 처리해야 할 행동을 정의한다.

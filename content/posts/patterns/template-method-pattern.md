@@ -28,7 +28,7 @@ tags: ["c++", "design pattern", "behavioral pattern"]
 
 ## Structure
 
-![template method structure](images/template_method_structure.png)
+![template method structure](images/patterns/template_method_structure.png)
 
 - `AbstractClass`: 공통적인 알고리즘의 흐름을 정의한다. 전체 알고리즘을 구성하는 여러 단계 중 일부는 구현을 제공하고, 일부는 서브클래스가 구현하도록 추상메서드로 남겨둔다.
 - `ConcreteClass`: `AbstractClass`가 정의한 알고리즘의 추상 메서드를 구현한다. 즉, 템플릿 메서드에서 호출되ㅓ는 추상 메서드의 실제 동작을 정의한다. 

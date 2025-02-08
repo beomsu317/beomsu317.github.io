@@ -21,7 +21,7 @@ tags: ["c++", "design pattern", "creational pattern"]
 
 ## Structure
 
-![prototype pattern structure](images/prototype_pattern_structure.png)
+![prototype pattern structure](images/patterns/prototype_pattern_structure.png)
 
 - `Prototype`: 자신을 복제하는 데 필요한 인터페이스를 정의
 - `ConcretePrototype`: 자신을 복제하는 연산을 구현

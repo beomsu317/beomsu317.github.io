@@ -20,11 +20,11 @@ tags: ["c++", "design pattern", "structural pattern"]
 
 ## Structure
 
-![composite pattern structure](images/composite_pattern_structure.png)
+![composite pattern structure](images/patterns/composite_pattern_structure.png)
 
 전형적인 컴포지트 객체 구조는 다음과 같다.
 
-![composite object structure](images/composite_object_structure.png)
+![composite object structure](images/patterns/composite_object_structure.png)
 
 - `Component`: 집합 관계에 정의될 모든 객체에 대한 인터페이스를 정의한다. 모든 클래스에 해당하는 인터페이스에 대해서는 공통의 행동을 구현한다. 전체 클래스에 속한 컴포넌트들을 관리하는 데 필요한 인터페이스를 정의한다. 순환 구조에서 컴포넌트들을 포함하는 전체 클래스로 접근하는 데 필요한 인터페이스를 정의하며, 적절하다면 그 인터페이스를 구현한다.
 - `Leaf`: 가장 밑단의 객체, 즉 자식이 없는 객체를 의미한다. 객체 합성에 가장 기본이 되는 객체의 행동을 정의한다.

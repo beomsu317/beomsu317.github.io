@@ -20,7 +20,7 @@ tags: ["c++", "design pattern", "creational pattern"]
 
 ## Structure
 
-![singleton pattern structure](images/singleton_pattern_structure.png)
+![singleton pattern structure](images/patterns/singleton_pattern_structure.png)
 
 - `Singleton`: `Instance()` 연산을 정의하여 유일한 인스턴스로 접근할 수 있도록 함
 

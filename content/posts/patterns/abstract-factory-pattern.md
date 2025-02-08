@@ -22,7 +22,7 @@ tags: ["c++", "design pattern", "creational pattern"]
 
 ## Structure
 
-![abstract factory pattern structure](images/abstract_factory_pattern_structure.png)
+![abstract factory pattern structure](images/patterns/abstract_factory_pattern_structure.png)
 
 - `AbstractFactory`: 개념적 제품에 대한 객체를 생성하는 연산으로 인터페이스를 정의
 - `ConcreteFactory`: 구체적인 제품에 대한 객체를 생성하는 연산을 구현

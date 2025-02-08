@@ -20,7 +20,7 @@ tags: ["c++", "design pattern", "creational pattern"]
 
 ## Structure
 
-![builder pattern structure](images/builder_pattern_structure.png)
+![builder pattern structure](images/patterns/builder_pattern_structure.png)
 
 - `Builder`: `Product` 객체의 일부 요소들을 생성하기 위한 추상 인터페이스를 정의
 - `ConcreteBuilder`: `Builder` 클래스에 정의된 인터페이스를 구현하며, 제품의 부품들을 모아 빌더를 복합
@@ -35,7 +35,7 @@ tags: ["c++", "design pattern", "creational pattern"]
 - `Builder`는 `Director`의 요청을 처리해 제품에 부품을 추가한다.
 - 사용자는 `Builder`에서 제품을 검색한다.
 
-![builder pattern collaborations](images/builder_pattern_collaborations.png)
+![builder pattern collaborations](images/patterns/builder_pattern_collaborations.png)
 
 ## Consequences
 

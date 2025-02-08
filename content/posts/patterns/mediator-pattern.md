@@ -29,13 +29,13 @@ GUI 애플리케이션에 여러 개의 UI 컴포넌트(예: 버튼, 체크박�
 
 ## Structure
 
-![mediator pattern structure](images/mediator_pattern_structure.png)
+![mediator pattern structure](images/patterns/mediator_pattern_structure.png)
 
 - `Mediator`: `Colleague` 객체와 교류하는 데 필요한 인터페이스를 정의한다.
 - `ConcreteMediator`: `Colleague` 객체들을 관리하며, 이들 간 협력 행동을 조정하는 역할을 수행한다.
 - `Colleague` 클래스들: 중재자를 통해 다른 객체들과 통신하는 개별 컴포넌트이다. 이들은 직접적으로 다른 `Colleague` 객체와 상호작용하지 않고, 반드시 `Mediator`를 통해서만 통신한다.
 
-![mediator pattern object structure](images/mediator_pattern_object_structure.png)
+![mediator pattern object structure](images/patterns/mediator_pattern_object_structure.png)
 
 ## Collaborations
 

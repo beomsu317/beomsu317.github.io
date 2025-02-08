@@ -24,7 +24,7 @@ tags: ["c++", "design pattern", "structural pattern"]
 
 ## Structure
 
-![bridge pattern structure](images/bridge_pattern_structure.png)
+![bridge pattern structure](images/patterns/bridge_pattern_structure.png)
 
 - `Abstraction`: 추상적 개념에 대한 인터페이스를 제공하고 객체 구현자에 대한 참조자를 관리한다.
 - `Refined Abstraction`: 추상적 개념에 정의된 인터페이스를 확장한다.

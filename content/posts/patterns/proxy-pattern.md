@@ -22,11 +22,11 @@ tags: ["c++", "design pattern", "structural pattern"]
 
 ## Structure
 
-![proxy pattern structure](images/proxy_pattern_structure.png)
+![proxy pattern structure](images/patterns/proxy_pattern_structure.png)
 
 프로그램 실행 중 프록시 구조를 객체 다이어그램으로 나타내면 다음과 같다.
 
-![proxy structure object diagram](images/proxy_structure_object_diagram.png)
+![proxy structure object diagram](images/patterns/proxy_structure_object_diagram.png)
 
 1. `Proxy`: 실제 참조할 대상에 대한 참조자를 관리한다. `RealSubject`와 `Subject` 인터페이스가 동일하다면 프록시는 `Subject`에 대한 참조자를 갖는다.`Subject`와 동일한 인터페이스를 제공하여 실제 대상을 대체할 수 있어야 한다. 실제 대상에 대한 접근을 제어하고 실제 대상의 생성과 삭제를 책임진다.
     

@@ -23,7 +23,7 @@ tags: ["c++", "design pattern", "behavioral pattern"]
 
 ## Structure
 
-![command pattern structure](images/command_pattern_structure.png)
+![command pattern structure](images/patterns/command_pattern_structure.png)
 
 - `Command`: 연산 수행에 필요한 인터페이스를 선언한다.
 - `ConcreteCommand`: `Command` 인터페이스를 구현한 클래스이다. 실제로 수행할 작업을 구현하고, 해당 작업을 수행할 `Receiver` 객체를 호출한다.
@@ -38,7 +38,7 @@ tags: ["c++", "design pattern", "behavioral pattern"]
 - `Invoker` 클래스는 `Command`에 정의된 `Execute()`를 호출하여 요청을 발생시킨다. 명령어가 취소 가능하다면 `ConcreteCommand`는 이전에 `Execute()` 호출 전 상태의 취소 처리를 위해 저장한다.
 - `ConcreteCommand` 객체는 요청에 대한 연산을 호출한다.
 
-![command pattern collaboration](images/command_pattern_collaboration.png)
+![command pattern collaboration](images/patterns/command_pattern_collaboration.png)
 
 ## Consequences
 

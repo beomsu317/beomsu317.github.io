@@ -21,7 +21,7 @@ tags: ["c++", "design pattern", "behavioral pattern"]
 
 ## Structure
 
-![observer pattern structure](images/observer_pattern_structure.png)
+![observer pattern structure](images/patterns/observer_pattern_structure.png)
 
 - `Subject`: 관찰자 객체들을 관리한다. 주체는 관찰자 객체를 추가하거나 삭제하는 데 필요한 인터페이스를 제공한다.
 - `Observer`: 주체에 생긴 변화에 관심 있는 객체를 갱신하는 데 필요한 인터페이스를 정의한다. 
@@ -33,7 +33,7 @@ tags: ["c++", "design pattern", "behavioral pattern"]
 - `ConcreteSubject`는 `Observer`에게 상태 변경을 통보한다.
 - `ConcreteSubject`에서 변경이 통보된 후, `ConcreteObserver`는 필요한 정보를 `Subject`에 질의하여 얻어온다. 이 정보를 이용해 주체의 상태와 자신의 상태를 동기화한다. 
 
-![observer pattern structure](images/observer_pattern_structure.png)
+![observer pattern structure](images/patterns/observer_pattern_structure.png)
 
 ## Consequences
 

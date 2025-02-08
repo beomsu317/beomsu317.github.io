@@ -22,7 +22,7 @@ tags: ["c++", "design pattern", "behavioral pattern"]
 
 ## Structure
 
-![strategy pattern structure](images/strategy_pattern_structure.png)
+![strategy pattern structure](images/patterns/strategy_pattern_structure.png)
 
 - `Strategy`: 제공하는 모든 알고리즘에 대한 공통의 연산들을 인터페이스로 정의한다.
 - `ConcreteStrategy`: `Strategy` 인터페이스를 실제 알고리즘으로 구현한다.

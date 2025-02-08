@@ -21,11 +21,11 @@ tags: ["c++", "design pattern", "behavioral pattern"]
 
 ## Structure
 
-![chain of responsibility pattern structure](images/chain_of_responsibility_pattern_structure.png)
+![chain of responsibility pattern structure](images/patterns/chain_of_responsibility_pattern_structure.png)
 
 객체 구조는 다음과 같이 보일 수 있다.
 
-![typical object structure](images/typical_object_structure.png)
+![typical object structure](images/patterns/typical_object_structure.png)
 
 - `Handler`: 요청을 처리하는 인터페이스를 정의하고, 후속 처리자(successor)와 연결을 구현한다. 즉, 연결 고리에 연결된 다음 객체에게 다시 메시지를 보낸다.
 - `ConcreteHandler`: 실제로 요청을 처리하는 핸들러이다. 즉, 자신이 처리할 행동이 있으면 처리하고, 그렇지 않으면 후속 처리자에 다시 처리를 요청할 수 있다.

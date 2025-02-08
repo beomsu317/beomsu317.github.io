@@ -20,7 +20,7 @@ tags: ["c++", "design pattern", "behavioral pattern"]
 
 ## Structure
 
-![interpreter pattern structure](images/interpreter_pattern_structure.png)
+![interpreter pattern structure](images/patterns/interpreter_pattern_structure.png)
 
 - `AbstractExpression`: 모든 표현식(`Expression`) 클래스들이 공통으로 가져야 할 인터페이스 역할을 한다. 즉, 추상 구문 트리(Abstract Syntax Tree, AST)를 구성하는 모든 노드들이 반드시 `Interpret()` 연산을 구현하도록 강제한다.
 - `TerminalExpression`: 문법에 정의한 터미널 기호(terminal symbol)에 해당하는 표현을 해석하는 역할을 한다. 터미널 기호란 더 이상 쪼갤 수 없는 기본 단위(숫자, 변수, 상수 등)을 의미한다.

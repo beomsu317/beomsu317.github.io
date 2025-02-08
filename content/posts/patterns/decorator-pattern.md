@@ -21,7 +21,7 @@ tags: ["c++", "design pattern", "structural pattern"]
 
 ## Structure
 
-![decorator pattern structure](images/decorator_pattern_structure.png)
+![decorator pattern structure](images/patterns/decorator_pattern_structure.png)
 
 - `Component`: 동적으로 추가할 기능을 가질 가능성들이 있는 객체에 대한 인터페이스
 - `ConcreteComponent`: 추가적인 기능이 실제 정의되어야 할 필요가 있는 객체

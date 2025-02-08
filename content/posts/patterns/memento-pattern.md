@@ -22,7 +22,7 @@ tags: ["c++", "design pattern", "behavioral pattern"]
 
 ## Structure
 
-![memento pattern structure](images/memento_pattern_structure.png)
+![memento pattern structure](images/patterns/memento_pattern_structure.png)
 
 - `Memento`: `Originator` 객체의 상태를 캡슐화하고, 이를 저장한다. 이 저장된 상태는 다른 객체로부터 보호되어야 하므로 `Memento` 클래스에는 두 가지 인터페이스가 존재한다. 
     - 좁은 인터페이스(Narrow Interface): `Caretaker`가 메멘토를 관리할 때 사용할 수 있는 제한된 인터페이스로 `Memento`의 상태에 접근하거나 변경할 수 없다.
@@ -34,7 +34,7 @@ tags: ["c++", "design pattern", "behavioral pattern"]
 
 - `Caretake` 객체는 `Originator` 객체에 `Memento` 객체를 요청한다. 또 요청한 시간을 저장하며, 받은 `Memento` 객체를 다시 `Originator` 객체에 돌려준다. 
 
-    ![memento pattern diagrm](images/memento_pattern_diagrm.png)
+    ![memento pattern diagrm](images/patterns/memento_pattern_diagrm.png)
 
     `Caretaker` 객체는 `Memento` 객체를 `Originator` 객체에 전달하지 않을 수도 있다. `Originator` 객체가 이전 상태로 돌아갈 필요가 없을 때는 전달할 필요가 없기 때문이다.
 - `Memento` 객체는 수동적이다. `Memento` 객체를 생성한 `Originator` 객체만이 상태를 설정하고 읽어올 수 있다.

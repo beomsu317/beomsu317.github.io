@@ -23,11 +23,11 @@ Flyweight 패턴을 적용하면 공유 가능한 부분을 외부에서 관리�
 
 ## Structure
 
-![flyweight pattern structure](images/flyweight_pattern_structure.png)
+![flyweight pattern structure](images/patterns/flyweight_pattern_structure.png)
 
 `Flyweight` 객체의 공유 방법은 다음과 같다.
 
-![sharing flyweight object](images/sharing_flyweight_object.png)
+![sharing flyweight object](images/patterns/sharing_flyweight_object.png)
 
 
 - `Flyweight`: `Flyweight` 인터페이스를 정의한다. 이 인터페이스는 부가적인 상태를 다룰 수 있어야 한다. 즉, 객체가 공유될 수 있도록 본질적인 상태와 부가적인 상태를 분리하는 역할을 한다.
@@ -124,11 +124,11 @@ private:
 
 다음은 글리프가 어떻게 구성되어 있는지를 보여준다.
 
-![glyph composition](images/glyph_composition.png)
+![glyph composition](images/patterns/glyph_composition.png)
 
 BTree 구조는 다음과 같을 것이다.
 
-![BTree structure](images/btree_structure.png)
+![BTree structure](images/patterns/btree_structure.png)
 
 루트 노드의 500이라는 값은 전체 문자의 길이가 500이라는 것이다. 그 다음 1 레이블 값을 갖는 단말 노드의 의미는 길이가 1인 문자열이 Times 24 폰트를 갖고 있음을 의미한다. 이는 발췌본의 인덱스 1에 정의한 "O" 문자열에 해당한다. 이후 2번 인덱스부터 101번 인덱스까지 길이가 100인 문자열은 Times 12 폰트를 갖고 있는데, 이 정보는 BTree에서 보면 300 노드의 첫 번째 왼쪽 자식인 노드 100 노드에 의해 정의되고 있다. 300 노드의 의미는 전체 발췌본을 "O" 문자열과 "object ... an" 까지의 스트링으로 구분했을 때, "object ... an"의 길이가 300임을 의미한다. 
 
@@ -146,7 +146,7 @@ gc.SetFont(times12, 6);
 
 새로운 BTree 구조는 다음과 같다.
 
-![new BTree structure](images/new_btree_structure.png)
+![new BTree structure](images/patterns/new_btree_structure.png)
 
 "expect" 단어 앞에 "don't " 단어(공백 문자 포함)를 Times-Italic-12 폰트로 삽입하려 한다. 다음 코드는 `gc`에게 이 이벤트를 알려주며 인덱스는 계속 102로 가정한다.
 
@@ -157,7 +157,7 @@ gc.SetFont(timesItalic12, 6);
 
 BTree 구조는 이렇게 변한다.
 
-![btree structure becomes](images/btree_structure_becomes.png)
+![btree structure becomes](images/patterns/btree_structure_becomes.png)
 
 `GlyphContext`가 현재 `Glyph` 폰트에 대해 질의를 받으면, 현재 스트링의 위치 인덱스에 대한 폰트를 찾을때 까지 BTree를 탐색한다. 폰트의 변경 빈도가 상대적으로 낮기 때문에 트리는 글리프 구조의 크기에 비해 작은 규모를 유지하게 된다.
 
