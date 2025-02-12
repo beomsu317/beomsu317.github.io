@@ -1,5 +1,5 @@
 ---
-title: "Return to Libc"
+title: "Perceptron"
 date: "2025-02-12"
 author: "Beomsu Lee"
 tags: ["machine learning", "deep learning"]
