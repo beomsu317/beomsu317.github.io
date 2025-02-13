@@ -54,7 +54,7 @@ if __name__ == '__main__':
 
 ## 신경망 추론
 
-입력층 뉴런을 784개, 출력층 뉴런을 10개로 구성한다. 은닉층은 총 두 개로, 첫 번째 은닉층에는 50개의 뉴런을, 두 번째 은닉층에는 100개의 뉴런을 배치한다.
+입력층 뉴런을 784개, 출력층 뉴런을 10개로 구성한다. 은닉층은 총 두 개로, 첫 번째 은닉층에는 50개의 뉴런을, 두 번째 은닉층에는 100개의 뉴런을 배치한다. `sample_weight.pkl`은 [여기서](https://github.com/kchcoo/WegraLee-deep-learning-from-scratch/blob/c05f6bcd9d403811307c15f2002c302a454759a1/ch03/sample_weight.pkl) 다운로드 할 수 있다.
 
 ```py
 def get_data():
