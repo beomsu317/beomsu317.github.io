@@ -878,7 +878,7 @@ spw(new Widget, loggingDel);
 
 `std::shared_ptr`는 객체에 대한 참조 횟수를 가리킨다고 했지만, 사실은 **제어 블록(control block)** 이라는 자료구조를 가리키고 있다. 커스텀 삭제자를 지정했다면, 참조 횟수와 함께 커스텀 삭제자 복사본이 제어 블록에 담긴다. 커스텀 할당자(custom allocator)를 지정했다면 이 복사본도 제어 블록에 담긴다. 이외에도 약한 참조(weak count)라 부르는 이차적인 참조 횟수가 포함되며 이 밖의 다른 추가 자료도 포함될 수 있다.
 
-![control block](images/cpp/control_block.png)
+![control block](images/control_block.png)
 
 제어 블록은 다음과 같은 규칙들로 생성된다.
 
@@ -2233,7 +2233,7 @@ bool doWork(std::function<bool(int)> filter,    // returns whether computation w
 
 `future` 객체는 피호출자가 결과를 호출자에게 전송하는 통신 채널의 끝이다. 피호출자의 결과를 `std::promise`나 `std::future`에 저장할 수 없으므로, 둘 다 바깥에 있는 장소에 결과를 담아야 한다. 이 장소가 바로 **공유 상태(shared state)** 다.
 
-![shared state](images/cpp/shared_state.png)
+![shared state](images/shared_state.png)
 
 이런 공유 상태가 중요한 것은, `future` 객체 소멸자의 행동을 그 `future` 객체와 연관된 공유 상태가 결정하기 때문이다.
 
