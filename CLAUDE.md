@@ -40,8 +40,9 @@ title: "[논문 제목]"
 authors: "[저자 목록]"
 venue: "[학회/저널] [연도]"
 arxiv: "https://arxiv.org/abs/XXXX.XXXXX"
-categories: category-name
+tags: tag-name1, tag-name2
 date: "YYYY-MM-DD"
+excerpt_separator: <!--more-->
 ---
 ```
 
