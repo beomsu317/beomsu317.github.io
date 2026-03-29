@@ -4,7 +4,7 @@ title: "Formalizing and Benchmarking Prompt Injection Attacks and Defenses"
 authors: "Yupei Liu, Yuqi Jia, Runpeng Geng, Jinyuan Jia, Neil Zhenqiang Gong"
 venue: "USENIX Security 2024"
 arxiv: "https://arxiv.org/abs/2310.12815"
-categories: security
+tags: [security, llm, prompt-injection, benchmark, defense]
 date: "2026-03-27"
 ---
 

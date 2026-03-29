@@ -4,7 +4,7 @@ title: "ISOLATEGPT: An Execution Isolation Architecture for LLM-Based Agentic Sy
 authors: "Yuhao Wu, Franziska Roesner, Tadayoshi Kohno, Ning Zhang, Umar Iqbal"
 venue: "NDSS 2025"
 arxiv: "https://dx.doi.org/10.14722/ndss.2025.241131"
-categories: security
+tags: [security, llm, llm-agent, isolation, architecture]
 date: "2026-03-27"
 ---
 

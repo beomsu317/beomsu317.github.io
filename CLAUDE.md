@@ -24,8 +24,8 @@ _config.yml   사이트 전역 설정
 
 ## Theme Notes
 
-- GitHub Pages 배포: `_config.yml`에서 `remote_theme: huangyz0918/moving` 사용 (현재 설정)
-- 로컬 테스트: `theme: moving`으로 변경 후 빌드 (GitHub Pages는 `remote_theme` 필요)
+- GitHub Pages 배포: `_config.yml`에서 `remote_theme: chesterhow/tale` 사용 (현재 설정)
+- 로컬 테스트: `theme: tale`으로 변경 후 빌드 (GitHub Pages는 `remote_theme` 필요)
 
 ## Working Rules
 
@@ -40,9 +40,8 @@ title: "[논문 제목]"
 authors: "[저자 목록]"
 venue: "[학회/저널] [연도]"
 arxiv: "https://arxiv.org/abs/XXXX.XXXXX"
-tags: tag-name1, tag-name2
+tags: [태그]
 date: "YYYY-MM-DD"
-excerpt_separator: <!--more-->
 ---
 ```
 
