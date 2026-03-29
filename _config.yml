@@ -1,6 +1,6 @@
 # Site settings
-title:          Tale
-description:    "Minimal Jekyll theme for storytellers"
+title:          Research Note
+description:    "Security & AI researcher. Reading papers, writing notes."
   #baseurl:        "/tale"
 url:            "https://chesterhow.github.io"
 
@@ -9,9 +9,9 @@ google_analytics: UA—XXXXXXXX-X
 
 # Author
 author:
-  name:         Chester How
-  url:          https://chester.how
-  email:        chesterhow@gmail.com
+  name:         Beomsu Lee
+  url:          https://beomsu317.github.io
+  email:        beomsu317@gmail.com
 
 # Build settings
 markdown:       kramdown
