@@ -4,7 +4,7 @@ title: "Attention is All You Need to Defend Against Indirect Prompt Injection At
 authors: "Yinan Zhong, Qianhao Miao, Yanjiao Chen, Jiangyi Deng, Yushi Cheng, Wenyuan Xu"
 venue: "NDSS 2026"
 arxiv: "https://doi.org/10.14722/ndss.2026.240394"
-tags: [security, llm, prompt-injection, indirect-prompt-injection, defense, attention]
+tags: [security, machine-learning, llm, prompt-injection, indirect-prompt-injection, defense, attention]
 date: "2026-03-27"
 ---
 

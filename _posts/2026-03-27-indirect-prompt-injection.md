@@ -4,7 +4,7 @@ title: "Not what you've signed up for: Compromising Real-World LLM-Integrated Ap
 authors: "Kai Greshake, Sahar Abdelnabi, Shailesh Mishra, Christoph Endres, Thorsten Holz, Mario Fritz"
 venue: "arXiv 2023 (cs.CR)"
 arxiv: "https://arxiv.org/abs/2302.12173"
-tags: [security, llm, prompt-injection, indirect-prompt-injection, attack]
+tags: [security, machine-learning, llm, prompt-injection, indirect-prompt-injection, attack]
 date: "2026-03-27"
 ---
 

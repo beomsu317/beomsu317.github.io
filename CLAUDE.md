@@ -40,10 +40,14 @@ title: "[논문 제목]"
 authors: "[저자 목록]"
 venue: "[학회/저널] [연도]"
 arxiv: "https://arxiv.org/abs/XXXX.XXXXX"
-tags: [태그]
+tags: [<subject>, <topic-tags...>]
 date: "YYYY-MM-DD"
 ---
 ```
+
+### Tag Taxonomy
+
+`tags` 필드는 **subject 태그**로 시작하고, 이후 논문의 핵심 topic 태그를 추가합니다.
 
 ### 본문 작성 규칙
 
