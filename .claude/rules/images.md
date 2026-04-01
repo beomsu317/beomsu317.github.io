@@ -23,35 +23,21 @@ assets/img/<slug>/        예: assets/img/attention-is-all-you-need/
 
 ## 추출 스크립트
 
-```python
-import fitz  # PyMuPDF
-from pathlib import Path
+스크립트는 `scripts/extract_images.py`에 있습니다. Bash 도구로 직접 실행합니다.
 
-def extract_images_from_pdf(pdf_path: str, slug: str, min_width: int = 200, min_height: int = 200):
-    """PDF에서 이미지를 추출해 assets/img/<slug>/ 에 저장합니다."""
-    output_dir = Path(f"assets/img/{slug}")
-    output_dir.mkdir(parents=True, exist_ok=True)
+```bash
+python3 scripts/extract_images.py <pdf_path> <slug>
+```
 
-    doc = fitz.open(pdf_path)
-    saved = []
+또는 인라인으로 함수를 import해 사용합니다.
 
-    for page_num, page in enumerate(doc, start=1):
-        for img_index, img in enumerate(page.get_images(full=True)):
-            xref = img[0]
-            pix = fitz.Pixmap(doc, xref)
-
-            if pix.width < min_width or pix.height < min_height:
-                continue  # 너무 작은 이미지(아이콘 등) 제외
-            if pix.n > 4:
-                pix = fitz.Pixmap(fitz.csRGB, pix)  # CMYK → RGB 변환
-
-            filename = f"fig-p{page_num:03d}-{img_index:02d}.png"
-            out_path = output_dir / filename
-            pix.save(str(out_path))
-            saved.append(str(out_path))
-
-    doc.close()
-    return saved
+```bash
+python3 -c "
+import sys; sys.path.insert(0, 'scripts')
+from extract_images import extract_images_from_pdf
+saved = extract_images_from_pdf('/tmp/<slug>.pdf', '<slug>')
+print(saved)
+"
 ```
 
 ## 포스트에서 이미지 참조
